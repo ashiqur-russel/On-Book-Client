@@ -33,8 +33,8 @@ const Header = () => {
   };
 
   return (
-    <div className="bg-[#FAF8F6] py-16">
-      <div className="container mx-auto px-4">
+    <div className="py-14">
+      <div className="container mx-auto ">
         {/* Heading Section */}
         <div className="lg:flex lg:items-center lg:justify-between">
           <div className="lg:w-1/2">
@@ -46,7 +46,7 @@ const Header = () => {
               <span className="font-bold">On.Book</span> perfect. <br />
               Not sure what to read now? Match your next reading mood perfectly.
             </p>
-            <button className="mt-6 bg-black text-white px-8 py-3 rounded text-lg hover:bg-gray-700 transition">
+            <button className="mt-6 bg-black text-white px-8 py-3  text-lg hover:bg-gray-700 transition">
               Explore Now
             </button>
           </div>
@@ -59,7 +59,7 @@ const Header = () => {
               id="carousel"
               className="flex space-x-6 overflow-x-auto no-scrollbar scroll-smooth"
             >
-              {books.map((book, index) => (
+              {books.map((book) => (
                 <div key={book.id} className="text-center flex-shrink-0">
                   <div className="w-48 h-80 bg-gray-100 rounded-t-full overflow-hidden shadow-md">
                     <img

@@ -1,4 +1,7 @@
+import React from "react";
 import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 const books = [
   {
@@ -28,9 +31,12 @@ const BookCarousel = () => {
   const settings = {
     dots: true,
     infinite: true,
-    speed: 500,
+    speed: 600,
+    autoplay: true,
+    autoplaySpeed: 4000,
     slidesToShow: 3,
     slidesToScroll: 1,
+    arrows: false,
     responsive: [
       {
         breakpoint: 1024,
@@ -46,20 +52,24 @@ const BookCarousel = () => {
         settings: {
           slidesToShow: 1,
           slidesToScroll: 1,
-          initialSlide: 1,
         },
       },
     ],
   };
 
   return (
-    <div className="container mx-auto ">
-      <h2 className="text-2xl font-bold mb-6">Featured Books</h2>
+    <div className="container mx-auto px-8 py-10">
+      {/* Title Section */}
+      <h2 className="text-3xl text-gray-900 mb-3 px-4 pt-10">Featured Books</h2>
+
+      {/* Carousel */}
       <Slider {...settings}>
         {books.map((book) => (
           <div key={book.id} className="px-4">
-            <div className="bg-white p-6 rounded-lg shadow-lg">
-              <h3 className="text-xl font-semibold mb-2">{book.title}</h3>
+            <div className="bg-white p-6  shadow-md border hover:shadow-lg transition-all">
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                {book.title}
+              </h3>
               <p className="text-gray-600">{book.description}</p>
             </div>
           </div>
