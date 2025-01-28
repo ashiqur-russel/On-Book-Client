@@ -5,6 +5,7 @@ import {
   AiOutlineClose,
   AiOutlineLock,
 } from "react-icons/ai";
+import { NavLink } from "react-router";
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -65,7 +66,7 @@ const Navbar = () => {
           {/* Lock Icon and Login */}
           <button className="flex items-center space-x-1 text-gray-800 hover:text-gray-600 font-medium">
             <AiOutlineLock className="w-5 h-5" />
-            <span>Login</span>
+            <NavLink to={"/signin"}>Login</NavLink>
           </button>
         </div>
 
@@ -119,7 +120,7 @@ const Navbar = () => {
             </a>
           </li>
           <li>
-            <a href="#" className="text-gray-800 hover:text-gray-600">
+            <a href="/" className="text-gray-800 hover:text-gray-600">
               About Us
             </a>
           </li>

@@ -1,4 +1,5 @@
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
+import SignIn from "../Signin/Signin";
 
 const books = [
   {
@@ -8,6 +9,14 @@ const books = [
     image:
       "https://images.unsplash.com/photo-1630344745876-cd39d1b58100?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTE5fHxhdXRob3J8ZW58MHx8MHx8fDA%3D",
     flipped: false,
+  },
+  {
+    id: 2,
+    title: "Der Process",
+    author: "Franz Kafka",
+    image:
+      "https://images.unsplash.com/photo-1589829068083-7cbcc8f6eed4?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+    flipped: true,
   },
   {
     id: 2,
@@ -60,8 +69,13 @@ const Header = () => {
               className="flex space-x-6 overflow-x-auto no-scrollbar scroll-smooth"
             >
               {books.map((book) => (
-                <div key={book.id} className="text-center flex-shrink-0">
-                  <div className="w-48 h-80 bg-gray-100 rounded-t-full overflow-hidden shadow-md">
+                <div
+                  key={book.id}
+                  className="text-center border-2 flex-shrink-0"
+                >
+                  <div
+                    className={`w-48 h-80 bg-gray-100 rounded-t-full overflow-hidden shadow-md `}
+                  >
                     <img
                       src={book.image}
                       alt={book.title}
