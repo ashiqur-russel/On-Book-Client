@@ -7,6 +7,8 @@ import "slick-carousel/slick/slick-theme.css";
 import BookCarousel from "./components/BookCarousel";
 import Bestsellers from "./pages/BestSeller/BestSeller";
 import Offers from "./pages/Offers/Offers";
+import BookFairSection from "./pages/BookFair/BookFair";
+import TopSellingBooks from "./pages/TopSellingBooks/TopSellingBooks";
 
 const App = () => {
   return (
@@ -14,8 +16,10 @@ const App = () => {
       <Navbar />
       <Header />
       <Bestsellers />
+      <BookFairSection />
       <BookCarousel />
       <Offers />
+      <TopSellingBooks />
 
       <Footer />
     </div>
