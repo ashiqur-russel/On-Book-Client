@@ -6,6 +6,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import BookCarousel from "./components/BookCarousel";
 import Bestsellers from "./pages/BestSeller/BestSeller";
+import Offers from "./pages/Offers/Offers";
 
 const App = () => {
   return (
@@ -14,9 +15,7 @@ const App = () => {
       <Header />
       <Bestsellers />
       <BookCarousel />
-      <div className="grid lg:grid-cols-3  h-screen md:grid-cols-2 grid-cols-1 gap-2 p-2">
-        {" "}
-      </div>
+      <Offers />
 
       <Footer />
     </div>

@@ -58,7 +58,7 @@ const BookCarousel = () => {
   };
 
   return (
-    <div className="container mx-auto px-8 py-10">
+    <div className="container mx-auto px-7 py-10">
       {/* Title Section */}
       <h2 className="text-3xl text-gray-900 mb-3 px-4 pt-10">Featured Books</h2>
 
