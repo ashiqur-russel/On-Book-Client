@@ -30,7 +30,6 @@ const PaymentInfo: React.FC<PaymentInfoProps> = ({
       <div className="mt-6">
         <p className="text-gray-500">Amount Due</p>
         <p className="text-2xl font-bold text-gray-900">{totalPrice}</p>
-        <p className="text-gray-500 text-sm">Visa Payment</p>
       </div>
 
       {/* Billing Plan */}

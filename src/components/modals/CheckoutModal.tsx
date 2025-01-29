@@ -1,8 +1,27 @@
+import { useState } from "react";
 import OnModal from "../utils/OnModal";
 
-const CheckoutModal = ({ onClose }: { onClose: () => void }) => {
+interface CheckoutModalProps {
+  onClose: () => void;
+  customer: string;
+  amount: string;
+}
+
+const CheckoutModal: React.FC<CheckoutModalProps> = ({
+  onClose,
+  customer,
+  amount,
+}) => {
+  const [cardNumber, setCardNumber] = useState("");
+  const [expiryDate, setExpiryDate] = useState("");
+  const [cvc, setCvc] = useState("");
+
   const handlePayment = () => {
-    alert("Payment Confirmed!");
+    if (!cardNumber || !expiryDate || !cvc) {
+      alert("❌ Please enter all card details!");
+      return;
+    }
+    alert(`✅ Payment Confirmed for ${customer} of ${amount}`);
     onClose();
   };
 
@@ -12,16 +31,18 @@ const CheckoutModal = ({ onClose }: { onClose: () => void }) => {
       <div className="flex items-center space-x-3 mb-4">
         <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
         <div>
-          <h3 className="text-lg font-semibold text-gray-900">Adison Rosser</h3>
-          <p className="text-gray-500 text-sm">Mar 20, 2021</p>
+          <h3 className="text-lg font-semibold text-gray-900">{customer}</h3>
+          <p className="text-gray-500 text-sm">
+            Billing Date: {new Date().toLocaleDateString()}
+          </p>
         </div>
       </div>
 
       {/* Total Amount */}
       <div className="mb-4 bg-gray-100 p-4 rounded-lg">
         <h3 className="font-medium text-gray-800">Amount Due</h3>
-        <p className="text-2xl font-bold text-gray-900">$250.00</p>
-        <p className="text-gray-500 text-sm">Visa - $250.00</p>
+        <p className="text-2xl font-bold text-gray-900">{amount}</p>
+        <p className="text-gray-500 text-sm">Payment Method: Visa</p>
       </div>
 
       {/* Payment Details */}
@@ -38,6 +59,8 @@ const CheckoutModal = ({ onClose }: { onClose: () => void }) => {
         <input
           type="text"
           placeholder="**** **** **** ****"
+          value={cardNumber}
+          onChange={(e) => setCardNumber(e.target.value)}
           className="w-full border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
@@ -51,6 +74,8 @@ const CheckoutModal = ({ onClose }: { onClose: () => void }) => {
           <input
             type="text"
             placeholder="MM/YY"
+            value={expiryDate}
+            onChange={(e) => setExpiryDate(e.target.value)}
             className="w-full border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -60,6 +85,8 @@ const CheckoutModal = ({ onClose }: { onClose: () => void }) => {
           <input
             type="text"
             placeholder="123"
+            value={cvc}
+            onChange={(e) => setCvc(e.target.value)}
             className="w-full border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>

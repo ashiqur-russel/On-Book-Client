@@ -44,17 +44,21 @@ const MyOrders = () => {
   const navigate = useNavigate();
 
   // Function to handle payment click
-  const handlePaymentClick = (order: { id: string; customer: string; price: string }) => {
+  const handlePaymentClick = (order: {
+    id: string;
+    customer: string;
+    price: string;
+  }) => {
     navigate(
       `/payment?orderId=${order.id}&customer=${order.customer}&totalPrice=${order.price}`
     );
   };
 
   return (
-    <div className="p-8 bg-blue-50 min-h-screen flex items-center justify-center text-black">
-      <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-5xl">
+    <div className="p-8 min-h-screen flex items-center justify-center text-black">
+      <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-5xl h-full">
         <div className="overflow-x-auto">
-          <table className="w-full border-collapse rounded-lg overflow-hidden">
+          <table className="w-full border-collapse rounded-lg overflow-hidden h-full min-w-[800px]">
             <thead className="bg-gray-200 text-gray-600 text-left">
               <tr>
                 <th className="px-4 py-2">Orders</th>
