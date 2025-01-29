@@ -1,6 +1,5 @@
 import { FaEllipsisH } from "react-icons/fa";
 
-// Define TypeScript type for payments
 interface Payment {
   id: number;
   name: string;
@@ -17,7 +16,6 @@ interface PaymentDetailsProps {
 const PaymentDetails: React.FC<PaymentDetailsProps> = ({ payments }) => {
   return (
     <>
-      {/* Recent Payments Table */}
       <h3 className="text-lg font-semibold mt-6">Recent Payment</h3>
       <div className="mt-4 overflow-x-auto">
         <table className="w-full border-collapse rounded-lg overflow-hidden bg-white shadow-md">

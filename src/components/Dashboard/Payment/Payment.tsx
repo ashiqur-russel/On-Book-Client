@@ -1,10 +1,11 @@
 import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import CheckoutModal from "../../modals/CheckoutModal";
 import CardInfo from "./CardInfo";
 import PaymentDetails from "./PaymentDetails";
 import PaymentInfo from "./PaymentInfo";
 
-// Define payment data
+// Mock Payment Data (Replace with API Data)
 const payments = [
   {
     id: 1,
@@ -42,19 +43,29 @@ const payments = [
 
 const Payment = () => {
   const [showModal, setShowModal] = useState(false);
+  const [searchParams] = useSearchParams();
+
+  // Fetch order details from query params
+  const orderId = searchParams.get("orderId") || "N/A";
+  const customer = searchParams.get("customer") || "Unknown";
+  const totalPrice = searchParams.get("totalPrice") || "$0.00";
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#f3e5f5] to-[#e3f2fd] flex flex-col items-center py-10 px-4">
       <div className="w-full max-w-5xl mt-10 bg-white p-8 rounded-3xl shadow-2xl flex flex-col md:flex-row gap-6">
         <div className="w-full md:w-2/3 bg-white p-6 rounded-xl shadow-lg">
-          <h2 className="text-2xl text-black font-semibold">
-            Your Cred it Card
-          </h2>
-
+          <h2 className="text-2xl text-black font-semibold">Your Credit Card</h2>
           <CardInfo />
           <PaymentDetails payments={payments} />
         </div>
-        <PaymentInfo onCheckout={() => setShowModal(true)} />
+
+        {/* Payment Info */}
+        <PaymentInfo
+          onCheckout={() => setShowModal(true)}
+          orderId={orderId}
+          customer={customer}
+          totalPrice={totalPrice}
+        />
       </div>
 
       {/* Checkout Modal */}

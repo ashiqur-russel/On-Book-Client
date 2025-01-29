@@ -1,5 +1,7 @@
 import { FaBook, FaUpload, FaCog, FaChartLine } from "react-icons/fa";
 import UserDashboard from "../components/Dashboard/user/UserDashboard";
+import MyOrders from "../components/Dashboard/user/Order-Management/MyOrder";
+import Payment from "../components/Dashboard/Payment/Payment";
 
 export const userPaths = [
   {
@@ -9,11 +11,19 @@ export const userPaths = [
     icon: <FaChartLine />,
   },
   {
-    name: "My Books",
-    path: "my-books",
-    element: "My Books",
+    name: "My Orders",
+    path: "my-orders",
+    element: <MyOrders />,
     icon: <FaBook />,
+    children: [
+      {
+        name: "Payment",
+        path: "payment",
+        element: <Payment />,
+      },
+    ],
   },
+
   {
     name: "Upload Books",
     path: "upload",

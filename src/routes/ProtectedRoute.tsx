@@ -5,7 +5,9 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ role }) => {
-  const user = { role: "user" };
+  //const user = useAppSelector(selectCurrentUser);
+
+  const user = { name: " Ashiqur Russel", role: "user" };
 
   if (!user) {
     return <Navigate to="/signin" replace />;

@@ -8,6 +8,7 @@ import SignUp from "../pages/Signup/Signup";
 import App from "../App";
 import MainLayout from "../components/Layout/MainLayout";
 import DashboardLayout from "../components/Layout/DashboardLayout";
+import Payment from "../components/Dashboard/Payment/Payment";
 
 const router = createBrowserRouter([
   {
@@ -18,6 +19,11 @@ const router = createBrowserRouter([
       { path: "signin", element: <SignIn /> },
       { path: "signup", element: <SignUp /> },
     ],
+  },
+  {
+    path: "/payment",
+    element: <ProtectedRoute role="user" />,
+    children: [{ index: true, element: <Payment /> }],
   },
   {
     path: "/dashboard",

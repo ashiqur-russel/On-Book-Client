@@ -2,9 +2,17 @@ import { FaUserCircle } from "react-icons/fa";
 
 interface PaymentInfoProps {
   onCheckout: () => void;
+  orderId: string;
+  customer: string;
+  totalPrice: string;
 }
 
-const PaymentInfo: React.FC<PaymentInfoProps> = ({ onCheckout }) => {
+const PaymentInfo: React.FC<PaymentInfoProps> = ({
+  onCheckout,
+  orderId,
+  customer,
+  totalPrice,
+}) => {
   return (
     <div className="w-full md:w-1/3 bg-white p-6 rounded-xl shadow-lg flex flex-col min-h-full">
       <h2 className="text-xl font-semibold text-black">Payment Detail</h2>
@@ -13,16 +21,16 @@ const PaymentInfo: React.FC<PaymentInfoProps> = ({ onCheckout }) => {
       <div className="mt-4 flex items-center space-x-4">
         <FaUserCircle className="text-4xl text-gray-600" />
         <div>
-          <h3 className="text-gray-900 font-medium">Adison Rosser</h3>
-          <p className="text-gray-500 text-sm">Mar 20, 2021</p>
+          <h3 className="text-gray-900 font-medium">{customer}</h3>
+          <p className="text-gray-500 text-sm">Order ID: {orderId}</p>
         </div>
       </div>
 
       {/* Amount Due */}
       <div className="mt-6">
         <p className="text-gray-500">Amount Due</p>
-        <p className="text-2xl font-bold text-gray-900">$250.00</p>
-        <p className="text-gray-500 text-sm">Visa $250.00</p>
+        <p className="text-2xl font-bold text-gray-900">{totalPrice}</p>
+        <p className="text-gray-500 text-sm">Visa Payment</p>
       </div>
 
       {/* Billing Plan */}
