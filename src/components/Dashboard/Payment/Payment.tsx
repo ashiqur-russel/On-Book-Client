@@ -1,5 +1,5 @@
 import { useState } from "react";
-import CheckoutModal from "./CheckoutModal";
+import CheckoutModal from "../../modals/CheckoutModal";
 import CardInfo from "./CardInfo";
 import PaymentDetails from "./PaymentDetails";
 import PaymentInfo from "./PaymentInfo";

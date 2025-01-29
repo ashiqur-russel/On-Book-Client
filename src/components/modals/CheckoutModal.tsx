@@ -1,4 +1,4 @@
-import OnModal from "../../utils/OnModal";
+import OnModal from "../utils/OnModal";
 
 const CheckoutModal = ({ onClose }: { onClose: () => void }) => {
   const handlePayment = () => {

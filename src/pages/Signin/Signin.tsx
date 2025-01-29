@@ -1,6 +1,5 @@
 import { FaGoogle } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
-import Navbar from "../../components/shared/Navbar";
 import OnForm from "../../components/utils/OnForm";
 
 const SignIn = () => {
@@ -30,7 +29,6 @@ const SignIn = () => {
 
   return (
     <>
-      <Navbar />
       <div className="min-h-screen flex">
         <div className="flex flex-1 justify-center items-center p-6">
           <div className="w-full max-w-md">
