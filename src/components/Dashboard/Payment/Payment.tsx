@@ -38,7 +38,7 @@ const payments = [
 ];
 
 const Payment = () => {
-  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#f3e5f5] to-[#e3f2fd] flex flex-col items-center py-10 px-4">
@@ -126,7 +126,7 @@ const Payment = () => {
 
           {/* Checkout Button */}
           <button
-            onClick={() => setIsCheckoutOpen(true)}
+            onClick={() => setShowModal(true)}
             className="mt-6 bg-black text-white w-full py-3 rounded-md hover:bg-gray-800 transition text-lg"
           >
             Proceed to Checkout
@@ -134,10 +134,7 @@ const Payment = () => {
         </div>
       </div>
 
-      {/* Checkout Modal */}
-      {isCheckoutOpen && (
-        <CheckoutModal onClose={() => setIsCheckoutOpen(false)} />
-      )}
+      {showModal && <CheckoutModal onClose={() => setShowModal(false)} />}
     </div>
   );
 };
