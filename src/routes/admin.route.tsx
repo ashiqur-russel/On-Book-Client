@@ -11,7 +11,7 @@ export const adminPaths = [
   {
     name: "Check Payments",
     path: "check-payments",
-    element: "Check Payments",
+    element: <Dashboard />,
     icon: <FaPaypal />,
   },
   {
@@ -23,7 +23,7 @@ export const adminPaths = [
   {
     name: "Settings",
     path: "settings",
-    element: <h1>Admin Settings</h1>,
+    element: <Dashboard />,
     icon: <FaCog />,
   },
 ];

@@ -27,7 +27,7 @@ export const userPaths = [
   {
     name: "Upload Books",
     path: "upload",
-    element: "Upload Books",
+    element: <Payment />,
     icon: <FaUpload />,
   },
   {

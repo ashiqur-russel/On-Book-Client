@@ -1,13 +1,13 @@
 import { Navigate, Outlet } from "react-router-dom";
+import { useAppSelector } from "../redux/hooks";
+import { selectCurrentUser } from "../redux/features/auth/authSlice";
 
 interface ProtectedRouteProps {
   role: "admin" | "user";
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ role }) => {
-  //const user = useAppSelector(selectCurrentUser);
-
-  const user = { name: " Ashiqur Russel", role: "user" };
+  const user = useAppSelector(selectCurrentUser);
 
   if (!user) {
     return <Navigate to="/signin" replace />;
