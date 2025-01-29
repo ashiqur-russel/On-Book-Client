@@ -8,6 +8,7 @@ import {
 import { NavLink } from "react-router";
 
 const Navbar = () => {
+  const user = { name: " Ashiqur Russel", role: "admin" };
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -44,12 +45,15 @@ const Navbar = () => {
             >
               Blog
             </a>
-            <NavLink
-              to={"/dashboard"}
-              className="text-gray-800 font-medium hover:text-gray-600 transition"
-            >
-              Dashboard
-            </NavLink>
+
+            {user && (
+              <NavLink
+                to={`/dashboard/${user.role}`}
+                className="text-gray-800 font-medium hover:text-gray-600 transition"
+              >
+                Dashboard
+              </NavLink>
+            )}
             <a
               href="#"
               className="text-gray-800 font-medium hover:text-gray-600 transition"
@@ -127,6 +131,15 @@ const Navbar = () => {
               Blog
             </a>
           </li>
+
+          {user && (
+            <NavLink
+              to={`/dashboard/${user.role}`}
+              className="text-gray-800 font-medium hover:text-gray-600 transition"
+            >
+              Dashboard
+            </NavLink>
+          )}
           <li>
             <a href="/" className="text-gray-800 hover:text-gray-600">
               About Us

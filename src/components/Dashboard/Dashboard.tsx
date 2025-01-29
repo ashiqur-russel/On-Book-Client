@@ -48,45 +48,65 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Recent Activity Table */}
+      {/* Recent Activity Table (Responsive) */}
       <div className="mt-8 bg-white p-6 rounded-lg shadow-md">
         <h2 className="text-xl font-semibold text-gray-900 mb-4">
           Recent Activity
         </h2>
-        <table className="w-full border-collapse rounded-lg overflow-hidden">
-          <thead className="bg-gray-200 text-gray-600 text-left">
-            <tr>
-              <th className="px-4 py-2">User</th>
-              <th className="px-4 py-2">Action</th>
-              <th className="px-4 py-2">Date</th>
-              <th className="px-4 py-2">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr className="border-t border-gray-200 hover:bg-gray-100">
-              <td className="px-4 py-3">John Doe</td>
-              <td className="px-4 py-3">Purchased a Book</td>
-              <td className="px-4 py-3">Jan 12, 2024</td>
-              <td className="px-4 py-3 text-green-500">Completed</td>
-            </tr>
-            <tr className="border-t border-gray-200 hover:bg-gray-100">
-              <td className="px-4 py-3">Emma Smith</td>
-              <td className="px-4 py-3">Added Payment</td>
-              <td className="px-4 py-3">Jan 14, 2024</td>
-              <td className="px-4 py-3 text-blue-500">Pending</td>
-            </tr>
-            <tr className="border-t border-gray-200 hover:bg-gray-100">
-              <td className="px-4 py-3">Michael Brown</td>
-              <td className="px-4 py-3">Updated Profile</td>
-              <td className="px-4 py-3">Jan 15, 2024</td>
-              <td className="px-4 py-3 text-yellow-500">In Progress</td>
-            </tr>
-          </tbody>
-        </table>
+
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse rounded-lg overflow-hidden min-w-[600px]">
+            <thead className="bg-gray-200 text-gray-600 text-left">
+              <tr>
+                <th className="px-4 py-2">User</th>
+                <th className="px-4 py-2">Action</th>
+                <th className="px-4 py-2">Date</th>
+                <th className="px-4 py-2">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                {
+                  user: "John Doe",
+                  action: "Purchased a Book",
+                  date: "Jan 12, 2024",
+                  status: "Completed",
+                  color: "text-green-500",
+                },
+                {
+                  user: "Emma Smith",
+                  action: "Added Payment",
+                  date: "Jan 14, 2024",
+                  status: "Pending",
+                  color: "text-blue-500",
+                },
+                {
+                  user: "Michael Brown",
+                  action: "Updated Profile",
+                  date: "Jan 15, 2024",
+                  status: "In Progress",
+                  color: "text-yellow-500",
+                },
+              ].map((row, index) => (
+                <tr
+                  key={index}
+                  className="border-t border-gray-200 hover:bg-gray-100"
+                >
+                  <td className="px-4 py-3 whitespace-nowrap">{row.user}</td>
+                  <td className="px-4 py-3 whitespace-nowrap">{row.action}</td>
+                  <td className="px-4 py-3 whitespace-nowrap">{row.date}</td>
+                  <td className={`px-4 py-3 font-medium ${row.color}`}>
+                    {row.status}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Quick Actions */}
-      <div className="mt-8 flex space-x-4">
+      <div className="mt-8 flex flex-wrap gap-4">
         <Link
           to="/dashboard/payment"
           className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition"
