@@ -47,7 +47,10 @@ const Bestsellers = () => {
         {/* Header Section */}
         <div className="flex px-1 justify-between items-center">
           <h2 className="text-4xl text-gray-900">Bestsellers</h2>
-          <a href="#" className="text-gray-700 hover:underline text-sm">
+          <a
+            href="#"
+            className="text-gray-700 hover:underline text-sm hidden md:inline lg:inline"
+          >
             See all
           </a>
         </div>

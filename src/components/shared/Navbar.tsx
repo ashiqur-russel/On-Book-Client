@@ -44,6 +44,12 @@ const Navbar = () => {
             >
               Blog
             </a>
+            <NavLink
+              to={"/payment"}
+              className="text-gray-800 font-medium hover:text-gray-600 transition"
+            >
+              Dashboard
+            </NavLink>
             <a
               href="#"
               className="text-gray-800 font-medium hover:text-gray-600 transition"
