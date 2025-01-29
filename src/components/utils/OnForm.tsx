@@ -12,6 +12,7 @@ interface FormProps {
     error?: string;
   }[];
   buttonText: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   control: Control<any>;
   onSubmit: () => void;
 }

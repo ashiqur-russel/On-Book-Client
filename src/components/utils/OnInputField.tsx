@@ -5,6 +5,7 @@ interface OnInputFieldProps {
   name: string;
   label: string;
   placeholder?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   control: Control<any>;
   validation?: object;
   error?: string;
@@ -25,7 +26,7 @@ const OnInputField: React.FC<OnInputFieldProps> = ({
       <Controller
         name={name}
         control={control}
-        defaultValue="" // ✅ Ensures controlled input
+        defaultValue=""
         rules={validation}
         render={({ field }) => (
           <>

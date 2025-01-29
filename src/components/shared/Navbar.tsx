@@ -4,48 +4,58 @@ import {
   AiOutlineMenu,
   AiOutlineClose,
   AiOutlineLock,
+  AiOutlineLogout,
 } from "react-icons/ai";
-import { NavLink } from "react-router";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useAppSelector, useAppDispatch } from "../../redux/hooks";
+import { logOut, selectCurrentUser } from "../../redux/features/auth/authSlice";
 
 const Navbar = () => {
-  const user = { name: " Ashiqur Russel", role: "admin" };
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const user = useAppSelector(selectCurrentUser);
   const [menuOpen, setMenuOpen] = useState(false);
 
+  const handleLogout = () => {
+    dispatch(logOut());
+    navigate("/signin");
+  };
+
   return (
-    <nav className="p-4">
+    <nav className="p-4 bg-white shadow-md">
       <div className="container mx-auto flex items-center justify-between">
+        {/* Logo & Desktop Navigation */}
         <div className="flex items-center space-x-8">
           <h1 className="text-3xl font-bold text-gray-900">
             <NavLink to={"/"}>On.Book</NavLink>
           </h1>
 
-          {/* Desktop Links */}
+          {/* Desktop Navigation Links */}
           <div className="hidden lg:flex items-center space-x-6">
-            <a
-              href="#"
+            <NavLink
+              to="/books"
               className="text-gray-800 font-medium hover:text-gray-600 transition"
             >
               Books
-            </a>
-            <a
-              href="#"
+            </NavLink>
+            <NavLink
+              to="/categories"
               className="text-gray-800 font-medium hover:text-gray-600 transition"
             >
               Categories
-            </a>
-            <a
-              href="#"
+            </NavLink>
+            <NavLink
+              to="/wishlist"
               className="text-gray-800 font-medium hover:text-gray-600 transition"
             >
               Wishlist
-            </a>
-            <a
-              href="#"
+            </NavLink>
+            <NavLink
+              to="/blog"
               className="text-gray-800 font-medium hover:text-gray-600 transition"
             >
               Blog
-            </a>
-
+            </NavLink>
             {user && (
               <NavLink
                 to={`/dashboard/${user.role}`}
@@ -54,16 +64,15 @@ const Navbar = () => {
                 Dashboard
               </NavLink>
             )}
-            <a
-              href="#"
+            <NavLink
+              to="/about"
               className="text-gray-800 font-medium hover:text-gray-600 transition"
             >
               About Us
-            </a>
+            </NavLink>
           </div>
         </div>
 
-        {/* Right Section: Search and Login */}
         <div className="hidden lg:flex items-center space-x-6">
           {/* Search Bar */}
           <div className="relative flex items-center">
@@ -75,11 +84,24 @@ const Navbar = () => {
             />
           </div>
 
-          {/* Lock Icon and Login */}
-          <button className="flex items-center space-x-1 text-gray-800 hover:text-gray-600 font-medium">
-            <AiOutlineLock className="w-5 h-5" />
-            <NavLink to={"/signin"}>Login</NavLink>
-          </button>
+          {/* Login / Logout Button */}
+          {user ? (
+            <button
+              onClick={handleLogout}
+              className="flex items-center space-x-1 text-gray-800 hover:text-gray-600 font-medium"
+            >
+              <AiOutlineLogout className="w-5 h-5" />
+              <span>Logout</span>
+            </button>
+          ) : (
+            <NavLink
+              to={"/signin"}
+              className="flex items-center space-x-1 text-gray-800 hover:text-gray-600 font-medium"
+            >
+              <AiOutlineLock className="w-5 h-5" />
+              <span>Login</span>
+            </NavLink>
+          )}
         </div>
 
         {/* Mobile Menu Button */}
@@ -112,39 +134,77 @@ const Navbar = () => {
         </div>
         <ul className="p-4 space-y-4">
           <li>
-            <a href="#" className="text-gray-800 hover:text-gray-600">
+            <NavLink
+              to="/books"
+              className="text-gray-800 hover:text-gray-600"
+              onClick={() => setMenuOpen(false)}
+            >
               Books
-            </a>
+            </NavLink>
           </li>
           <li>
-            <a href="#" className="text-gray-800 hover:text-gray-600">
+            <NavLink
+              to="/categories"
+              className="text-gray-800 hover:text-gray-600"
+              onClick={() => setMenuOpen(false)}
+            >
               Categories
-            </a>
+            </NavLink>
           </li>
           <li>
-            <a href="#" className="text-gray-800 hover:text-gray-600">
+            <NavLink
+              to="/wishlist"
+              className="text-gray-800 hover:text-gray-600"
+              onClick={() => setMenuOpen(false)}
+            >
               Wishlist
-            </a>
+            </NavLink>
           </li>
           <li>
-            <a href="#" className="text-gray-800 hover:text-gray-600">
+            <NavLink
+              to="/blog"
+              className="text-gray-800 hover:text-gray-600"
+              onClick={() => setMenuOpen(false)}
+            >
               Blog
-            </a>
+            </NavLink>
           </li>
 
           {user && (
-            <NavLink
-              to={`/dashboard/${user.role}`}
-              className="text-gray-800 font-medium hover:text-gray-600 transition"
-            >
-              Dashboard
-            </NavLink>
+            <li>
+              <NavLink
+                to={`/dashboard/${user.role}`}
+                className="text-gray-800 hover:text-gray-600"
+                onClick={() => setMenuOpen(false)}
+              >
+                Dashboard
+              </NavLink>
+            </li>
           )}
           <li>
-            <a href="/" className="text-gray-800 hover:text-gray-600">
+            <NavLink
+              to="/about"
+              className="text-gray-800 hover:text-gray-600"
+              onClick={() => setMenuOpen(false)}
+            >
               About Us
-            </a>
+            </NavLink>
           </li>
+
+          {user && (
+            <li>
+              <button
+                onClick={() => {
+                  handleLogout();
+                  setMenuOpen(false);
+                }}
+                className="text-gray-800 hover:text-gray-600 flex items-center space-x-2"
+              >
+                <AiOutlineLogout className="w-5 h-5" />
+                <span>Logout</span>
+              </button>
+            </li>
+          )}
         </ul>
       </div>
     </nav>

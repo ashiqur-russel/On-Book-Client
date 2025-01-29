@@ -1,12 +1,12 @@
 import { useForm, SubmitHandler } from "react-hook-form";
 import { FaGoogle } from "react-icons/fa";
 import { NavLink, useNavigate } from "react-router-dom";
-import OnForm from "../../components/utils/OnForm";
 import { useAppDispatch } from "../../redux/hooks";
 import { useLoginMutation } from "../../redux/features/auth/authApi";
 import { verifyToken } from "../../utils/verifyToken";
 import { setUser, TUser } from "../../redux/features/auth/authSlice";
 import { toast } from "sonner";
+import OnForm from "../../components/utils/OnForm";
 
 interface LoginForm {
   email: string;
