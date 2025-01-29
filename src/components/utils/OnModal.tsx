@@ -47,7 +47,9 @@ const OnModal: React.FC<ModalProps> = ({
         </button>
 
         {/* Title */}
-        <h2 className="text-2xl font-bold text-center mb-4">{title}</h2>
+        <h2 className="text-2xl font-bold text-black text-center mb-4">
+          {title}
+        </h2>
 
         {/* Modal Content */}
         <div className="mb-4">{content}</div>
