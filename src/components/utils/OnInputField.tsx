@@ -1,36 +1,44 @@
-import { Control, useController } from "react-hook-form";
+import { Controller, Control } from "react-hook-form";
 
-interface InputProps {
+interface OnInputFieldProps {
+  type: string;
   name: string;
   label: string;
-  type: string;
   placeholder?: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   control: Control<any>;
+  validation?: object;
+  error?: string;
 }
 
-const OnInputField: React.FC<InputProps> = ({
+const OnInputField: React.FC<OnInputFieldProps> = ({
+  type,
   name,
   label,
-  type,
   placeholder,
   control,
+  validation,
+  error,
 }) => {
-  const {
-    field,
-    fieldState: { error },
-  } = useController({ name, control });
-
   return (
     <div>
       <label className="block text-sm font-medium text-gray-700">{label}</label>
-      <input
-        {...field}
-        type={type}
-        placeholder={placeholder}
-        className="w-full border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+      <Controller
+        name={name}
+        control={control}
+        defaultValue="" // ✅ Ensures controlled input
+        rules={validation}
+        render={({ field }) => (
+          <>
+            <input
+              {...field}
+              type={type}
+              placeholder={placeholder}
+              className="w-full border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
+          </>
+        )}
       />
-      {error && <p className="text-red-500 text-xs mt-1">{error.message}</p>}
     </div>
   );
 };

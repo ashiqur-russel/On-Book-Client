@@ -18,7 +18,12 @@ const SignIn = () => {
   const dispatch = useAppDispatch();
   const [login, { isLoading }] = useLoginMutation();
 
-  const { handleSubmit, control } = useForm<LoginForm>({
+  const {
+    handleSubmit,
+    formState: { errors },
+    control,
+    setError,
+  } = useForm<LoginForm>({
     defaultValues: {
       email: "",
       password: "",
@@ -27,8 +32,7 @@ const SignIn = () => {
 
   const onSubmit: SubmitHandler<LoginForm> = async (data) => {
     try {
-      console.log("Sending refresh token");
-      console.log(data);
+      console.log("Sending login request", data);
       const result = await login(data).unwrap();
       const token = result.data.accessToken;
       const user = verifyToken(token) as TUser;
@@ -36,9 +40,12 @@ const SignIn = () => {
       toast.success("Logged in Successfully", { duration: 200 });
       dispatch(setUser({ user, token }));
 
-      // Redirect user based on role
-      navigate(`/${user.role}/dashboard`);
+      navigate(`/`);
     } catch {
+      setError("email", {
+        type: "manual",
+        message: "Invalid email or password",
+      });
       toast.error("Invalid credentials. Please try again.");
     }
   };
@@ -65,15 +72,31 @@ const SignIn = () => {
             fields={[
               {
                 label: "Email",
-                type: "text",
+                type: "email",
                 name: "email",
                 placeholder: "Enter your email",
+                validation: {
+                  required: "Email is required",
+                  pattern: {
+                    value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                    message: "Invalid email format",
+                  },
+                },
+                error: errors.email?.message,
               },
               {
                 label: "Password",
                 type: "password",
                 name: "password",
                 placeholder: "Enter your password",
+                validation: {
+                  required: "Password is required",
+                  minLength: {
+                    value: 5,
+                    message: "Password must be at least 5 characters",
+                  },
+                },
+                error: errors.password?.message,
               },
             ]}
             buttonText={isLoading ? "Signing In..." : "Sign In"}

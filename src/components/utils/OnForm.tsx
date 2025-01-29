@@ -8,9 +8,10 @@ interface FormProps {
     type: string;
     name: string;
     placeholder?: string;
+    validation?: object;
+    error?: string;
   }[];
   buttonText: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   control: Control<any>;
   onSubmit: () => void;
 }
@@ -29,18 +30,18 @@ const OnForm: React.FC<FormProps> = ({
       </h2>
 
       <form onSubmit={onSubmit} className="space-y-4 text-black">
-        {fields.map((field, index) => {
-          return (
-            <OnInputField
-              key={index}
-              type={field.type}
-              name={field.name}
-              label={field.label}
-              placeholder={field.placeholder}
-              control={control}
-            />
-          );
-        })}
+        {fields.map((field, index) => (
+          <OnInputField
+            key={index}
+            type={field.type}
+            name={field.name}
+            label={field.label}
+            placeholder={field.placeholder}
+            control={control}
+            validation={field.validation}
+            error={field.error}
+          />
+        ))}
 
         <button
           type="submit"
