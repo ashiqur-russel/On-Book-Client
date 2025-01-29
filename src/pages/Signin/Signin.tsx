@@ -32,7 +32,6 @@ const SignIn = () => {
 
   const onSubmit: SubmitHandler<LoginForm> = async (data) => {
     try {
-      console.log("Sending login request", data);
       const result = await login(data).unwrap();
       const token = result.data.accessToken;
       const user = verifyToken(token) as TUser;

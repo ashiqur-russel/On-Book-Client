@@ -37,7 +37,7 @@ const Header = () => {
               <span className="font-bold">On.Book</span> perfect. <br />
               Not sure what to read now? Match your next reading mood perfectly.
             </p>
-            <button className="mt-6 bg-black text-white px-8 py-3 text-lg rounded-md hover:bg-gray-700 transition">
+            <button className="mt-6 bg-black text-white px-8 py-3 text-lg hover:bg-gray-700 transition">
               Explore Now
             </button>
           </div>

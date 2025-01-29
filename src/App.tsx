@@ -15,7 +15,7 @@ const TopSellingBooks = lazy(
 
 const App = () => {
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col h-[100vh]">
+    <div className="min-h-screen flex flex-col h-[100vh]">
       <main className="flex-1">
         <Suspense
           fallback={<div className="text-center mt-10">Loading...</div>}

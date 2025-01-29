@@ -2,6 +2,9 @@ import { useState } from "react";
 import { FaGoogle } from "react-icons/fa";
 import { useForm, SubmitHandler } from "react-hook-form";
 import OnForm from "../../components/utils/OnForm";
+import { useRegisterUserMutation } from "../../redux/features/user/registerApi";
+import { toast } from "sonner";
+import { useNavigate } from "react-router";
 
 interface SignUpFormValues {
   name: string;
@@ -11,9 +14,12 @@ interface SignUpFormValues {
 
 const SignUp = () => {
   const [emailSignUp, setEmailSignUp] = useState(false);
+  const [registerUser] = useRegisterUserMutation();
+  const navigate = useNavigate();
 
   const {
     handleSubmit,
+    reset,
     formState: { errors },
     control,
     setError,
@@ -25,7 +31,6 @@ const SignUp = () => {
     },
   });
 
-  // Handle Sign Up Submission
   const onSubmit: SubmitHandler<SignUpFormValues> = async (data) => {
     try {
       const formattedData = {
@@ -36,8 +41,19 @@ const SignUp = () => {
         },
       };
 
-      console.log("Submitted Data:", formattedData);
-      alert("Sign Up Successful!");
+      const result = await registerUser(formattedData).unwrap();
+      console.log(result);
+
+      if (result?.success) {
+        toast.success("Account created successfully! Redirecting to login...", {
+          duration: 2000,
+        });
+
+        reset();
+        setTimeout(() => {
+          navigate("/signin");
+        }, 2000);
+      }
     } catch {
       setError("email", { type: "manual", message: "Email already exists" });
     }

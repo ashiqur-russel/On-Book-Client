@@ -22,7 +22,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="p-4 bg-white shadow-md">
+    <nav className="p-4 w-full">
       <div className="container mx-auto flex items-center justify-between">
         {/* Logo & Desktop Navigation */}
         <div className="flex items-center space-x-8">
