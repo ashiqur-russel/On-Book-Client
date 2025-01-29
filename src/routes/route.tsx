@@ -9,11 +9,13 @@ import App from "../App";
 import MainLayout from "../components/Layout/MainLayout";
 import DashboardLayout from "../components/Layout/DashboardLayout";
 import Payment from "../components/Dashboard/Payment/Payment";
+import ErrorPage from "../pages/Error/ErrorsPage";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <MainLayout />,
+    errorElement: <ErrorPage />,
     children: [
       { index: true, element: <App /> },
       { path: "signin", element: <SignIn /> },
@@ -23,11 +25,13 @@ const router = createBrowserRouter([
   {
     path: "/payment",
     element: <ProtectedRoute role="user" />,
+    errorElement: <ErrorPage />,
     children: [{ index: true, element: <Payment /> }],
   },
   {
     path: "/dashboard",
     element: <ProtectedRoute role="admin" />,
+    errorElement: <ErrorPage />,
     children: [
       {
         path: "admin",
@@ -46,6 +50,10 @@ const router = createBrowserRouter([
         children: routeGenerator(userPaths),
       },
     ],
+  },
+  {
+    path: "*",
+    element: <ErrorPage />,
   },
 ]);
 

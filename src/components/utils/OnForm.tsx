@@ -1,4 +1,4 @@
-import React from "react";
+import { Control } from "react-hook-form";
 import OnInputField from "./OnInputField";
 
 interface FormProps {
@@ -7,16 +7,19 @@ interface FormProps {
     label: string;
     type: string;
     name: string;
-    required?: boolean;
+    placeholder?: string;
   }[];
   buttonText: string;
-  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  control: Control<any>;
+  onSubmit: () => void;
 }
 
 const OnForm: React.FC<FormProps> = ({
   title,
   fields,
   buttonText,
+  control,
   onSubmit,
 }) => {
   return (
@@ -25,18 +28,24 @@ const OnForm: React.FC<FormProps> = ({
         {title}
       </h2>
 
-      <form onSubmit={onSubmit} className="space-y-4">
-        {fields.map((field, index) => (
-          <OnInputField
-            key={index}
-            type={field.type}
-            name={field.name}
-            required={field.required}
-            label={field.label}
-          />
-        ))}
+      <form onSubmit={onSubmit} className="space-y-4 text-black">
+        {fields.map((field, index) => {
+          return (
+            <OnInputField
+              key={index}
+              type={field.type}
+              name={field.name}
+              label={field.label}
+              placeholder={field.placeholder}
+              control={control}
+            />
+          );
+        })}
 
-        <button className="w-full bg-black text-white py-3 rounded-md hover:bg-gray-800 transition">
+        <button
+          type="submit"
+          className="w-full bg-black text-white py-3 rounded-md hover:bg-gray-800 transition"
+        >
           {buttonText}
         </button>
       </form>

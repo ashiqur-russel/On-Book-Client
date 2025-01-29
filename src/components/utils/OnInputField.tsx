@@ -1,48 +1,36 @@
-import React, { useState } from "react";
+import { Control, useController } from "react-hook-form";
 
 interface InputProps {
+  name: string;
   label: string;
   type: string;
-  name: string;
-  required?: boolean;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  placeholder?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  control: Control<any>;
 }
 
 const OnInputField: React.FC<InputProps> = ({
+  name,
   label,
   type,
-  name,
-  required,
-  onChange,
+  placeholder,
+  control,
 }) => {
-  const [value, setValue] = useState("");
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(e.target.value);
-    if (onChange) onChange(e);
-  };
+  const {
+    field,
+    fieldState: { error },
+  } = useController({ name, control });
 
   return (
-    <div className="relative mb-6">
+    <div>
+      <label className="block text-sm font-medium text-gray-700">{label}</label>
       <input
-        id={name}
-        name={name}
+        {...field}
         type={type}
-        required={required}
-        value={value}
-        onChange={handleChange}
-        className="peer w-full border border-gray-300 px-4 py-3 text-black bg-white rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500 placeholder-transparent"
-        placeholder=" " // Hides placeholder to prevent overlap
+        placeholder={placeholder}
+        className="w-full border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
-      <label
-        className={`absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 text-sm transition-all 
-          peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 
-          peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 
-          peer-focus:top-2 peer-focus:text-xs peer-focus:text-gray-700 
-          ${value ? "top-2 text-xs text-gray-700" : ""}`}
-      >
-        {label}
-      </label>
+      {error && <p className="text-red-500 text-xs mt-1">{error.message}</p>}
     </div>
   );
 };
