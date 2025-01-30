@@ -4,6 +4,7 @@ import Sidebar from "./Sidebar";
 import { useAppSelector } from "../../redux/hooks";
 import { selectCurrentToken } from "../../redux/features/auth/authSlice";
 import { verifyToken } from "../../utils/verifyToken";
+import Footer from "../shared/Footer";
 
 export type TUser = {
   userId: string;
@@ -35,6 +36,8 @@ const DashboardLayout = () => {
       >
         <Outlet />
       </div>
+
+      <Footer />
     </div>
   );
 };

@@ -10,6 +10,8 @@ import MainLayout from "../components/Layout/MainLayout";
 import DashboardLayout from "../components/Layout/DashboardLayout";
 import Payment from "../components/Dashboard/Payment/Payment";
 import ErrorPage from "../pages/Error/ErrorsPage";
+import Product from "../pages/BookStore/ProductDetails";
+import Products from "../pages/BookStore/ProductList";
 
 const router = createBrowserRouter([
   {
@@ -18,10 +20,13 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       { index: true, element: <App /> },
+      { path: "products", element: <Products /> },
+      { path: "products/:id", element: <Product /> },
       { path: "signin", element: <SignIn /> },
       { path: "signup", element: <SignUp /> },
     ],
   },
+
   {
     path: "/payment",
     element: <ProtectedRoute role="user" />,
@@ -51,6 +56,7 @@ const router = createBrowserRouter([
       },
     ],
   },
+
   {
     path: "*",
     element: <ErrorPage />,

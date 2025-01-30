@@ -33,7 +33,7 @@ const Navbar = () => {
           {/* Desktop Navigation Links */}
           <div className="hidden lg:flex items-center space-x-6">
             <NavLink
-              to="/books"
+              to="/products"
               className="text-gray-800 font-medium hover:text-gray-600 transition"
             >
               Books
@@ -135,7 +135,7 @@ const Navbar = () => {
         <ul className="p-4 space-y-4">
           <li>
             <NavLink
-              to="/books"
+              to="/products"
               className="text-gray-800 hover:text-gray-600"
               onClick={() => setMenuOpen(false)}
             >
