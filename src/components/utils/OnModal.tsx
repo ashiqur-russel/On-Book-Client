@@ -7,6 +7,7 @@ interface ModalProps {
   buttonLabel?: string;
   onClose: () => void;
   onConfirm?: () => void;
+  children: React.ReactNode;
 }
 
 const OnModal: React.FC<ModalProps> = ({

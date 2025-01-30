@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import {
   IoCart,
   IoBagHandle,
@@ -17,17 +16,15 @@ interface ProductProps {
     rating?: number;
     hasOffer?: boolean;
   };
-  onClick: () => void;
+  onBuy: () => void; // Accepting onBuy function as a prop
 }
 
-const ProductCard: React.FC<ProductProps> = ({ product }) => {
-  const navigate = useNavigate();
-
+const ProductCard: React.FC<ProductProps> = ({ product, onBuy }) => {
   return (
     <div className="relative bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition duration-300 cursor-pointer">
       {/** Offer Badge */}
       {product.hasOffer && (
-        <div className="absolute top-2 left-2 bg-red-600  text-white text-xs font-bold px-3 py-1 ">
+        <div className="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-3 py-1">
           OFFER
         </div>
       )}
@@ -69,25 +66,30 @@ const ProductCard: React.FC<ProductProps> = ({ product }) => {
         )}
       </div>
 
+      {/** Action Buttons */}
       <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:gap-1">
         {/** View Details */}
         <button
-          className="flex items-center justify-center gap-1 bg-red-700   text-white text-sm py-2 px-3 w-full hover:bg-red-400"
-          onClick={() => navigate(`/products/${product.id}`)}
+          className="flex items-center justify-center gap-1 bg-red-700 text-white text-sm py-2 px-3 w-full hover:bg-red-400"
+          onClick={() => (window.location.href = `/products/${product.id}`)}
         >
           <IoEye size={16} /> Details
         </button>
 
-        {/** Buy Now */}
-        <button className="flex items-center justify-center gap-1 bg-red-700   text-white text-sm py-2 px-3 w-full hover:bg-red-400">
+        {/** Buy Now (Triggers Checkout Modal) */}
+        <button
+          className="flex items-center justify-center gap-1 bg-red-700 text-white text-sm py-2 px-3 w-full hover:bg-red-400"
+          onClick={onBuy}
+        >
           <IoBagHandle size={16} /> Buy
         </button>
 
         {/** Add to Cart */}
-        <button className="flex items-center justify-center gap-1 bg-red-700 text-white text-sm py-2 px-3 w-full  hover:bg-red-400">
+        <button className="flex items-center justify-center gap-1 bg-red-700 text-white text-sm py-2 px-3 w-full hover:bg-red-400">
           <IoCart size={16} /> Add
         </button>
       </div>
+
       {/** Comment Icon */}
       <button className="absolute top-2 right-2 bg-gray-100 p-2 rounded-full hover:bg-gray-200 transition duration-300">
         <IoChatbubbleEllipses size={18} className="text-gray-600" />

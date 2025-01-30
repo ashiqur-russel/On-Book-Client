@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useForm } from "react-hook-form";
 import OnModal from "../utils/OnModal";
 
 interface CheckoutModalProps {
@@ -12,21 +12,26 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
   customer,
   amount,
 }) => {
-  const [cardNumber, setCardNumber] = useState("");
-  const [expiryDate, setExpiryDate] = useState("");
-  const [cvc, setCvc] = useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<PaymentData>();
 
-  const handlePayment = () => {
-    if (!cardNumber || !expiryDate || !cvc) {
-      alert("❌ Please enter all card details!");
-      return;
-    }
+  interface PaymentData {
+    cardNumber: string;
+    expiryDate: string;
+    cvc: string;
+  }
+
+  const handlePayment = (data: PaymentData) => {
+    console.log("Payment Success:", data);
     alert(`✅ Payment Confirmed for ${customer} of ${amount}`);
     onClose();
   };
 
   const checkoutContent = (
-    <>
+    <form onSubmit={handleSubmit(handlePayment)}>
       {/* User Info */}
       <div className="flex items-center space-x-3 mb-4">
         <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
@@ -45,12 +50,6 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
         <p className="text-gray-500 text-sm">Payment Method: Visa</p>
       </div>
 
-      {/* Payment Details */}
-      <div className="mb-4 bg-gray-100 p-4 rounded-lg">
-        <h3 className="font-medium text-gray-800">Billing Plan</h3>
-        <p className="text-gray-600 text-sm">Company Start</p>
-      </div>
-
       {/* Card Details */}
       <div className="mb-3">
         <label className="block text-sm font-medium text-gray-700">
@@ -59,10 +58,15 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
         <input
           type="text"
           placeholder="**** **** **** ****"
-          value={cardNumber}
-          onChange={(e) => setCardNumber(e.target.value)}
-          className="w-full border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          {...register("cardNumber", {
+            required: "Card number is required",
+            minLength: 16,
+          })}
+          className="w-full border border-gray-300 px-4 py-2 rounded-md"
         />
+        {errors.cardNumber && (
+          <p className="text-red-500 text-sm">{errors.cardNumber?.message as string}</p>
+        )}
       </div>
 
       {/* Expiry Date & CVC */}
@@ -74,10 +78,14 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
           <input
             type="text"
             placeholder="MM/YY"
-            value={expiryDate}
-            onChange={(e) => setExpiryDate(e.target.value)}
-            className="w-full border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            {...register("expiryDate", { required: "Expiry date is required" })}
+            className="w-full border border-gray-300 px-4 py-2 rounded-md"
           />
+          {errors.expiryDate && (
+            <p className="text-red-500 text-sm">
+              {errors.expiryDate?.message as string}
+            </p>
+          )}
         </div>
 
         <div className="w-1/2">
@@ -85,23 +93,30 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
           <input
             type="text"
             placeholder="123"
-            value={cvc}
-            onChange={(e) => setCvc(e.target.value)}
-            className="w-full border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            {...register("cvc", { required: "CVC is required", minLength: 3 })}
+            className="w-full border border-gray-300 px-4 py-2 rounded-md"
           />
+          {errors.cvc && (
+            <p className="text-red-500 text-sm">
+              {errors.cvc?.message as string}
+            </p>
+          )}
         </div>
       </div>
-    </>
+
+      <button
+        type="submit"
+        className="w-full bg-blue-600 text-white py-2 mt-4 rounded-md"
+      >
+        Confirm Payment
+      </button>
+    </form>
   );
 
   return (
-    <OnModal
-      title="Checkout"
-      content={checkoutContent}
-      buttonLabel="Confirm Payment"
-      onClose={onClose}
-      onConfirm={handlePayment}
-    />
+    <OnModal title="Checkout" content={checkoutContent} onClose={onClose}>
+      {checkoutContent}
+    </OnModal>
   );
 };
 
