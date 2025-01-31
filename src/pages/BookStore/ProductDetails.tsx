@@ -1,4 +1,4 @@
-import { data, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
   IoCart,
   IoHeart,
@@ -12,9 +12,7 @@ import { useGetProductByIdQuery } from "../../redux/features/product/productApi"
 const ProductDetails = () => {
   const { id } = useParams<{ id: string }>();
 
-  // Fetch product data from Redux Query
   const { data: product, isLoading, isError } = useGetProductByIdQuery(id!);
-  console.log(data);
 
   if (isLoading) {
     return <div className="text-center text-lg font-semibold">Loading...</div>;

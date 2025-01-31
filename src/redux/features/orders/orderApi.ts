@@ -2,11 +2,10 @@
 import { TQueryParam, TResponseRedux } from "../../../types";
 import { baseApi } from "../../api/baseApi";
 
-const authApi = baseApi.injectEndpoints({
+const orderApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getAllProducts: builder.query({
+    getAllOrders: builder.query({
       query: (args) => {
-        console.log(args);
         const params = new URLSearchParams();
 
         if (args) {
@@ -16,7 +15,7 @@ const authApi = baseApi.injectEndpoints({
         }
 
         return {
-          url: "/products",
+          url: "/orders",
           method: "GET",
           params: params,
         };
@@ -28,16 +27,17 @@ const authApi = baseApi.injectEndpoints({
         };
       },
     }),
-    getProductById: builder.query({
-      query: (id: string) => ({
-        url: `/products/${id}`,
+    getMyorders: builder.query({
+      query: () => ({
+        url: `/orders/my-orders`,
         method: "GET",
       }),
       transformResponse: (response: TResponseRedux<any>) => {
+        console.log(response);
         return response.data;
       },
     }),
   }),
 });
 
-export const { useGetAllProductsQuery, useGetProductByIdQuery } = authApi;
+export const { useGetAllOrdersQuery, useGetMyordersQuery } = orderApi;

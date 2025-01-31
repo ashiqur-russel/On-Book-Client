@@ -1,121 +1,186 @@
 import { useNavigate } from "react-router-dom";
-import { FaPaypal, FaTimes } from "react-icons/fa";
+import { FaPaypal, FaTimes, FaCheckCircle } from "react-icons/fa";
+import { useGetAllOrdersQuery } from "@/redux/features/orders/orderApi";
 
-const orders = [
-  {
-    id: "ZX9847417485",
-    date: "Sep 3 Fri, 18:36",
-    customer: "Mustafa Namoğlu",
-    products: 3,
-    productImg: "https://via.placeholder.com/40",
-    status: "Pending",
-    price: "$2,350.49",
-  },
-  {
-    id: "WQRE148T793RF",
-    date: "Sep 4 Fri, 19:24",
-    customer: "Oğuz Yağız Kara",
-    products: 2,
-    productImg: "https://via.placeholder.com/40",
-    status: "Pending",
-    price: "$7,478.99",
-  },
-  {
-    id: "PHK5395GJK54",
-    date: "Sep 4 Fri, 21:41",
-    customer: "Ömercan Çelikler",
-    products: 2,
-    productImg: "https://via.placeholder.com/40",
-    status: "Pending",
-    price: "$18,478.99",
-  },
-  {
-    id: "PK821GJ6ZYPY912",
-    date: "Sep 4 Sat, 16:39",
-    customer: "Umut Ozan Yıldırım",
-    products: 2,
-    productImg: "https://via.placeholder.com/40",
-    status: "Pending",
-    price: "$18,478.99",
-  },
-];
+interface Order {
+  _id: string;
+  user: string;
+  email: string;
+  product: string;
+  quantity: number;
+  totalPrice: number;
+  payment: string | null;
+  deliveryStatus: "pending" | "shipped" | "delivered";
+  createdAt: string;
+  updatedAt: string;
+}
 
 const MyOrders = () => {
+  const { data, isLoading, isError } = useGetAllOrdersQuery("");
   const navigate = useNavigate();
 
   // Function to handle payment click
-  const handlePaymentClick = (order: {
-    id: string;
-    customer: string;
-    price: string;
-  }) => {
+  const handlePaymentClick = (order: Order) => {
     navigate(
-      `/payment?orderId=${order.id}&customer=${order.customer}&totalPrice=${order.price}`
+      `/payment?orderId=${order._id}&customer=${order.email}&totalPrice=${order.totalPrice}`
     );
   };
 
+  if (isLoading) {
+    return <div className="text-center text-lg font-semibold">Loading...</div>;
+  }
+
+  if (isError || !data) {
+    return (
+      <div className="text-center text-lg font-semibold text-red-600">
+        Something went wrong! Please Logout and come back later.
+      </div>
+    );
+  }
+
   return (
-    <div className="p-8 min-h-screen flex items-center justify-center text-black">
-      <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-5xl h-full">
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse rounded-lg overflow-hidden h-full min-w-[800px]">
-            <thead className="bg-gray-200 text-gray-600 text-left">
-              <tr>
-                <th className="px-4 py-2">Orders</th>
-                <th className="px-4 py-2">Customer</th>
-                <th className="px-4 py-2">Products</th>
-                <th className="px-4 py-2">Status</th>
-                <th className="px-4 py-2">Total Price</th>
-                <th className="px-4 py-2">Action</th>
+    <div className="p-4 min-h-screen flex items-center justify-center text-black">
+      <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-6xl overflow-x-auto">
+        <h2 className="text-2xl font-bold text-gray-800 mb-4">📦 My Orders</h2>
+
+        <div className="overflow-auto">
+          <table className="w-full border border-gray-200 text-left min-w-[900px]">
+            <thead className="bg-gray-100 text-gray-700 uppercase text-sm tracking-wider">
+              <tr className="border-b border-gray-200">
+                <th className="px-4 py-3">Order Date</th>
+                <th className="px-4 py-3">Email</th>
+                <th className="px-4 py-3 text-center">Qty</th>
+                <th className="px-4 py-3">Total Price</th>
+                <th className="px-4 py-3">Delivery Status</th>
+                <th className="px-4 py-3">Payment Status</th>
+                <th className="px-4 py-3 text-center">Actions</th>
               </tr>
             </thead>
-            <tbody>
-              {orders.map((order) => (
+            <tbody className="text-gray-900">
+              {data?.data?.map((order: Order) => (
                 <tr
-                  key={order.id}
-                  className="border-t border-gray-200 hover:bg-gray-100"
+                  key={order._id}
+                  className="border-b border-gray-200 hover:bg-gray-50"
                 >
                   <td className="px-4 py-3">
-                    <span className="text-blue-600 font-medium">
-                      {order.id}
-                    </span>
-                    <p className="text-xs text-gray-500">{order.date}</p>
+                    {new Date(order.createdAt).toLocaleDateString()}
                   </td>
-                  <td className="px-4 py-3">{order.customer}</td>
-                  <td className="px-4 py-3 flex items-center space-x-2">
-                    <img
-                      src={order.productImg}
-                      alt="Product"
-                      className="w-8 h-8 rounded-full"
-                    />
-                    <span className="bg-blue-100 text-blue-600 px-2 py-1 rounded-md text-sm">
-                      +{order.products}
-                    </span>
+                  <td className="px-4 py-3">{order.email}</td>
+                  <td className="px-4 py-3 text-center">{order.quantity}</td>
+                  <td className="px-4 py-3 font-semibold">
+                    ${order.totalPrice}
                   </td>
-                  <td className="px-4 py-3">
-                    <span className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full text-xs">
-                      {order.status}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3">{order.price}</td>
-                  <td className="px-4 py-3 flex space-x-3">
-                    {/* Payment Button with Navigation */}
-                    <button
-                      className="bg-gray-600 text-white p-2 rounded-md hover:bg-gray-700 transition"
-                      onClick={() => handlePaymentClick(order)}
-                    >
-                      <FaPaypal className="w-5 h-5" />
-                    </button>
 
-                    {/* Cancel Order Button */}
-                    <button className="bg-red-600 text-white p-2 rounded-md hover:bg-red-700 transition">
-                      <FaTimes className="w-5 h-5" />
-                    </button>
+                  {/* Delivery Status */}
+                  <td className="px-4 py-3">
+                    <span
+                      className={`px-2 py-1 font-semibold text-xs ${
+                        order.deliveryStatus === "pending"
+                          ? "bg-yellow-100 text-yellow-700"
+                          : order.deliveryStatus === "shipped"
+                          ? "bg-blue-100 text-blue-700"
+                          : "bg-green-100 text-green-700"
+                      }`}
+                    >
+                      {order.deliveryStatus}
+                    </span>
+                  </td>
+
+                  {/* Payment Status */}
+                  <td className="px-4 py-3">
+                    {order.payment === null ? (
+                      <span className="text-red-600 font-semibold">Unpaid</span>
+                    ) : (
+                      <span className="text-green-600 flex items-center font-semibold">
+                        <FaCheckCircle className="w-4 h-4 mr-1" /> Paid
+                      </span>
+                    )}
+                  </td>
+
+                  {/* Actions */}
+                  <td className="px-4 py-3 flex justify-center gap-3">
+                    {order.payment === null && (
+                      <>
+                        {/* Pay Now Button */}
+                        <button
+                          className="bg-black text-white px-4 py-1 text-sm font-semibold hover:bg-gray-800 transition"
+                          onClick={() => handlePaymentClick(order)}
+                        >
+                          <FaPaypal className="inline-block mr-1" /> Pay
+                        </button>
+
+                        {/* Cancel Order Button */}
+                        <button className="bg-red-600 text-white px-4 py-1 text-sm font-semibold hover:bg-red-700 transition">
+                          <FaTimes className="inline-block mr-1" /> Cancel
+                        </button>
+                      </>
+                    )}
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+        </div>
+
+        {/*  Mobile View - List Layout */}
+        <div className="sm:hidden">
+          {data?.data?.map((order: Order) => (
+            <div
+              key={order._id}
+              className="border border-gray-200 p-4 rounded-md mb-4"
+            >
+              <p className="text-sm text-gray-600">
+                <strong>Order Date:</strong>{" "}
+                {new Date(order.createdAt).toLocaleDateString()}
+              </p>
+              <p className="text-sm text-gray-600">
+                <strong>Email:</strong> {order.email}
+              </p>
+              <p className="text-sm text-gray-600">
+                <strong>Quantity:</strong> {order.quantity}
+              </p>
+              <p className="text-sm text-gray-600">
+                <strong>Total Price:</strong> ${order.totalPrice}
+              </p>
+              <p className="text-sm text-gray-600">
+                <strong>Delivery Status:</strong>{" "}
+                <span
+                  className={`px-2 py-1 font-semibold text-xs ${
+                    order.deliveryStatus === "pending"
+                      ? "bg-yellow-100 text-yellow-700"
+                      : order.deliveryStatus === "shipped"
+                      ? "bg-blue-100 text-blue-700"
+                      : "bg-green-100 text-green-700"
+                  }`}
+                >
+                  {order.deliveryStatus}
+                </span>
+              </p>
+              <p className="text-sm text-gray-600">
+                <strong>Payment:</strong>{" "}
+                {order.payment === null ? (
+                  <span className="text-red-600 font-semibold">Unpaid</span>
+                ) : (
+                  <span className="text-green-600 font-semibold">Paid</span>
+                )}
+              </p>
+
+              {/* Actions */}
+              {order.payment === null && (
+                <div className="mt-3 flex justify-between">
+                  <button
+                    className="bg-black text-white px-4 py-1 text-sm font-semibold hover:bg-gray-800 transition"
+                    onClick={() => handlePaymentClick(order)}
+                  >
+                    <FaPaypal className="inline-block mr-1" /> Pay
+                  </button>
+                  <button className="bg-red-600 text-white px-4 py-1 text-sm font-semibold hover:bg-red-700 transition">
+                    <FaTimes className="inline-block mr-1" /> Cancel
+                  </button>
+                </div>
+              )}
+            </div>
+          ))}
         </div>
       </div>
     </div>

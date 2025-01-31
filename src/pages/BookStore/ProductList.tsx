@@ -8,31 +8,52 @@ import Filters from "./Filters";
 import { useGetAllProductsQuery } from "../../redux/features/product/productApi";
 import { IoFilter } from "react-icons/io5";
 import CheckoutModal from "../../components/modals/CheckoutModal";
+import { useGetMeQuery } from "../../redux/features/user/registerApi";
 
 const Products = () => {
-  const { data } = useGetAllProductsQuery("");
+  const { data, isLoading, isError } = useGetAllProductsQuery("");
+  const { data: userData } = useGetMeQuery("");
+
+  console.log(userData);
+
   const user = useAppSelector(selectCurrentUser);
   const navigate = useNavigate();
 
   const [showFilters, setShowFilters] = useState<boolean>(false);
-  const [gridView, setGridView] = useState<boolean>(true);
+  const [gridView] = useState<boolean>(true);
   const [checkoutModal, setCheckoutModal] = useState(false);
   const [checkoutData, setCheckoutData] = useState<{
     customer: string;
     amount: string;
   } | null>(null);
 
-  const handleBuyNow = (product) => {
+  const handleBuyNow = (product: {
+    id: string;
+    name: string;
+    price: number;
+  }) => {
     if (!user) {
       navigate("/signin", { replace: true });
       return;
     }
     setCheckoutData({
-      customer: user.name,
+      customer: userData[0].name,
       amount: `$${product.price}`,
     });
     setCheckoutModal(true);
   };
+
+  if (isLoading) {
+    return <div className="text-center text-lg font-semibold">Loading...</div>;
+  }
+
+  if (isError || !data) {
+    return (
+      <div className="text-center text-lg font-semibold text-red-600">
+        Something goin on! Please Reload page or Try again later.
+      </div>
+    );
+  }
 
   return (
     <>

@@ -1,7 +1,7 @@
 import { Suspense, lazy } from "react";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import "./App.scss";
+import "./App.css";
 import Footer from "./components/shared/Footer";
 
 const Header = lazy(() => import("./pages/Header/Header"));
