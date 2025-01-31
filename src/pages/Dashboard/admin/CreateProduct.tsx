@@ -1,10 +1,5 @@
-import { Button } from "@/components/ui/button";
 const CreateProduct = () => {
-  return (
-    <div>
-      <Button variant="outline">Button</Button>
-    </div>
-  );
+  return <div></div>;
 };
 
 export default CreateProduct;

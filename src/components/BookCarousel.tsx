@@ -1,6 +1,11 @@
+import { useEffect, useState } from "react";
 import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
+
+// Dynamically import slick-carousel styles only when component is mounted
+const loadSlickCarouselCSS = async () => {
+  await import("slick-carousel/slick/slick.css");
+  await import("slick-carousel/slick/slick-theme.css");
+};
 
 const books = [
   {
@@ -27,6 +32,12 @@ const books = [
 ];
 
 const BookCarousel = () => {
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    loadSlickCarouselCSS().then(() => setIsLoaded(true));
+  }, []);
+
   const settings = {
     dots: true,
     infinite: true,
@@ -46,15 +57,13 @@ const BookCarousel = () => {
           dots: true,
         },
       },
-      {
-        breakpoint: 768,
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1,
-        },
-      },
+      { breakpoint: 768, settings: { slidesToShow: 1, slidesToScroll: 1 } },
     ],
   };
+
+  if (!isLoaded) {
+    return <div className="text-center py-10">Loading Carousel...</div>;
+  }
 
   return (
     <div className="container mx-auto px-7 py-10">
@@ -65,7 +74,7 @@ const BookCarousel = () => {
       <Slider {...settings}>
         {books.map((book) => (
           <div key={book.id} className="px-4">
-            <div className="bg-white p-6  shadow-md border hover:shadow-lg transition-all">
+            <div className="bg-white p-6 shadow-md border hover:shadow-lg transition-all">
               <h3 className="text-xl font-semibold text-gray-900 mb-2">
                 {book.title}
               </h3>

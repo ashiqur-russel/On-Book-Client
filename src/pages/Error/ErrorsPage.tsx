@@ -10,8 +10,6 @@ const ErrorPage = () => {
       error.status === 404
         ? "The page you're looking for doesn't exist."
         : error.data || "An unexpected error occurred.";
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const errorStatus = error.status;
     errorMessage = error.statusText;
   }
 

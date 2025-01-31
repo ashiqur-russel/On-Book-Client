@@ -30,7 +30,7 @@ const DashboardLayout = () => {
 
       <div
         className={`flex-1 transition-all ${
-          isOpen ? "ml-64" : "ml-20"
+          isOpen ? "ml-1" : "ml-2"
         } p-6 overflow-y-auto`}
       >
         <Outlet />

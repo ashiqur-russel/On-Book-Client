@@ -1,10 +1,10 @@
-import { FC, useEffect, useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { FC } from "react";
+import { NavLink } from "react-router-dom";
 import {
   FaBars,
+  FaTimes,
   FaHome,
   FaSignOutAlt,
-  FaTimes,
   FaUserCircle,
 } from "react-icons/fa";
 import { adminPaths } from "../../routes/admin.route";
@@ -16,96 +16,75 @@ import { useGetMeQuery } from "@/redux/features/user/registerApi";
 type UserRole = "admin" | "user";
 
 interface SidebarProps {
+  role: UserRole;
   isOpen: boolean;
   toggleSidebar: () => void;
-  role: UserRole;
 }
 
-const Sidebar: FC<SidebarProps> = ({ isOpen, role }) => {
+const Sidebar: FC<SidebarProps> = ({ role, isOpen, toggleSidebar }) => {
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
-  const { data: myData, isLoading, isError } = useGetMeQuery("");
-
-  // Fix: State for tracking sidebar expansion on screen resize
-  const [sidebarOpen, setSidebarOpen] = useState(isOpen);
-
-  // Automatically expand sidebar when switching to large screens
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth >= 1024) {
-        setSidebarOpen(true); // Expand sidebar on large screens
-      } else {
-        setSidebarOpen(false); // Collapse sidebar on small screens
-      }
-    };
-
-    handleResize(); // Check on mount
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
+  const { data: myData } = useGetMeQuery("");
   const user = myData?.[0] || null;
 
   const handleLogout = () => {
     dispatch(logOut());
-    navigate("/signin");
   };
 
   const menuItems = role === "admin" ? adminPaths : userPaths;
 
   return (
     <>
+      {/* Burger Icon */}
+      <button
+        className="fixed top-4 left-4 z-50 text-gray-700 text-2xl lg:hidden"
+        onClick={toggleSidebar}
+      >
+        <FaBars />
+      </button>
+
+      {/* Sidebar Overlay */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black opacity-50 z-40"
+          onClick={toggleSidebar}
+        ></div>
+      )}
+
       {/* Sidebar Container */}
       <div
-        className={`h-screen bg-white shadow-lg fixed top-0 left-0 z-50 transition-all duration-300 ${
-          sidebarOpen ? "w-64" : "w-20"
-        } flex flex-col overflow-y-auto`}
+        className={`fixed top-0 left-0 h-screen bg-white shadow-lg z-50 w-64 p-4 transition-transform transform ${
+          isOpen ? "translate-x-0" : "-translate-x-full"
+        } lg:relative lg:translate-x-0 lg:w-64`}
       >
-        {/* Sidebar Header */}
-        <div className="flex items-center justify-between p-4 border-b">
-          <h2
-            className={`text-xl font-bold text-gray-900 ${
-              sidebarOpen ? "block" : "hidden"
-            }`}
-          >
-            Dashboard
-          </h2>
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="text-gray-600 focus:outline-none lg:hidden"
-          >
-            {sidebarOpen ? <FaTimes size={22} /> : <FaBars size={22} />}
-          </button>
-        </div>
+        {/* Close Icon */}
+        <button
+          className="absolute top-4 right-4 text-gray-700 text-2xl lg:hidden"
+          onClick={toggleSidebar}
+        >
+          <FaTimes />
+        </button>
 
-        {/* Navigation Links Based on Role */}
-        <nav className="flex-1 px-3 py-4 space-y-2">
+        {/* Sidebar Header */}
+        <h2 className="text-xl font-bold text-gray-900 mb-6">Dashboard</h2>
+
+        {/* Navigation Links */}
+        <nav className="space-y-2">
           {menuItems.map((item) => (
             <SidebarItem
               key={item.path}
               to={`/dashboard/${role}/${item.path}`}
               label={item.name}
               icon={item.icon}
-              isOpen={sidebarOpen}
             />
           ))}
         </nav>
 
-        {/* User Profile */}
-        <div className="p-4 border-t flex items-center justify-between">
-          {/* User Avatar */}
+        {/* User Profile and Actions in One Row */}
+        <div className="mt-auto border-t pt-4 flex items-center justify-between absolute bottom-0 w-55 mb-2">
           <div className="flex items-center space-x-3">
             <FaUserCircle size={34} className="text-gray-600" />
-            <div
-              className={`transition-opacity duration-300 ${
-                sidebarOpen ? "opacity-100" : "opacity-0 hidden"
-              }`}
-            >
-              {isLoading ? (
-                <p className="text-gray-500">Loading...</p>
-              ) : isError ? (
-                <p className="text-red-500">Error</p>
-              ) : user ? (
+            <div>
+              {user ? (
                 <>
                   <p className="text-gray-900 font-medium">{user.name}</p>
                   <p className="text-gray-500 text-sm capitalize">{role}</p>
@@ -115,34 +94,21 @@ const Sidebar: FC<SidebarProps> = ({ isOpen, role }) => {
               )}
             </div>
           </div>
-
-          {/* Icons for Logout & Home */}
           <div className="flex items-center space-x-3">
-            {/* Logout Button */}
             <button
               onClick={handleLogout}
-              className="p-2 cursor-pointer bg-red-600 text-white rounded-full hover:bg-red-700 transition"
+              className="p-2 bg-red-600 text-white rounded-full hover:bg-red-700 transition flex items-center justify-center"
             >
-              <FaSignOutAlt size={20} />
+              <FaSignOutAlt size={18} />
             </button>
-
-            {/* Home Button */}
-            <button className="p-2 cursor-pointer bg-gray-700 text-white rounded-full hover:bg-gray-800 transition">
-              <NavLink to={"/"}>
-                <FaHome size={20} />
-              </NavLink>
-            </button>
+            <NavLink to="/">
+              <button className="p-2 bg-gray-700 text-white rounded-full hover:bg-gray-800 transition flex items-center justify-center">
+                <FaHome size={18} />
+              </button>
+            </NavLink>
           </div>
         </div>
       </div>
-
-      {/* Overlay for Mobile */}
-      {sidebarOpen && window.innerWidth < 1024 && (
-        <div
-          className="lg:hidden fixed inset-0 bg-black opacity-50 z-40"
-          onClick={() => setSidebarOpen(false)}
-        ></div>
-      )}
     </>
   );
 };
@@ -152,10 +118,9 @@ interface SidebarItemProps {
   to: string;
   label: string;
   icon: React.ReactNode;
-  isOpen: boolean;
 }
 
-const SidebarItem: FC<SidebarItemProps> = ({ to, label, icon, isOpen }) => (
+const SidebarItem: FC<SidebarItemProps> = ({ to, label, icon }) => (
   <NavLink
     to={to}
     className={({ isActive }) =>
@@ -165,13 +130,7 @@ const SidebarItem: FC<SidebarItemProps> = ({ to, label, icon, isOpen }) => (
     }
   >
     {icon}
-    <span
-      className={`ml-3 transition-opacity duration-300 ${
-        isOpen ? "opacity-100" : "opacity-0 hidden"
-      }`}
-    >
-      {label}
-    </span>
+    <span className="ml-3">{label}</span>
   </NavLink>
 );
 
