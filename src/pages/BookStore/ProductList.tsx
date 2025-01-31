@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../../redux/hooks";
 import { selectCurrentUser } from "../../redux/features/auth/authSlice";
@@ -9,12 +9,11 @@ import { useGetAllProductsQuery } from "../../redux/features/product/productApi"
 import { IoFilter } from "react-icons/io5";
 import CheckoutModal from "../../components/modals/CheckoutModal";
 import { useGetMeQuery } from "../../redux/features/user/registerApi";
+import { IProduct, TCategory } from "@/types";
 
 const Products = () => {
-  const { data, isLoading, isError } = useGetAllProductsQuery("");
+  const { data } = useGetAllProductsQuery("");
   const { data: userData } = useGetMeQuery("");
-
-  console.log(userData);
 
   const user = useAppSelector(selectCurrentUser);
   const navigate = useNavigate();
@@ -27,33 +26,51 @@ const Products = () => {
     amount: string;
   } | null>(null);
 
-  const handleBuyNow = (product: {
-    id: string;
-    name: string;
-    price: number;
-  }) => {
+  const [filteredProducts, setFilteredProducts] = useState<IProduct[]>([]);
+  const [filters, setFilters] = useState({
+    themes: [] as string[],
+    authors: [] as string[],
+    categories: [] as TCategory[],
+    language: "all",
+  });
+
+  useEffect(() => {
+    if (data?.data) {
+      let filtered: IProduct[] = data.data as IProduct[];
+
+      if (filters.themes.length > 0) {
+        filtered = filtered.filter((p) => filters.themes.includes(p.title)); // Assuming 'title' is the theme
+      }
+
+      if (filters.authors.length > 0) {
+        filtered = filtered.filter((p) => filters.authors.includes(p.author));
+      }
+
+      if (filters.categories.length > 0) {
+        filtered = filtered.filter((p) =>
+          filters.categories.includes(p.category)
+        );
+      }
+
+      if (filters.language !== "all") {
+        filtered = filtered.filter((p) => p.language === filters.language);
+      }
+
+      setFilteredProducts(filtered);
+    }
+  }, [data, filters]);
+
+  const handleBuyNow = (product: IProduct) => {
     if (!user) {
       navigate("/signin", { replace: true });
       return;
     }
     setCheckoutData({
-      customer: userData[0].name,
+      customer: userData?.[0]?.name || "Unknown",
       amount: `$${product.price}`,
     });
     setCheckoutModal(true);
   };
-
-  if (isLoading) {
-    return <div className="text-center text-lg font-semibold">Loading...</div>;
-  }
-
-  if (isError || !data) {
-    return (
-      <div className="text-center text-lg font-semibold text-red-600">
-        Something goin on! Please Reload page or Try again later.
-      </div>
-    );
-  }
 
   return (
     <>
@@ -68,7 +85,12 @@ const Products = () => {
           </button>
         </div>
 
-        {showFilters && <Filters />}
+        {showFilters && (
+          <Filters
+            products={data?.data as IProduct[]}
+            onFilterChange={setFilters}
+          />
+        )}
 
         {/** Product List */}
         <div className="p-4">
@@ -79,19 +101,24 @@ const Products = () => {
                 : "grid-cols-1"
             } gap-6`}
           >
-            {data?.data?.map((product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                onBuy={() => handleBuyNow(product)}
-              />
-            ))}
+            {filteredProducts.length > 0 ? (
+              filteredProducts.map((product) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  onBuy={() => handleBuyNow(product)}
+                />
+              ))
+            ) : (
+              <p className="col-span-full text-center text-gray-500">
+                Keine Produkte gefunden
+              </p>
+            )}
           </div>
         </div>
 
         <Footer />
 
-        {/** Checkout Modal - Only Show If User Clicks Buy */}
         {checkoutModal && checkoutData && (
           <CheckoutModal
             onClose={() => setCheckoutModal(false)}

@@ -37,7 +37,18 @@ const authApi = baseApi.injectEndpoints({
         return response.data;
       },
     }),
+    createProduct: builder.mutation({
+      query: (productData) => ({
+        url: "/product",
+        method: "POST",
+        body: productData,
+      }),
+    }),
   }),
 });
 
-export const { useGetAllProductsQuery, useGetProductByIdQuery } = authApi;
+export const {
+  useGetAllProductsQuery,
+  useGetProductByIdQuery,
+  useCreateProductMutation,
+} = authApi;

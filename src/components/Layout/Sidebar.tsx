@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
   FaBars,
@@ -21,10 +21,28 @@ interface SidebarProps {
   role: UserRole;
 }
 
-const Sidebar: FC<SidebarProps> = ({ isOpen, toggleSidebar, role }) => {
+const Sidebar: FC<SidebarProps> = ({ isOpen, role }) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { data: myData, isLoading, isError } = useGetMeQuery("");
+
+  // Fix: State for tracking sidebar expansion on screen resize
+  const [sidebarOpen, setSidebarOpen] = useState(isOpen);
+
+  // Automatically expand sidebar when switching to large screens
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setSidebarOpen(true); // Expand sidebar on large screens
+      } else {
+        setSidebarOpen(false); // Collapse sidebar on small screens
+      }
+    };
+
+    handleResize(); // Check on mount
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const user = myData?.[0] || null;
 
@@ -40,23 +58,23 @@ const Sidebar: FC<SidebarProps> = ({ isOpen, toggleSidebar, role }) => {
       {/* Sidebar Container */}
       <div
         className={`h-screen bg-white shadow-lg fixed top-0 left-0 z-50 transition-all duration-300 ${
-          isOpen ? "w-64" : "w-20"
+          sidebarOpen ? "w-64" : "w-20"
         } flex flex-col overflow-y-auto`}
       >
         {/* Sidebar Header */}
         <div className="flex items-center justify-between p-4 border-b">
           <h2
             className={`text-xl font-bold text-gray-900 ${
-              isOpen ? "block" : "hidden"
+              sidebarOpen ? "block" : "hidden"
             }`}
           >
             Dashboard
           </h2>
           <button
-            onClick={toggleSidebar}
+            onClick={() => setSidebarOpen(!sidebarOpen)}
             className="text-gray-600 focus:outline-none lg:hidden"
           >
-            {isOpen ? <FaTimes size={22} /> : <FaBars size={22} />}
+            {sidebarOpen ? <FaTimes size={22} /> : <FaBars size={22} />}
           </button>
         </div>
 
@@ -68,7 +86,7 @@ const Sidebar: FC<SidebarProps> = ({ isOpen, toggleSidebar, role }) => {
               to={`/dashboard/${role}/${item.path}`}
               label={item.name}
               icon={item.icon}
-              isOpen={isOpen}
+              isOpen={sidebarOpen}
             />
           ))}
         </nav>
@@ -80,7 +98,7 @@ const Sidebar: FC<SidebarProps> = ({ isOpen, toggleSidebar, role }) => {
             <FaUserCircle size={34} className="text-gray-600" />
             <div
               className={`transition-opacity duration-300 ${
-                isOpen ? "opacity-100" : "opacity-0 hidden"
+                sidebarOpen ? "opacity-100" : "opacity-0 hidden"
               }`}
             >
               {isLoading ? (
@@ -119,10 +137,10 @@ const Sidebar: FC<SidebarProps> = ({ isOpen, toggleSidebar, role }) => {
       </div>
 
       {/* Overlay for Mobile */}
-      {isOpen && (
+      {sidebarOpen && window.innerWidth < 1024 && (
         <div
           className="lg:hidden fixed inset-0 bg-black opacity-50 z-40"
-          onClick={toggleSidebar}
+          onClick={() => setSidebarOpen(false)}
         ></div>
       )}
     </>

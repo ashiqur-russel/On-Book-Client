@@ -1,44 +1,60 @@
-import { useState } from "react";
+import { IProduct, TCategory } from "@/types";
+import { useState, useEffect } from "react";
 import Select from "react-select";
 
-const Filters = () => {
-  const [selectedThemes, setSelectedThemes] = useState<
-    { value: string; label: string }[]
-  >([]);
-  const [selectedAuthors, setSelectedAuthors] = useState<
-    { value: string; label: string }[]
-  >([]);
-  const [selectedCategories, setSelectedCategories] = useState<
-    { value: string; label: string }[]
-  >([]);
-  const [selectedYear, setSelectedYear] = useState("");
-  const [selectedLanguage, setSelectedLanguage] = useState("all");
+interface SelectOption {
+  value: string;
+  label: string;
+}
 
-  const themeOptions = [
-    { value: "fiction", label: "Fiction" },
-    { value: "mystery", label: "Mystery" },
-    { value: "romance", label: "Romance" },
-    { value: "fantasy", label: "Fantasy" },
-  ];
+interface FiltersProps {
+  products: IProduct[];
+  onFilterChange: (filters: {
+    themes: string[];
+    authors: string[];
+    categories: TCategory[];
+    language: string;
+  }) => void;
+}
 
-  const authorOptions = [
-    { value: "rebecca-yarros", label: "Rebecca Yarros" },
-    { value: "kiarash-hossainpour", label: "Kiarash Hossainpour" },
-    { value: "stephen-king", label: "Stephen King" },
-  ];
+const Filters: React.FC<FiltersProps> = ({ products, onFilterChange }) => {
+  const [selectedThemes, setSelectedThemes] = useState<SelectOption[]>([]);
+  const [selectedAuthors, setSelectedAuthors] = useState<SelectOption[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<SelectOption[]>(
+    []
+  );
+  const [selectedLanguage, setSelectedLanguage] = useState<string>("all");
 
-  const categoryOptions = [
-    { value: "thriller", label: "Thriller" },
-    { value: "sci-fi", label: "Science Fiction" },
-    { value: "biography", label: "Biography" },
-  ];
+  // Extract unique filter options dynamically
+  const extractUniqueOptions = (key: keyof IProduct): SelectOption[] => {
+    return Array.from(new Set(products.map((product) => product[key])))
+      .filter((item): item is string => typeof item === "string")
+      .map((item) => ({ value: item, label: item }));
+  };
 
-  const languageOptions = [
+  const themeOptions = extractUniqueOptions("title");
+  const authorOptions = extractUniqueOptions("author");
+  const categoryOptions = extractUniqueOptions("category");
+  const languageOptions: SelectOption[] = [
     { value: "all", label: "All Languages" },
-    { value: "german", label: "German" },
-    { value: "english", label: "English" },
-    { value: "french", label: "French" },
+    ...extractUniqueOptions("language"),
   ];
+
+  // Update parent component when filters change
+  useEffect(() => {
+    onFilterChange({
+      themes: selectedThemes.map((t) => t.value),
+      authors: selectedAuthors.map((a) => a.value),
+      categories: selectedCategories.map((c) => c.value as TCategory),
+      language: selectedLanguage,
+    });
+  }, [
+    selectedThemes,
+    selectedAuthors,
+    selectedCategories,
+    selectedLanguage,
+    onFilterChange,
+  ]);
 
   return (
     <div className="p-4 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 bg-white shadow-md rounded-lg border border-gray-300 text-black">
@@ -49,10 +65,9 @@ const Filters = () => {
           options={themeOptions}
           isMulti
           closeMenuOnSelect={false}
-          onChange={(newValue) =>
-            setSelectedThemes(newValue as { value: string; label: string }[])
-          }
-          className="border-2 border-red-500 rounded-md"
+          value={selectedThemes}
+          onChange={(newValue) => setSelectedThemes(newValue as SelectOption[])}
+          className="border-2 border-gray-300 rounded-md"
         />
       </div>
 
@@ -63,10 +78,11 @@ const Filters = () => {
           options={authorOptions}
           isMulti
           closeMenuOnSelect={false}
+          value={selectedAuthors}
           onChange={(newValue) =>
-            setSelectedAuthors(newValue as { value: string; label: string }[])
+            setSelectedAuthors(newValue as SelectOption[])
           }
-          className="border-2 border-red-500 rounded-md"
+          className="border-2 border-gray-300 rounded-md"
         />
       </div>
 
@@ -79,12 +95,11 @@ const Filters = () => {
           options={categoryOptions}
           isMulti
           closeMenuOnSelect={false}
+          value={selectedCategories}
           onChange={(newValue) =>
-            setSelectedCategories(
-              newValue as { value: string; label: string }[]
-            )
+            setSelectedCategories(newValue as SelectOption[])
           }
-          className="border-2 border-red-500 rounded-md"
+          className="border-2 border-gray-300 rounded-md"
         />
       </div>
 
@@ -93,7 +108,7 @@ const Filters = () => {
         <label className="block text-sm font-medium text-gray-700">
           Sprache
         </label>
-        <div className="border-2 border-red-500 rounded-md p-2">
+        <div className="border-2 border-gray-300 rounded-md p-2">
           {languageOptions.map((lang) => (
             <label key={lang.value} className="flex items-center space-x-2">
               <input

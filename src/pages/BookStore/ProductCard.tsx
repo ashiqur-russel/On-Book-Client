@@ -8,7 +8,7 @@ import {
 interface ProductProps {
   product: {
     id: string;
-    productImg: string;
+    productImg?: string;
     title: string;
     author: string;
     price: number;
@@ -16,7 +16,7 @@ interface ProductProps {
     rating?: number;
     hasOffer?: boolean;
   };
-  onBuy: () => void; // Accepting onBuy function as a prop
+  onBuy: () => void;
 }
 
 const ProductCard: React.FC<ProductProps> = ({ product, onBuy }) => {
@@ -30,8 +30,9 @@ const ProductCard: React.FC<ProductProps> = ({ product, onBuy }) => {
       )}
 
       {/** Product Image */}
+
       <img
-        src={product.productImg}
+        src={product.productImg || "/default-image.jpg"}
         alt={product.title}
         className="w-full h-56 object-cover rounded-md"
       />
