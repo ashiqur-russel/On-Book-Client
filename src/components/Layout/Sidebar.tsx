@@ -1,8 +1,17 @@
 import { FC } from "react";
-import { NavLink } from "react-router-dom";
-import { FaBars, FaTimes, FaUserCircle } from "react-icons/fa";
+import { NavLink, useNavigate } from "react-router-dom";
+import {
+  FaBars,
+  FaHome,
+  FaSignOutAlt,
+  FaTimes,
+  FaUserCircle,
+} from "react-icons/fa";
 import { adminPaths } from "../../routes/admin.route";
 import { userPaths } from "../../routes/user.route";
+import { useAppDispatch } from "@/redux/hooks";
+import { logOut } from "@/redux/features/auth/authSlice";
+import { useGetMeQuery } from "@/redux/features/user/registerApi";
 
 type UserRole = "admin" | "user";
 
@@ -13,6 +22,17 @@ interface SidebarProps {
 }
 
 const Sidebar: FC<SidebarProps> = ({ isOpen, toggleSidebar, role }) => {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const { data: myData, isLoading, isError } = useGetMeQuery("");
+
+  const user = myData?.[0] || null;
+
+  const handleLogout = () => {
+    dispatch(logOut());
+    navigate("/signin");
+  };
+
   const menuItems = role === "admin" ? adminPaths : userPaths;
 
   return (
@@ -54,15 +74,46 @@ const Sidebar: FC<SidebarProps> = ({ isOpen, toggleSidebar, role }) => {
         </nav>
 
         {/* User Profile */}
-        <div className="p-4 border-t flex items-center space-x-3">
-          <FaUserCircle size={30} className="text-gray-600" />
-          <div
-            className={`transition-opacity duration-300 ${
-              isOpen ? "opacity-100" : "opacity-0 hidden"
-            }`}
-          >
-            <p className="text-gray-900 font-medium">John Doe</p>
-            <p className="text-gray-500 text-sm capitalize">{role}</p>
+        <div className="p-4 border-t flex items-center justify-between">
+          {/* User Avatar */}
+          <div className="flex items-center space-x-3">
+            <FaUserCircle size={34} className="text-gray-600" />
+            <div
+              className={`transition-opacity duration-300 ${
+                isOpen ? "opacity-100" : "opacity-0 hidden"
+              }`}
+            >
+              {isLoading ? (
+                <p className="text-gray-500">Loading...</p>
+              ) : isError ? (
+                <p className="text-red-500">Error</p>
+              ) : user ? (
+                <>
+                  <p className="text-gray-900 font-medium">{user.name}</p>
+                  <p className="text-gray-500 text-sm capitalize">{role}</p>
+                </>
+              ) : (
+                <p className="text-gray-500">Guest</p>
+              )}
+            </div>
+          </div>
+
+          {/* Icons for Logout & Home */}
+          <div className="flex items-center space-x-3">
+            {/* Logout Button */}
+            <button
+              onClick={handleLogout}
+              className="p-2 cursor-pointer bg-red-600 text-white rounded-full hover:bg-red-700 transition"
+            >
+              <FaSignOutAlt size={20} />
+            </button>
+
+            {/* Home Button */}
+            <button className="p-2 cursor-pointer bg-gray-700 text-white rounded-full hover:bg-gray-800 transition">
+              <NavLink to={"/"}>
+                <FaHome size={20} />
+              </NavLink>
+            </button>
           </div>
         </div>
       </div>
