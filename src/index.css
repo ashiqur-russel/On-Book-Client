@@ -1,34 +1,35 @@
-/* ✅ Optimized Google Font Import */
+/* Google Font */
 @import url("https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600&family=Source+Code+Pro:wght@400;600;700&family=Space+Grotesk:wght@300&family=Poppins:wght@100;200;300;400;500;600;700;800;900&family=Mona+Sans:wght@200..900&display=swap");
 @import "tailwindcss";
 
-/* ✅ Base Theme Variables */
+/* Base Theme Variables */
 @layer base {
   :root {
-    --color-1: #AC6AFF;
-    --color-2: #FFC876;
-    --color-3: #FF776F;
-    --color-4: #7ADB78;
-    --color-5: #858DFF;
-    --color-6: #FF98E2;
-    --color-7: #FAF8F6;
+    /* Updated Primary Colors */
+    --primary-base: #05c0a5;
+    --primary-hover: #1eb19b;
+    --primary-active: #56c5b4;
+    --primary-outline: #baede6;
 
-    --stroke-1: #26242C;
+    /* Updated Secondary Colors */
+    --secondary-base: #0b1a40;
+    --secondary-active: #c5ccd3;
 
-    /* Neutral colors */
-    --n-1: Black;
-    --n-2: #CAC6DD;
-    --n-3: #ADA8C3;
-    --n-4: #757185;
-    --n-5: #3F3A52;
-    --n-6: #252134;
-    --n-7: #15131D;
-    --n-8: #0E0C15;
-    --n-9: #474060;
-    --n-10: #43435C;
-    --n-11: #1B1B2E;
-    --n-12: #2E2A41;
-    --n-13: #6C7275;
+    /* Updated Status Colors */
+    --error-base: #ff445b;
+    --error-light: #ff7dc;
+    --error-outline: #ff7dc;
+    --success-base: #2cc479;
+    --warning-base: #FFF2DC;
+    --warning-dark: #f5a623;
+
+    /* Text & Background Colors */
+    --text-primary: #707D9E;
+    --text-secondary: #999999;
+    --table-header: #f9f9f9;
+    --disabled: #cecece;
+    --white: #ffffff;
+    --black: #000000;
 
     /* Fonts */
     --font-sora: "Sora", sans-serif;
@@ -40,8 +41,8 @@
 
   body {
     font-family: var(--font-mona);
-    background-color: var(--color-7);
-    color: var(--n-1);
+    background-color: var(--white);
+    color: var(--black);
     scroll-behavior: smooth;
   }
 
@@ -50,28 +51,64 @@
   }
 }
 
-/* ✅ Dark Mode (Official Tailwind Implementation) */
+/*  Dark Mode Support */
 @layer base {
   [data-theme="dark"] body {
-    background-color: var(--n-8);
-    color: var(--n-2);
+    background-color: var(--black);
+    color: var(--text-secondary);
   }
 }
 
-/* ✅ Custom Utilities */
+/*  Custom Utilities */
 @layer utilities {
-  .bgc1 { background-color: var(--color-7); }
-  .bgn1 { background-color: var(--n-1); }
-  .bgn2 { background-color: var(--n-2); }
-  .bgn3 { background-color: var(--n-3); }
-  .bgn8 { background-color: var(--n-8); }
+  /* Background Colors */
+  .bg-primary { background-color: var(--primary-base); }
+  .bg-primary-hover { background-color: var(--primary-hover); }
+  .bg-primary-active { background-color: var(--primary-active); }
+  .bg-secondary { background-color: var(--secondary-base); }
+  .bg-secondary-active { background-color: var(--secondary-active); }
 
-  .rotate135 { transform: rotate(135deg); }
-  .negativeRotate135 { transform: rotate(-135deg); }
-}
+  /* Button Styles (Sharp edges, no border-radius) */
+  .btn-primary {
+    background-color: var(--primary-base);
+    color: var(--white);
+    padding: 10px 20px;
+    font-weight: bold;
+    border: none;
+    transition: background 0.2s ease-in-out;
+  }
+  .btn-primary:hover { background-color: var(--primary-hover); }
+  .btn-primary:active { background-color: var(--primary-active); }
 
-/* ✅ Custom Font Classes */
-@layer components {
+  .btn-error {
+    background-color: var(--error-base);
+    color: var(--white);
+    padding: 10px 20px;
+    font-weight: bold;
+    border: none;
+    transition: background 0.2s ease-in-out;
+  }
+  .btn-error:hover { background-color: var(--error-light); }
+  .btn-error:active { background-color: var(--error-outline); }
+
+  /* Table Styles */
+  .table-header {
+    background-color: var(--table-header);
+    font-weight: bold;
+    color: var(--black);
+  }
+  .table-cell {
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--disabled);
+    padding: 10px;
+  }
+
+  /* Other UI Elements */
+  .border-primary { border: 1px solid var(--primary-base); }
+  .border-secondary { border: 1px solid var(--secondary-base); }
+  .border-error { border: 1px solid var(--error-base); }
+
+  /* Custom Font Classes */
   .fontSans { font-family: var(--font-sora); }
   .fontCode { font-family: var(--font-code); }
   .fontGrotesk { font-family: var(--font-grotesk); }

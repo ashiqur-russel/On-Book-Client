@@ -1,6 +1,7 @@
 import { FaChartLine, FaUsers, FaCog, FaBook } from "react-icons/fa";
 import Dashboard from "../components/Dashboard/Dashboard";
 import CreateProduct from "@/components/Dashboard/admin/ProductManagement/CreateProduct";
+import Users from "@/components/Dashboard/admin/UserManagement/Users";
 
 export const adminPaths = [
   {
@@ -18,7 +19,7 @@ export const adminPaths = [
   {
     name: "Manage Users",
     path: "manage-users",
-    element: "Manage Users",
+    element: <Users />,
     icon: <FaUsers />,
   },
   {
