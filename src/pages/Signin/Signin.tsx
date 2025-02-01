@@ -39,6 +39,8 @@ const SignIn = () => {
       toast.success("Logged in Successfully", { duration: 200 });
       dispatch(setUser({ user, token }));
 
+      await new Promise((resolve) => setTimeout(resolve, 200));
+
       navigate(`/`);
     } catch {
       setError("email", {
