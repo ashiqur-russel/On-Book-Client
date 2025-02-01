@@ -1,9 +1,4 @@
-import {
-  IoCart,
-  IoBagHandle,
-  IoEye,
-  IoChatbubbleEllipses,
-} from "react-icons/io5";
+import { IoBagHandle, IoEye, IoChatbubbleEllipses } from "react-icons/io5";
 
 interface ProductProps {
   product: {
@@ -16,10 +11,9 @@ interface ProductProps {
     rating?: number;
     hasOffer?: boolean;
   };
-  onBuy: () => void;
 }
 
-const ProductCard: React.FC<ProductProps> = ({ product, onBuy }) => {
+const ProductCard: React.FC<ProductProps> = ({ product }) => {
   return (
     <div className="relative bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition duration-300 cursor-pointer">
       {/** Offer Badge */}
@@ -78,16 +72,8 @@ const ProductCard: React.FC<ProductProps> = ({ product, onBuy }) => {
         </button>
 
         {/** Buy Now (Triggers Checkout Modal) */}
-        <button
-          className="flex items-center justify-center gap-1 bg-red-700 text-white text-sm py-2 px-3 w-full hover:bg-red-400"
-          onClick={onBuy}
-        >
-          <IoBagHandle size={16} /> Buy
-        </button>
-
-        {/** Add to Cart */}
         <button className="flex items-center justify-center gap-1 bg-red-700 text-white text-sm py-2 px-3 w-full hover:bg-red-400">
-          <IoCart size={16} /> Add
+          <IoBagHandle size={16} /> Buy
         </button>
       </div>
 

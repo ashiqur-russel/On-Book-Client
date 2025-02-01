@@ -3,21 +3,24 @@ import { useAppDispatch } from "@/redux/hooks";
 import { addToCart } from "@/redux/features/product/productSlice";
 import { IProduct } from "@/types";
 import OnModal from "@/components/utils/OnModal";
+import CheckoutModal from "./CheckoutModal";
 
 interface BuyProductModalProps {
   product: IProduct;
   onClose: () => void;
-  onCheckout: () => void;
+  user: { name: string };
 }
 
 const BuyProductModal: React.FC<BuyProductModalProps> = ({
   product,
   onClose,
-  onCheckout,
+  user,
 }) => {
   const dispatch = useAppDispatch();
   const [quantity, setQuantity] = useState(1);
   const [totalPrice, setTotalPrice] = useState(product.price);
+  const [showCheckoutModal, setShowCheckoutModal] = useState(false);
+  const [isHidden, setIsHidden] = useState(false);
 
   useEffect(() => {
     setTotalPrice(quantity * product.price);
@@ -34,51 +37,78 @@ const BuyProductModal: React.FC<BuyProductModalProps> = ({
   };
 
   const handleBuyNow = () => {
-    onCheckout();
+    setIsHidden(true); // Hide BuyProductModal
+    setShowCheckoutModal(true); // Open CheckoutModal
+  };
+
+  // Handles closing of CheckoutModal and reopens BuyProductModal if not paid
+  const handleCloseCheckout = () => {
+    setShowCheckoutModal(false);
+    setIsHidden(false); // Reopen BuyProductModal if checkout is cancelled
+  };
+
+  // Handles successful payment and closes both modals
+  const handleCompletePayment = () => {
+    setShowCheckoutModal(false);
+    onClose(); // Close BuyProductModal as well
   };
 
   return (
-    <OnModal title="Buy Product" onClose={onClose}>
-      <div>
-        <p className="text-lg font-semibold">{product.title}</p>
-        <p className="text-gray-600">{product.description}</p>
-        <p className="text-xl font-bold mt-2">${product.price} per unit</p>
+    <>
+      {!isHidden && (
+        <OnModal title="Buy Product" onClose={onClose}>
+          <div>
+            <p className="text-lg font-semibold">{product.title}</p>
+            <p className="text-gray-600">{product.description}</p>
+            <p className="text-xl font-bold mt-2">${product.price} per unit</p>
 
-        {/* Quantity Selector */}
-        <div className="flex items-center mt-4">
-          <button
-            onClick={decreaseQuantity}
-            className="p-2 bg-gray-200 rounded-md"
-          >
-            -
-          </button>
-          <span className="px-4 text-lg">{quantity}</span>
-          <button
-            onClick={increaseQuantity}
-            className="p-2 bg-gray-200 rounded-md"
-          >
-            +
-          </button>
-        </div>
+            {/* Quantity Selector */}
+            <div className="flex items-center mt-4">
+              <button
+                onClick={decreaseQuantity}
+                className="p-2 bg-gray-200 rounded-md"
+              >
+                -
+              </button>
+              <span className="px-4 text-lg">{quantity}</span>
+              <button
+                onClick={increaseQuantity}
+                className="p-2 bg-gray-200 rounded-md"
+              >
+                +
+              </button>
+            </div>
 
-        <p className="text-xl font-semibold mt-2">Total: ${totalPrice}</p>
+            <p className="text-xl font-semibold mt-2">Total: ${totalPrice}</p>
 
-        <div className="mt-4 flex gap-4">
-          <button
-            onClick={handleBuyNow}
-            className="bg-black text-white px-4 py-2 rounded-md w-full"
-          >
-            Buy Now
-          </button>
-          <button
-            onClick={handleAddToCart}
-            className="bg-gray-300 px-4 py-2 rounded-md w-full"
-          >
-            Add to Cart
-          </button>
-        </div>
-      </div>
-    </OnModal>
+            <div className="mt-4 flex gap-4">
+              <button
+                onClick={handleBuyNow}
+                className="bg-black text-white px-4 py-2 rounded-md w-full"
+              >
+                Buy Now
+              </button>
+              <button
+                onClick={handleAddToCart}
+                className="bg-gray-300 px-4 py-2 rounded-md w-full"
+              >
+                Add to Cart
+              </button>
+            </div>
+          </div>
+        </OnModal>
+      )}
+
+      {/* Checkout Modal (Opens when "Buy Now" is clicked) */}
+      {showCheckoutModal && (
+        <CheckoutModal
+          onClose={handleCloseCheckout} // Reopen BuyProductModal if closed
+          onSuccess={handleCompletePayment} // Close both modals on successful payment
+          customer={user.name}
+          amount={`$${totalPrice}`}
+        />
+      )}
+    </>
   );
 };
 

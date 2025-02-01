@@ -10,11 +10,13 @@ import {
 import { useGetProductByIdQuery } from "../../redux/features/product/productApi";
 import { useState } from "react";
 import BuyProductModal from "@/components/modals/BuyProductModal";
+import { useGetMeQuery } from "@/redux/features/user/registerApi";
 
 const ProductDetails = () => {
   const { id } = useParams<{ id: string }>();
 
   const { data: product, isLoading, isError } = useGetProductByIdQuery(id!);
+  const { data: user } = useGetMeQuery("");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -135,9 +137,7 @@ const ProductDetails = () => {
         <BuyProductModal
           product={product}
           onClose={() => setIsModalOpen(false)}
-          onCheckout={() => {
-            console.log("Proceed to checkout...");
-          }}
+          user={user[0].name}
         />
       )}
     </div>
