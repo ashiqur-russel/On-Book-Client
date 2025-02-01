@@ -1,5 +1,6 @@
 import { Control } from "react-hook-form";
 import OnInputField from "./OnInputField";
+import { ReactNode } from "react";
 
 interface FormProps {
   title: string;
@@ -15,6 +16,7 @@ interface FormProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   control: Control<any>;
   onSubmit: () => void;
+  children?: ReactNode;
 }
 
 const OnForm: React.FC<FormProps> = ({
@@ -23,6 +25,7 @@ const OnForm: React.FC<FormProps> = ({
   buttonText,
   control,
   onSubmit,
+  children,
 }) => {
   return (
     <div className="w-full max-w-md bg-white p-6 shadow-md rounded-lg">
@@ -43,6 +46,7 @@ const OnForm: React.FC<FormProps> = ({
             error={field.error}
           />
         ))}
+        {children}
 
         <button
           type="submit"
