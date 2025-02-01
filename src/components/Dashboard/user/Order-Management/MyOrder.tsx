@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { FaPaypal, FaTimes, FaCheckCircle } from "react-icons/fa";
-import { useGetAllOrdersQuery } from "@/redux/features/orders/orderApi";
+import { useGetMyordersQuery } from "@/redux/features/orders/orderApi";
 
 interface Order {
   _id: string;
@@ -16,7 +16,7 @@ interface Order {
 }
 
 const MyOrders = () => {
-  const { data, isLoading, isError } = useGetAllOrdersQuery("");
+  const { data, isLoading, isError } = useGetMyordersQuery("");
   const navigate = useNavigate();
 
   // Function to handle payment click

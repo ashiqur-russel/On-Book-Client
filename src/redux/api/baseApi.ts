@@ -12,8 +12,7 @@ import { toast } from "sonner";
 import { RootState } from "../store";
 
 const baseQuery = fetchBaseQuery({
-  //baseUrl: "https://book-on.vercel.app/api",
-  baseUrl: "http://localhost:5001/api",
+  baseUrl: "https://book-on.vercel.app/api",
   credentials: "include",
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as RootState).auth.token;
@@ -42,9 +41,7 @@ const baseQueryWithRefreshToken: BaseQueryFn<
   }
 
   if (result?.error?.status === 401) {
-    console.log("Sending refresh token");
-
-    const res = await fetch("http://localhost:5001/api/auth/refresh-token", {
+    const res = await fetch("http://localhost:5173/api/auth/refresh-token", {
       method: "POST",
       credentials: "include",
     });

@@ -45,7 +45,7 @@ const Sidebar: FC<SidebarProps> = ({ role, isOpen, toggleSidebar }) => {
       {/* Sidebar Overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black opacity-50 z-40"
+          className="fixed inset-0 bg-black opacity-50 lg:opacity-0  z-40"
           onClick={toggleSidebar}
         ></div>
       )}
