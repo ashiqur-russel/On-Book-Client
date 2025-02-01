@@ -19,4 +19,5 @@ export interface IProduct {
   hasOffer?: boolean;
   productImg?: string;
   language?: string;
+  totalPrice?: number;
 }

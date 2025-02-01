@@ -8,11 +8,15 @@ import {
   IoLogoWhatsapp,
 } from "react-icons/io5";
 import { useGetProductByIdQuery } from "../../redux/features/product/productApi";
+import { useState } from "react";
+import BuyProductModal from "@/components/modals/BuyProductModal";
 
 const ProductDetails = () => {
   const { id } = useParams<{ id: string }>();
 
   const { data: product, isLoading, isError } = useGetProductByIdQuery(id!);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   if (isLoading) {
     return <div className="text-center text-lg font-semibold">Loading...</div>;
@@ -84,7 +88,10 @@ const ProductDetails = () => {
           </div>
 
           <div className="mt-6">
-            <button className="w-full bg-red-600 text-white py-3 rounded-lg text-lg flex items-center justify-center gap-2 hover:bg-red-700 transition duration-200">
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="w-full bg-red-600 text-white py-3 rounded-lg text-lg flex items-center justify-center gap-2 hover:bg-red-700 transition duration-200"
+            >
               <IoCart size={20} /> Buy Now
             </button>
 
@@ -124,6 +131,15 @@ const ProductDetails = () => {
           </div>
         </div>
       </div>
+      {isModalOpen && (
+        <BuyProductModal
+          product={product}
+          onClose={() => setIsModalOpen(false)}
+          onCheckout={() => {
+            console.log("Proceed to checkout...");
+          }}
+        />
+      )}
     </div>
   );
 };

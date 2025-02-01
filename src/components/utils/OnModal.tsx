@@ -3,11 +3,11 @@ import { FaTimes } from "react-icons/fa";
 
 interface ModalProps {
   title: string;
-  content: React.ReactNode;
+  content?: React.ReactNode;
   buttonLabel?: string;
   onClose: () => void;
   onConfirm?: () => void;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 const OnModal: React.FC<ModalProps> = ({
@@ -16,6 +16,7 @@ const OnModal: React.FC<ModalProps> = ({
   buttonLabel,
   onClose,
   onConfirm,
+  children,
 }) => {
   const [isVisible, setIsVisible] = useState(false);
 
@@ -53,7 +54,7 @@ const OnModal: React.FC<ModalProps> = ({
         </h2>
 
         {/* Modal Content */}
-        <div className="mb-4">{content}</div>
+        <div className="mb-4">{content || children}</div>
 
         {/* Confirm Button */}
         {buttonLabel && (
