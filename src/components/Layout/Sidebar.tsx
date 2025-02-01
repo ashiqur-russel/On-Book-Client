@@ -65,7 +65,9 @@ const Sidebar: FC<SidebarProps> = ({ role, isOpen, toggleSidebar }) => {
         </button>
 
         {/* Sidebar Header */}
-        <h2 className="text-xl font-bold text-gray-900 mb-6">Dashboard</h2>
+        <h2 className="text-xl font-bold text-gray-900 mb-6">
+          Dashboard - v1.0
+        </h2>
 
         {/* Navigation Links */}
         <nav className="space-y-2">

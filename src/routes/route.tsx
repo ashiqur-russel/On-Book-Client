@@ -8,7 +8,6 @@ import SignUp from "../pages/Signup/Signup";
 import App from "../App";
 import MainLayout from "../components/Layout/MainLayout";
 import DashboardLayout from "../components/Layout/DashboardLayout";
-import Payment from "../components/Dashboard/Payment/Payment";
 import ErrorPage from "../pages/Error/ErrorsPage";
 import Product from "../pages/BookStore/ProductDetails";
 import Products from "../pages/BookStore/ProductList";
@@ -27,12 +26,6 @@ const router = createBrowserRouter([
     ],
   },
 
-  {
-    path: "/payment",
-    element: <ProtectedRoute role="user" />,
-    errorElement: <ErrorPage />,
-    children: [{ index: true, element: <Payment /> }],
-  },
   {
     path: "/dashboard",
     element: <ProtectedRoute role="admin" />,
