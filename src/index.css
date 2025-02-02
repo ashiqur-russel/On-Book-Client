@@ -62,11 +62,13 @@
 /*  Custom Utilities */
 @layer utilities {
   /* Background Colors */
-  .bg-primary { background-color: var(--primary-base); }
+  .bg-primary { background-color: var(--primary-active); }
   .bg-primary-hover { background-color: var(--primary-hover); }
   .bg-primary-active { background-color: var(--primary-active); }
   .bg-secondary { background-color: var(--secondary-base); }
   .bg-secondary-active { background-color: var(--secondary-active); }
+
+
 
   /* Button Styles (Sharp edges, no border-radius) */
   .btn-primary {

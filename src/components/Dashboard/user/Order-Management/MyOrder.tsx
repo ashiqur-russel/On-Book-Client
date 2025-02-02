@@ -1,190 +1,136 @@
-import { useNavigate } from "react-router-dom";
-import { FaPaypal, FaTimes, FaCheckCircle } from "react-icons/fa";
+import React from "react";
 import { useGetMyordersQuery } from "@/redux/features/orders/orderApi";
+import { motion } from "framer-motion";
 
 interface Order {
   _id: string;
   user: string;
   email: string;
-  product: string;
+  product: {
+    _id: string;
+    title: string;
+    productImg: string;
+    price: number;
+  };
   quantity: number;
   totalPrice: number;
   payment: string | null;
-  deliveryStatus: "pending" | "shipped" | "delivered";
+  deliveryStatus: "pending" | "shipped" | "delivered" | "revoked";
   createdAt: string;
   updatedAt: string;
 }
 
 const MyOrders = () => {
-  const { data, isLoading, isError } = useGetMyordersQuery("");
-  const navigate = useNavigate();
-
-  console.log(data);
-
-  // Function to handle payment click
-  const handlePaymentClick = (order: Order) => {
-    navigate(
-      `/payment?orderId=${order._id}&customer=${order.email}&totalPrice=${order.totalPrice}`
-    );
-  };
+  const { data: orders, isLoading, isError } = useGetMyordersQuery("");
 
   if (isLoading) {
     return <div className="text-center text-lg font-semibold">Loading...</div>;
   }
 
-  if (isError || !data) {
+  if (isError || !orders || !Array.isArray(orders)) {
     return (
       <div className="text-center text-lg font-semibold text-red-600">
-        Something went wrong! Please Logout and come back later.
+        Something went wrong! Please logout and try again later.
       </div>
     );
   }
 
   return (
-    <div className="p-4 min-h-screen flex items-center justify-center text-black">
-      <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-6xl overflow-x-auto">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">📦 My Orders</h2>
+    <div className="p-4 w-full max-w-4xl mx-auto">
+      {orders.map((order: Order) => (
+        <OrderCard key={order._id} order={order} />
+      ))}
+    </div>
+  );
+};
 
-        <div className="overflow-auto">
-          <table className="w-full border border-gray-200 text-left min-w-[900px]">
-            <thead className="bg-gray-100 text-gray-700 uppercase text-sm tracking-wider">
-              <tr className="border-b border-gray-200">
-                <th className="px-4 py-3">Order Date</th>
-                <th className="px-4 py-3">Email</th>
-                <th className="px-4 py-3 text-center">Qty</th>
-                <th className="px-4 py-3">Total Price</th>
-                <th className="px-4 py-3">Delivery Status</th>
-                <th className="px-4 py-3">Payment Status</th>
-                <th className="px-4 py-3 text-center">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="text-gray-900">
-              {data?.data?.map((order: Order) => (
-                <tr
-                  key={order._id}
-                  className="border-b border-gray-200 hover:bg-gray-50"
-                >
-                  <td className="px-4 py-3">
-                    {new Date(order.createdAt).toLocaleDateString()}
-                  </td>
-                  <td className="px-4 py-3">{order.email}</td>
-                  <td className="px-4 py-3 text-center">{order.quantity}</td>
-                  <td className="px-4 py-3 font-semibold">
-                    ${order.totalPrice}
-                  </td>
+const OrderCard: React.FC<{ order: Order }> = ({ order }) => {
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case "pending":
+        return "Waiting for Shipping";
+      case "shipped":
+        return "Order has been shipped";
+      case "delivered":
+        return "Order delivered";
+      case "revoked":
+        return "Order has been cancelled";
+      default:
+        return "Unknown Status";
+    }
+  };
 
-                  {/* Delivery Status */}
-                  <td className="px-4 py-3">
-                    <span
-                      className={`px-2 py-1 font-semibold text-xs ${
-                        order.deliveryStatus === "pending"
-                          ? "bg-yellow-100 text-yellow-700"
-                          : order.deliveryStatus === "shipped"
-                          ? "bg-blue-100 text-blue-700"
-                          : "bg-green-100 text-green-700"
-                      }`}
-                    >
-                      {order.deliveryStatus}
-                    </span>
-                  </td>
+  const progressMap: { [key: string]: number } = {
+    pending: 25,
+    shipped: 50,
+    delivered: 100,
+    revoked: 0,
+  };
 
-                  {/* Payment Status */}
-                  <td className="px-4 py-3">
-                    {order.payment === null ? (
-                      <span className="text-red-600 font-semibold">Unpaid</span>
-                    ) : (
-                      <span className="text-green-600 flex items-center font-semibold">
-                        <FaCheckCircle className="w-4 h-4 mr-1" /> Paid
-                      </span>
-                    )}
-                  </td>
+  const statusIndex = ["pending", "shipped", "delivered"].indexOf(
+    order.deliveryStatus
+  );
+  const progress = progressMap[order.deliveryStatus] || 0;
 
-                  {/* Actions */}
-                  <td className="px-4 py-3 flex justify-center gap-3">
-                    {order.payment === null && (
-                      <>
-                        {/* Pay Now Button */}
-                        <button
-                          className="bg-black text-white px-4 py-1 text-sm font-semibold hover:bg-gray-800 transition"
-                          onClick={() => handlePaymentClick(order)}
-                        >
-                          <FaPaypal className="inline-block mr-1" /> Pay
-                        </button>
-
-                        {/* Cancel Order Button */}
-                        <button className="bg-red-600 text-white px-4 py-1 text-sm font-semibold hover:bg-red-700 transition">
-                          <FaTimes className="inline-block mr-1" /> Cancel
-                        </button>
-                      </>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {/*  Mobile View - List Layout */}
-        <div className="sm:hidden">
-          {data?.data?.map((order: Order) => (
-            <div
-              key={order._id}
-              className="border border-gray-200 p-4 rounded-md mb-4"
-            >
-              <p className="text-sm text-gray-600">
-                <strong>Order Date:</strong>{" "}
-                {new Date(order.createdAt).toLocaleDateString()}
-              </p>
-              <p className="text-sm text-gray-600">
-                <strong>Email:</strong> {order.email}
-              </p>
-              <p className="text-sm text-gray-600">
-                <strong>Quantity:</strong> {order.quantity}
-              </p>
-              <p className="text-sm text-gray-600">
-                <strong>Total Price:</strong> ${order.totalPrice}
-              </p>
-              <p className="text-sm text-gray-600">
-                <strong>Delivery Status:</strong>{" "}
-                <span
-                  className={`px-2 py-1 font-semibold text-xs ${
-                    order.deliveryStatus === "pending"
-                      ? "bg-yellow-100 text-yellow-700"
-                      : order.deliveryStatus === "shipped"
-                      ? "bg-blue-100 text-blue-700"
-                      : "bg-green-100 text-green-700"
-                  }`}
-                >
-                  {order.deliveryStatus}
-                </span>
-              </p>
-              <p className="text-sm text-gray-600">
-                <strong>Payment:</strong>{" "}
-                {order.payment === null ? (
-                  <span className="text-red-600 font-semibold">Unpaid</span>
-                ) : (
-                  <span className="text-green-600 font-semibold">Paid</span>
-                )}
-              </p>
-
-              {/* Actions */}
-              {order.payment === null && (
-                <div className="mt-3 flex justify-between">
-                  <button
-                    className="bg-black text-white px-4 py-1 text-sm font-semibold hover:bg-gray-800 transition"
-                    onClick={() => handlePaymentClick(order)}
-                  >
-                    <FaPaypal className="inline-block mr-1" /> Pay
-                  </button>
-                  <button className="bg-red-600 text-white px-4 py-1 text-sm font-semibold hover:bg-red-700 transition">
-                    <FaTimes className="inline-block mr-1" /> Cancel
-                  </button>
-                </div>
-              )}
-            </div>
-          ))}
+  return (
+    <div className="shadow-md rounded-xl p-4 mb-4 w-full border border-gray-200 relative">
+      <p className="font-bold text-lg mb-2 text-gray-900">
+        {getStatusText(order.deliveryStatus)}
+      </p>
+      <div className="flex flex-col md:flex-row items-start gap-4">
+        <img
+          src={order.product.productImg}
+          alt={order.product.title}
+          className="w-20 h-20 object-cover rounded-lg"
+        />
+        <div className="flex-1">
+          <h2 className="text-md font-semibold">{order.product.title}</h2>
+          <p className="text-gray-600">Quantity: {order.quantity}</p>
+          <p className="text-gray-600">Total: €{order.totalPrice}</p>
+          <p className="text-sm text-gray-500">
+            Order Date: {new Date(order.createdAt).toDateString()}
+          </p>
         </div>
       </div>
+
+      {/* Progress Bar */}
+      <div className="mt-4 relative w-full">
+        <div className="w-full h-1 bg-gray-300 rounded-full absolute top-2 left-0" />
+        <motion.div
+          className="h-1 rounded-full absolute top-2 left-0 bg-primary"
+          initial={{ width: "20%" }}
+          animate={{ width: `${progress}%` }}
+          transition={{ duration: 0.5, ease: "easeInOut" }}
+        />
+        <div className="flex items-center justify-between w-full relative z-10">
+          {["pending", "shipped", "delivered"].map((status, index) => (
+            <motion.div
+              key={index}
+              className={`h-5 w-5 rounded-full flex items-center justify-center ${
+                index <= statusIndex ? "bg-primary-active" : "bg-gray-300"
+              } ${
+                index === statusIndex
+                  ? "scale-100 shadow-md shadow-yellow-100"
+                  : ""
+              }`}
+              animate={{
+                scale: index === statusIndex ? 1.5 : 1.2,
+              }}
+              transition={{ duration: 0.3 }}
+            />
+          ))}
+        </div>
+
+        <div className="flex justify-between text-xs mt-2 text-gray-500">
+          <span>Order Placed</span>
+          <span>Shipped</span>
+          <span>Delivered</span>
+        </div>
+      </div>
+
+      <button className="w-full cursor-pointer md:w-auto mt-4 md:mt-0 md:absolute md:top-6 md:right-4 bg-gray-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-600">
+        Cancel Order
+      </button>
     </div>
   );
 };

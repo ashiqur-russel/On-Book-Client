@@ -79,6 +79,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
       if (redirectResult.error) {
         throw new Error(redirectResult.error.message);
       }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       setError(error.message || "An unknown error occurred.");
     }
