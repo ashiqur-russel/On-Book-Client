@@ -1,3 +1,4 @@
+import DeleteConfirmModal from "@/components/modals/DeleteConfirmModal";
 import {
   useGetUsersQuery,
   useUpdateUserStatusMutation,
@@ -12,6 +13,10 @@ const Users = () => {
   const [sortColumn, setSortColumn] = useState("createdAt");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [statusFilters, setStatusFilters] = useState<string[]>([]);
+  const [deleteUserInfo, setDeleteUserInfo] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
 
   const handleSort = (column: string) => {
     if (sortColumn === column) {
@@ -35,7 +40,7 @@ const Users = () => {
     { name: "limit", value: "10" },
     { name: "searchTerm", value: searchTerm || "" },
     { name: "sort", value: `${sortColumn}:${sortOrder}` },
-    ...statusFilters.map((status) => ({ name: "status", value: status })), // Correctly appending multiple status filters
+    ...statusFilters.map((status) => ({ name: "status", value: status })),
   ];
 
   const { data, isLoading, isFetching, refetch } = useGetUsersQuery(
@@ -59,7 +64,41 @@ const Users = () => {
   }
 
   const users = data?.data ?? [];
-  const meta = data?.meta ?? { page: 1, totalPage: 1 };
+  const totalPages = data?.meta?.totalPage ?? 1;
+
+  const handleUserStatus = async (userId: string, currentStatus: string) => {
+    let newStatus: string = "";
+
+    switch (currentStatus) {
+      case "pending":
+        newStatus = "approved";
+        break;
+      case "approved":
+      case "active":
+        newStatus = "blocked";
+        break;
+      case "blocked":
+        newStatus = "active";
+        break;
+      default:
+        return;
+    }
+
+    try {
+      await updateUserStatus({ userId, status: newStatus }).unwrap();
+      refetch();
+    } catch (error) {
+      console.error("Error updating user status:", error);
+    }
+  };
+
+  const handleDeleteUser = async () => {
+    if (deleteUserInfo) {
+      await deleteUser(deleteUserInfo.id);
+      setDeleteUserInfo(null);
+      refetch();
+    }
+  };
 
   return (
     <div className="container mx-auto p-6">
@@ -67,6 +106,7 @@ const Users = () => {
         Users Management
       </h2>
 
+      {/* Filters & Search */}
       <div className="flex flex-col md:flex-row items-center justify-between mb-4 bg-neutral-light p-3 rounded-md shadow">
         <input
           type="text"
@@ -104,8 +144,9 @@ const Users = () => {
         </div>
       )}
 
-      <div className="bg-white shadow-md rounded-md overflow-x-auto">
-        <table className="w-full border-collapse border border-neutral-dark">
+      {/* Table for Large Screens */}
+      <div className="hidden md:block bg-white shadow-md rounded-md overflow-x-auto">
+        <table className="w-full border-collapse  border-gray-100">
           <thead className="bg-neutral-lighter">
             <tr className="text-primary-dark text-left">
               <th
@@ -135,10 +176,12 @@ const Users = () => {
               <th className="p-3 text-center w-1/5">Actions</th>
             </tr>
           </thead>
-
           <tbody>
             {users.map((user) => (
-              <tr key={user.id} className="border-t hover:bg-neutral-light">
+              <tr
+                key={user.id}
+                className="border-t border-gray-100 hover:bg-neutral-light"
+              >
                 <td className="p-3">{user.name}</td>
                 <td className="p-3">{user.email}</td>
                 <td className="p-3 capitalize">{user.role}</td>
@@ -149,44 +192,25 @@ const Users = () => {
                   {new Date(user.createdAt).toLocaleDateString()}
                 </td>
                 <td className="p-3 flex justify-center gap-2">
-                  {user.status === "pending" && (
+                  {user.status !== "blocked" ? (
                     <button
-                      onClick={() =>
-                        updateUserStatus({
-                          userId: user.id,
-                          status: "approved",
-                        })
-                      }
-                      className="px-4 py-2 bg-green-900 text-white w-32"
-                    >
-                      Approve
-                    </button>
-                  )}
-                  {user.status === "approved" && (
-                    <button
-                      onClick={() =>
-                        updateUserStatus({ userId: user.id, status: "blocked" })
-                      }
+                      onClick={() => handleUserStatus(user.id, user.status)}
                       className="px-4 py-2 bg-zinc-800 text-white w-32"
                     >
-                      Block
+                      {user.status === "pending" ? "Approve" : "Block"}
                     </button>
-                  )}
-                  {user.status === "blocked" && (
+                  ) : (
                     <button
-                      onClick={() =>
-                        updateUserStatus({
-                          userId: user.id,
-                          status: "approved",
-                        })
-                      }
+                      onClick={() => handleUserStatus(user.id, user.status)}
                       className="px-4 py-2 bg-gray-600 text-white w-32"
                     >
                       Unblock
                     </button>
                   )}
                   <button
-                    onClick={() => deleteUser(user.id)}
+                    onClick={() =>
+                      setDeleteUserInfo({ id: user.id, name: user.name })
+                    }
                     className="px-4 py-2 bg-red-300 text-white w-32"
                   >
                     Delete
@@ -196,18 +220,66 @@ const Users = () => {
             ))}
           </tbody>
         </table>
+        {deleteUserInfo && (
+          <DeleteConfirmModal
+            itemName={deleteUserInfo.name}
+            onClose={() => setDeleteUserInfo(null)}
+            onConfirm={handleDeleteUser}
+          />
+        )}
       </div>
 
+      {/* Pagination */}
       <div className="flex justify-center mt-6">
         <ReactPaginate
           previousLabel="◀"
           nextLabel="▶"
-          pageCount={meta.totalPage}
+          pageCount={totalPages}
           onPageChange={({ selected }) => setPage(selected + 1)}
           containerClassName="flex space-x-2"
           activeClassName="bg-primary text-white px-4 py-2 w-10 text-center"
           pageClassName="px-4 py-2 border border-neutral-dark w-10 text-center hover:bg-neutral-light"
         />
+      </div>
+
+      <div className="space-y-4  p-4 lg:hidden md:hidden">
+        {users.map((user) => (
+          <div key={user.id} className="bg-white shadow-md p-4 ">
+            <p className="text-lg font-semibold">{user.name}</p>
+            <p className="text-sm text-gray-500">{user.email}</p>
+            <p className="text-sm capitalize">Role: {user.role}</p>
+            <p className="text-sm font-bold">Status: {user.status}</p>
+            <p className="text-sm text-gray-600">
+              Joined: {new Date(user.createdAt).toLocaleDateString()}
+            </p>
+
+            <div className="mt-4 flex flex-wrap gap-2">
+              {user.status !== "blocked" ? (
+                <button
+                  onClick={() => handleUserStatus(user.id, user.status)}
+                  className="px-4 py-2 bg-zinc-800 text-white w-full rounded-md"
+                >
+                  {user.status === "pending" ? "Approve" : "Block"}
+                </button>
+              ) : (
+                <button
+                  onClick={() => handleUserStatus(user.id, user.status)}
+                  className="px-4 py-2 bg-gray-600 text-white w-full rounded-md"
+                >
+                  Unblock
+                </button>
+              )}
+              <button
+                onClick={() =>
+                  setDeleteUserInfo({ id: user.id, name: user.name })
+                }
+                className="px-4 py-2 bg-red-500 text-white w-full rounded-md"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

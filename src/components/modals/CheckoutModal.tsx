@@ -1,40 +1,92 @@
-import { useForm } from "react-hook-form";
+import { useCreateCheckoutSessionMutation } from "@/redux/features/payment/paymentApi";
+import { loadStripe } from "@stripe/stripe-js";
 import OnModal from "../utils/OnModal";
+import { useEffect, useState } from "react";
+import { IProduct } from "@/types";
 
 interface CheckoutModalProps {
+  items: IProduct[];
+
   onClose: () => void;
+
   onSuccess: () => void;
+
   customer: string;
+
   amount: string;
 }
 
 const CheckoutModal: React.FC<CheckoutModalProps> = ({
   onClose,
-  onSuccess,
   customer,
   amount,
+  items,
 }) => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<PaymentData>();
+  const [createCheckoutSession, { isLoading }] =
+    useCreateCheckoutSessionMutation();
+  const [error, setError] = useState<string | null>(null);
 
-  interface PaymentData {
-    cardNumber: string;
-    expiryDate: string;
-    cvc: string;
-  }
+  useEffect(() => {
+    console.log("📡 Checkout Modal Opened. Items:", items);
+  }, [items]);
 
-  const handlePayment = (data: PaymentData) => {
-    console.log("Payment Success:", data);
-    alert(`✅ Payment Confirmed for ${customer} of ${amount}`);
-    onSuccess();
+  const handlePayment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+
+    try {
+      console.log("📡 Sending payment request with items:", items);
+
+      // Ensure items are in correct format
+      if (!items || items.length === 0) {
+        throw new Error("No items found for checkout.");
+      }
+
+      const formattedItems = items.map((item) => ({
+        name: item.title,
+        price: item.price,
+        quantity: item.quantity,
+      }));
+
+      const product = items[0]?.id;
+
+      if (!product) {
+        throw new Error("Missing required fields: user, email, product.");
+      }
+
+      // Create Stripe Checkout Session
+      const response = await createCheckoutSession({
+        items: formattedItems,
+        product,
+      }).unwrap();
+
+      console.log("✅ Stripe session created:", response);
+
+      if (!response?.data?.sessionId) {
+        throw new Error("No sessionId returned from API.");
+      }
+
+      // Load Stripe and redirect to checkout
+      const stripe = await loadStripe(import.meta.env.VITE_APP_STRIPE_KEY);
+      if (!stripe) {
+        throw new Error("Stripe failed to initialize.");
+      }
+
+      const redirectResult = await stripe.redirectToCheckout({
+        sessionId: response?.data?.sessionId,
+      });
+
+      if (redirectResult.error) {
+        throw new Error(redirectResult.error.message);
+      }
+    } catch (error: any) {
+      setError(error.message || "An unknown error occurred.");
+    }
   };
 
   return (
     <OnModal title="Checkout" onClose={onClose}>
-      <form onSubmit={handleSubmit(handlePayment)}>
+      <form onSubmit={handlePayment}>
         {/* User Info */}
         <div className="flex items-center space-x-3 mb-4">
           <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
@@ -46,70 +98,52 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
           </div>
         </div>
 
+        {/* Product Details */}
+        <div className="mb-4">
+          <h3 className="font-medium text-gray-800 mb-2">Order Summary</h3>
+          <div className="max-h-40 overflow-y-auto bg-gray-100 p-4 rounded-md">
+            {items.map((item, index) => (
+              <div key={index} className="border-b pb-2 mb-2">
+                <p className="font-semibold text-gray-900">{item.title}</p>
+                <p className="text-sm text-gray-600">By {item.author}</p>
+                <p className="text-sm text-gray-500">
+                  Quantity:{" "}
+                  <span className="font-semibold">{item.quantity}</span>
+                </p>
+                <p className="text-sm text-gray-500">
+                  Price: <span className="font-semibold">${item.price}</span>
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Total Amount */}
-        <div className="mb-4 bg-gray-100 p-4 rounded-lg">
-          <h3 className="font-medium text-gray-800">Amount Due</h3>
-          <p className="text-2xl font-bold text-gray-900">{amount}</p>
-          <p className="text-gray-500 text-sm">Payment Method: Visa</p>
+        <div className="mb-4 bg-gray-100 p-4 rounded-md">
+          <h3 className="font-medium text-gray-800">Amount to be paid</h3>
+          <p className="text-2xl font-bold text-gray-900">${amount}</p>
         </div>
 
-        {/* Card Details */}
-        <div className="mb-3">
-          <label className="block text-sm font-medium text-gray-700">
-            Card Number
-          </label>
-          <input
-            type="text"
-            placeholder="**** **** **** ****"
-            {...register("cardNumber", {
-              required: "Card number is required",
-              minLength: 16,
-            })}
-            className="w-full border border-gray-300 px-4 py-2 rounded-md"
-          />
-          {errors.cardNumber && (
-            <p className="text-red-500 text-sm">{errors.cardNumber?.message}</p>
-          )}
+        {/* Error Display */}
+        {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
+
+        {/* Buttons */}
+        <div className="flex justify-between">
+          <button
+            type="button"
+            onClick={onClose}
+            className="w-1/3 bg-gray-300 text-gray-800 py-2 rounded-md"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            className="w-1/3 bg-gray-600 text-white py-2 rounded-md"
+            disabled={isLoading}
+          >
+            {isLoading ? "Processing..." : "Confirm"}
+          </button>
         </div>
-
-        {/* Expiry Date & CVC */}
-        <div className="flex space-x-3">
-          <div className="w-1/2">
-            <label className="block text-sm font-medium text-gray-700">
-              Expiry Date
-            </label>
-            <input
-              type="text"
-              placeholder="MM/YY"
-              {...register("expiryDate", {
-                required: "Expiry date is required",
-              })}
-              className="w-full border border-gray-300 px-4 py-2 rounded-md"
-            />
-          </div>
-
-          <div className="w-1/2">
-            <label className="block text-sm font-medium text-gray-700">
-              CVC
-            </label>
-            <input
-              type="text"
-              placeholder="123"
-              {...register("cvc", {
-                required: "CVC is required",
-                minLength: 3,
-              })}
-              className="w-full border border-gray-300 px-4 py-2 rounded-md"
-            />
-          </div>
-        </div>
-
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white py-2 mt-4 rounded-md"
-        >
-          Confirm Payment
-        </button>
       </form>
     </OnModal>
   );

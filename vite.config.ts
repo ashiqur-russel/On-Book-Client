@@ -11,4 +11,9 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  define: {
+    "process.env.VITE_APP_STRIPE_KEY": JSON.stringify(
+      process.env.VITE_APP_STRIPE_KEY
+    ),
+  },
 });

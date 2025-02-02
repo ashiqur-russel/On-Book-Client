@@ -19,6 +19,8 @@ const MyOrders = () => {
   const { data, isLoading, isError } = useGetMyordersQuery("");
   const navigate = useNavigate();
 
+  console.log(data);
+
   // Function to handle payment click
   const handlePaymentClick = (order: Order) => {
     navigate(

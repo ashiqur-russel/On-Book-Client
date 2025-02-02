@@ -37,20 +37,20 @@ const BuyProductModal: React.FC<BuyProductModalProps> = ({
   };
 
   const handleBuyNow = () => {
-    setIsHidden(true); // Hide BuyProductModal
-    setShowCheckoutModal(true); // Open CheckoutModal
+    setIsHidden(true);
+    setShowCheckoutModal(true);
   };
 
   // Handles closing of CheckoutModal and reopens BuyProductModal if not paid
   const handleCloseCheckout = () => {
     setShowCheckoutModal(false);
-    setIsHidden(false); // Reopen BuyProductModal if checkout is cancelled
+    setIsHidden(false);
   };
 
   // Handles successful payment and closes both modals
   const handleCompletePayment = () => {
     setShowCheckoutModal(false);
-    onClose(); // Close BuyProductModal as well
+    onClose();
   };
 
   return (
@@ -102,8 +102,9 @@ const BuyProductModal: React.FC<BuyProductModalProps> = ({
       {/* Checkout Modal (Opens when "Buy Now" is clicked) */}
       {showCheckoutModal && (
         <CheckoutModal
-          onClose={handleCloseCheckout} // Reopen BuyProductModal if closed
-          onSuccess={handleCompletePayment} // Close both modals on successful payment
+          items={[{ ...product, quantity }]}
+          onClose={handleCloseCheckout}
+          onSuccess={handleCompletePayment}
           customer={user.name}
           amount={`$${totalPrice}`}
         />
