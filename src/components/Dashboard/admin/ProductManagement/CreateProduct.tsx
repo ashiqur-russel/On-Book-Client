@@ -13,6 +13,7 @@ const categories: TCategory[] = [
   "SelfDevelopment",
   "Poetry",
   "Religious",
+  "Thriller",
 ];
 
 interface ProductForm extends Omit<IProduct, "productImg"> {
@@ -24,8 +25,10 @@ const CreateProduct = () => {
   const {
     handleSubmit,
     control,
-    formState: { errors },
+    register,
     reset,
+    setValue,
+    formState: { errors },
   } = useForm<ProductForm>();
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -34,7 +37,6 @@ const CreateProduct = () => {
     try {
       const formData = new FormData();
 
-      // Append file if it exists
       if (data.file && data.file.length > 0) {
         formData.append("file", data.file[0]);
       }
@@ -53,11 +55,15 @@ const CreateProduct = () => {
         })
       );
 
-      // Send the request
       await createProduct(formData).unwrap();
 
       toast.success("Product created successfully!");
+
       reset();
+      setSelectedFile(null);
+      setValue("file", undefined);
+      setValue("category", undefined as unknown as TCategory);
+      setValue("description", "");
     } catch (error) {
       console.error(error);
       toast.error("Failed to create product. Please try again.");
@@ -66,7 +72,7 @@ const CreateProduct = () => {
 
   return (
     <div className="min-h-screen flex justify-center items-center p-6">
-      <OnForm
+      <OnForm<ProductForm>
         title="Create a New Product"
         fields={[
           {
@@ -110,9 +116,10 @@ const CreateProduct = () => {
         ]}
         buttonText={isLoading ? "Creating..." : "Create Product"}
         control={control}
-        onSubmit={handleSubmit(onSubmit)}
+        register={register}
+        handleSubmit={handleSubmit}
+        onSubmit={onSubmit}
       >
-        {/* Category Dropdown */}
         <OnDropdown
           name="category"
           label="Category"
@@ -122,7 +129,6 @@ const CreateProduct = () => {
           error={errors.category?.message}
         />
 
-        {/* Description Text Area */}
         <OnTextArea
           name="description"
           label="Description"
@@ -132,7 +138,6 @@ const CreateProduct = () => {
           error={errors.description?.message}
         />
 
-        {/* File Upload */}
         <div className="mt-4">
           <label className="block text-sm font-medium text-gray-700">
             Upload Product Image
@@ -140,14 +145,19 @@ const CreateProduct = () => {
           <Controller
             name="file"
             control={control}
-            render={({ field }) => (
+            defaultValue={undefined}
+            render={({ field: { onChange, ref } }) => (
               <input
                 type="file"
                 accept="image/*"
                 className="w-full border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                ref={ref}
                 onChange={(e) => {
-                  setSelectedFile(e.target.files?.[0] || null);
-                  field.onChange(e.target.files);
+                  const files = e.target.files;
+                  if (files && files.length > 0) {
+                    setSelectedFile(files[0]);
+                    onChange(files); // ✅ Correctly updates form state
+                  }
                 }}
               />
             )}
