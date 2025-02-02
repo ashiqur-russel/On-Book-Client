@@ -1,6 +1,7 @@
 import { FaBook, FaCog, FaChartLine } from "react-icons/fa";
 import UserDashboard from "../components/Dashboard/user/UserDashboard";
 import MyOrders from "../components/Dashboard/user/Order-Management/MyOrder";
+import Settings from "@/components/Dashboard/user/Settings";
 
 export const userPaths = [
   {
@@ -19,7 +20,7 @@ export const userPaths = [
   {
     name: "Settings",
     path: "settings",
-    element: <h1>User Settings</h1>,
+    element: <Settings />,
     icon: <FaCog />,
   },
 ];

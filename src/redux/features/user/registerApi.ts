@@ -28,8 +28,6 @@ const userManagementApi = baseApi.injectEndpoints({
         };
       },
       transformResponse: (response: TResponseRedux<any[]>) => {
-        console.log(response);
-
         return {
           data: response.data,
           meta: response.meta,
@@ -60,6 +58,14 @@ const userManagementApi = baseApi.injectEndpoints({
         method: "DELETE",
       }),
     }),
+
+    changePassword: builder.mutation({
+      query: ({ oldPassword, newPassword }) => ({
+        url: "/change-password",
+        method: "POST",
+        body: { oldPassword, newPassword },
+      }),
+    }),
   }),
 });
 
@@ -69,4 +75,5 @@ export const {
   useGetUsersQuery,
   useUpdateUserStatusMutation,
   useDeleteUserMutation,
+  useChangePasswordMutation,
 } = userManagementApi;

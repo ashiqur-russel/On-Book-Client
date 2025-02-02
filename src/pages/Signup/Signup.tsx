@@ -23,6 +23,7 @@ const SignUp = () => {
     formState: { errors },
     control,
     setError,
+    register,
   } = useForm<SignUpFormValues>({
     defaultValues: {
       name: "",
@@ -64,7 +65,7 @@ const SignUp = () => {
     {
       label: "Name",
       type: "text",
-      name: "name",
+      name: "name" as keyof SignUpFormValues,
       placeholder: "Enter your full name",
       validation: {
         required: "Name is required",
@@ -74,7 +75,7 @@ const SignUp = () => {
     {
       label: "Email",
       type: "email",
-      name: "email",
+      name: "email" as keyof SignUpFormValues,
       placeholder: "Enter your email",
       validation: {
         required: "Email is required",
@@ -88,7 +89,7 @@ const SignUp = () => {
     {
       label: "Password",
       type: "password",
-      name: "password",
+      name: "password" as keyof SignUpFormValues,
       placeholder: "Enter your password",
       validation: {
         required: "Password is required",
@@ -108,12 +109,14 @@ const SignUp = () => {
           {emailSignUp ? (
             <>
               {/* Email Sign-Up Form */}
-              <OnForm
+              <OnForm<SignUpFormValues>
                 title="Sign up with Email"
                 fields={signUpFields}
                 buttonText="Create Account"
                 control={control}
-                onSubmit={handleSubmit(onSubmit)}
+                register={register}
+                handleSubmit={handleSubmit}
+                onSubmit={onSubmit}
               />
 
               {/* Back to Google Sign-Up */}

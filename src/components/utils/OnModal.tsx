@@ -5,8 +5,10 @@ interface ModalProps {
   title: string;
   content?: React.ReactNode;
   buttonLabel?: string;
+  cancelLabel?: string;
   onClose: () => void;
   onConfirm?: () => void;
+  onCancel?: () => void;
   children?: React.ReactNode;
 }
 
@@ -14,8 +16,10 @@ const OnModal: React.FC<ModalProps> = ({
   title,
   content,
   buttonLabel,
+  cancelLabel,
   onClose,
   onConfirm,
+  onCancel,
   children,
 }) => {
   const [isVisible, setIsVisible] = useState(false);
@@ -56,15 +60,28 @@ const OnModal: React.FC<ModalProps> = ({
         {/* Modal Content */}
         <div className="mb-4">{content || children}</div>
 
-        {/* Confirm Button */}
-        {buttonLabel && (
-          <button
-            onClick={onConfirm}
-            className="mt-4 bg-black text-white w-full py-3 hover:bg-gray-800 transition text-lg"
-          >
-            {buttonLabel}
-          </button>
-        )}
+        {/* Buttons Section */}
+        <div className="grid grid-cols-1  md:grid-cols-2  mt-4 md:flex-row w-full gap-1">
+          {/* Cancel Button */}
+          {cancelLabel && (
+            <button
+              onClick={onCancel || handleClose}
+              className="   bg-gray-300 text-gray-800 py-2 rounded-md hover:bg-gray-400 transition"
+            >
+              {cancelLabel}
+            </button>
+          )}
+
+          {/* Confirm Button */}
+          {buttonLabel && (
+            <button
+              onClick={onConfirm}
+              className=" bg-black text-white py-2 rounded-md hover:bg-gray-800 transition"
+            >
+              {buttonLabel}
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

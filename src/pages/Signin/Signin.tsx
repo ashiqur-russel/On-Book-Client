@@ -23,6 +23,7 @@ const SignIn = () => {
     formState: { errors },
     control,
     setError,
+    register,
   } = useForm<LoginForm>({
     defaultValues: {
       email: "",
@@ -68,7 +69,7 @@ const SignIn = () => {
           </div>
 
           {/* Sign In Form Using Generic Component */}
-          <OnForm
+          <OnForm<LoginForm>
             title="Sign in to On.Book"
             fields={[
               {
@@ -102,7 +103,9 @@ const SignIn = () => {
             ]}
             buttonText={isLoading ? "Signing In..." : "Sign In"}
             control={control}
-            onSubmit={handleSubmit(onSubmit)}
+            register={register} // ✅ Register inputs
+            handleSubmit={handleSubmit}
+            onSubmit={onSubmit} // ✅ Submit form correctly
           />
 
           {/* Sign Up Link */}
