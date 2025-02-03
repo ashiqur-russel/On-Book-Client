@@ -43,7 +43,6 @@ const OnForm = <T extends FieldValues>({
         </h2>
       )}
 
-      {/* ✅ Ensure handleSubmit is used correctly */}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 text-black">
         {fields?.map((field, index) => (
           <OnInputField
@@ -53,7 +52,7 @@ const OnForm = <T extends FieldValues>({
             label={field.label}
             placeholder={field.placeholder}
             control={control}
-            register={register} // ✅ Register inputs correctly
+            register={register}
             validation={field.validation}
             error={field.error}
           />

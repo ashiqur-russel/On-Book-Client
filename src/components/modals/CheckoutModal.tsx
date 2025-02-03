@@ -35,9 +35,6 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
     setError(null);
 
     try {
-      console.log("📡 Sending payment request with items:", items);
-
-      // Ensure items are in correct format
       if (!items || items.length === 0) {
         throw new Error("No items found for checkout.");
       }
@@ -60,13 +57,10 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
         product,
       }).unwrap();
 
-      console.log("✅ Stripe session created:", response);
-
       if (!response?.data?.sessionId) {
         throw new Error("No sessionId returned from API.");
       }
 
-      // Load Stripe and redirect to checkout
       const stripe = await loadStripe(import.meta.env.VITE_APP_STRIPE_KEY);
       if (!stripe) {
         throw new Error("Stripe failed to initialize.");
@@ -88,7 +82,6 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
   return (
     <OnModal title="Checkout" onClose={onClose}>
       <form onSubmit={handlePayment}>
-        {/* User Info */}
         <div className="flex items-center space-x-3 mb-4">
           <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
           <div>
@@ -99,7 +92,6 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
           </div>
         </div>
 
-        {/* Product Details */}
         <div className="mb-4">
           <h3 className="font-medium text-gray-800 mb-2">Order Summary</h3>
           <div className="max-h-40 overflow-y-auto bg-gray-100 p-4 rounded-md">
@@ -119,16 +111,13 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
           </div>
         </div>
 
-        {/* Total Amount */}
         <div className="mb-4 bg-gray-100 p-4 rounded-md">
           <h3 className="font-medium text-gray-800">Amount to be paid</h3>
           <p className="text-2xl font-bold text-gray-900">${amount}</p>
         </div>
 
-        {/* Error Display */}
         {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
 
-        {/* Buttons */}
         <div className="flex justify-between">
           <button
             type="button"

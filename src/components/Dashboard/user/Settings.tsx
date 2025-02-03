@@ -12,7 +12,6 @@ const UserSettings = () => {
         User Settings
       </h1>
 
-      {/* Change Password */}
       <div className="mt-6 p-4 border rounded-lg shadow-sm">
         <h2 className="text-xl font-semibold">Security</h2>
         <button
@@ -23,7 +22,6 @@ const UserSettings = () => {
         </button>
       </div>
 
-      {/* Notification Settings */}
       <div className="mt-6 p-4 border rounded-lg shadow-sm">
         <h2 className="text-xl font-semibold">Notifications</h2>
         <div className="flex items-center justify-between mt-2">
@@ -36,7 +34,6 @@ const UserSettings = () => {
         </div>
       </div>
 
-      {/* Delete Account */}
       <div className="mt-6 p-4 border rounded-lg shadow-sm">
         <h2 className="text-xl font-semibold text-red-600">Danger Zone</h2>
         <button
@@ -47,7 +44,6 @@ const UserSettings = () => {
         </button>
       </div>
 
-      {/* Change Password Modal */}
       {isPasswordModalOpen && (
         <ChangePasswordModal onClose={() => setPasswordModalOpen(false)} />
       )}

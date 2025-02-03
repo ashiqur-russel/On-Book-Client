@@ -68,7 +68,6 @@ const SignIn = () => {
             <div className="absolute right-0 top-1/2 transform -translate-y-1/2 w-1/3 border-t border-gray-300"></div>
           </div>
 
-          {/* Sign In Form Using Generic Component */}
           <OnForm<LoginForm>
             title="Sign in to On.Book"
             fields={[
@@ -103,9 +102,9 @@ const SignIn = () => {
             ]}
             buttonText={isLoading ? "Signing In..." : "Sign In"}
             control={control}
-            register={register} // ✅ Register inputs
+            register={register}
             handleSubmit={handleSubmit}
-            onSubmit={onSubmit} // ✅ Submit form correctly
+            onSubmit={onSubmit}
           />
 
           {/* Sign Up Link */}

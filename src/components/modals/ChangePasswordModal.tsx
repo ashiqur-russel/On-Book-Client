@@ -1,5 +1,8 @@
-import { useState } from "react";
-import { useChangePasswordMutation } from "@/redux/features/user/registerApi";
+import { useEffect, useState } from "react";
+import { useChangePasswordMutation } from "@/redux/features/auth/authApi";
+import { useAppDispatch } from "@/redux/hooks";
+import { logOut } from "@/redux/features/auth/authSlice";
+import { useNavigate } from "react-router-dom";
 import OnModal from "../utils/OnModal";
 import { toast } from "sonner";
 import OnForm from "../utils/OnForm";
@@ -18,10 +21,31 @@ interface ChangePasswordModalProps {
 const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
   onClose,
 }) => {
-  const { control, register, handleSubmit, getValues } =
-    useForm<ChangePasswordFormData>();
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
+  const {
+    control,
+    register,
+    handleSubmit,
+    getValues,
+    reset,
+    formState: { errors },
+    watch,
+  } = useForm<ChangePasswordFormData>();
+
   const [changePassword, { isLoading }] = useChangePasswordMutation();
   const [error, setError] = useState<string | null>(null);
+
+  const oldPassword = watch("oldPassword");
+  const newPassword = watch("newPassword");
+  const confirmPassword = watch("confirmPassword");
+
+  useEffect(() => {
+    if (error) {
+      setError(null);
+    }
+  }, [oldPassword, newPassword, confirmPassword, error]);
 
   const handlePasswordChange = async (data: ChangePasswordFormData) => {
     setError(null);
@@ -37,11 +61,28 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
         newPassword: data.newPassword,
       }).unwrap();
 
-      toast.success("Password changed successfully!");
+      toast.success("Password changed successfully! Logging out...", {
+        duration: 2000,
+      });
+
+      reset();
       onClose();
+
+      setTimeout(() => {
+        dispatch(logOut());
+        navigate("/signin");
+      }, 2000);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
-      setError(err.message || "Failed to change password.");
-      toast.error(err.message || "Failed to change password.");
+      console.error("Error Changing Password:", err);
+
+      let errorMessage = "Failed to change password.";
+      if (err?.data?.message) {
+        errorMessage = err.data.message;
+      }
+
+      setError(errorMessage);
+      toast.error(errorMessage);
     }
   };
 
@@ -49,10 +90,12 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
     <OnModal
       title="Change Password"
       onClose={onClose}
-      buttonLabel="Update Password"
+      buttonLabel={isLoading ? "Updating..." : "Update Password"}
       cancelLabel="Cancel"
       onCancel={onClose}
+      onConfirm={handleSubmit(handlePasswordChange)}
     >
+      {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
       <OnForm<ChangePasswordFormData>
         fields={[
           {
@@ -61,6 +104,7 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
             name: "oldPassword",
             placeholder: "Enter old password",
             validation: { required: "Old password is required" },
+            error: errors.oldPassword?.message,
           },
           {
             label: "New Password",
@@ -68,6 +112,7 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
             name: "newPassword",
             placeholder: "Enter new password",
             validation: { required: "New password is required", minLength: 5 },
+            error: errors.newPassword?.message,
           },
           {
             label: "Confirm Password",
@@ -80,10 +125,11 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
               validate: (value: string) =>
                 value === getValues("newPassword") || "Passwords do not match",
             },
+            error: errors.confirmPassword?.message,
           },
         ]}
         control={control}
-        register={register} // ✅ Pass register function
+        register={register}
         handleSubmit={handleSubmit}
         onSubmit={handlePasswordChange}
       />
