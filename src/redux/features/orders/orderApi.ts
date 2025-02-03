@@ -28,13 +28,28 @@ const orderApi = baseApi.injectEndpoints({
       },
     }),
     getMyorders: builder.query({
-      query: () => ({
-        url: `/orders/my-orders`,
-        method: "GET",
-      }),
-      transformResponse: (response: TResponseRedux<any>) => {
-        console.log(response);
-        return response.data;
+      query: (args) => {
+        const params = new URLSearchParams();
+
+        if (args && typeof args === "object") {
+          Object.entries(args).forEach(([key, value]) => {
+            if (value !== "") {
+              params.append(key, String(value));
+            }
+          });
+        }
+
+        return {
+          url: `/orders/my-orders`,
+          method: "GET",
+          params: params,
+        };
+      },
+      transformResponse: (response: TResponseRedux<any[]>) => {
+        return {
+          data: response.data,
+          meta: response.meta,
+        };
       },
     }),
   }),

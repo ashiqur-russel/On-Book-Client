@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { useGetMyordersQuery } from "@/redux/features/orders/orderApi";
 import { motion } from "framer-motion";
+import { BiChevronLeft, BiChevronRight } from "react-icons/bi";
 
 interface Order {
   _id: string;
@@ -21,7 +22,26 @@ interface Order {
 }
 
 const MyOrders = () => {
-  const { data: orders, isLoading, isError } = useGetMyordersQuery("");
+  const [queryParams, setQueryParams] = useState({
+    deliveryStatus: "",
+    searchTerm: "",
+    page: 1,
+    limit: 10,
+  });
+
+  const { data: orders, isLoading, isError } = useGetMyordersQuery(queryParams);
+
+  console.log("Orders API Response:", orders);
+
+  const totalOrders = orders?.meta?.total || 0;
+  const totalPages = Math.max(1, Math.ceil(totalOrders / queryParams.limit));
+
+  const handlePageChange = (newPage: number) => {
+    setQueryParams((prev) => ({
+      ...prev,
+      page: Math.max(1, Math.min(newPage, totalPages)),
+    }));
+  };
 
   if (isLoading) {
     return (
@@ -31,7 +51,6 @@ const MyOrders = () => {
     );
   }
 
-  // ✅ Handle API errors properly
   if (isError) {
     return (
       <div className="text-center text-lg font-semibold text-red-600">
@@ -40,8 +59,11 @@ const MyOrders = () => {
     );
   }
 
-  // ✅ Correctly handle empty orders case
-  if (!orders || orders.length === 0) {
+  if (
+    !orders?.data ||
+    !Array.isArray(orders.data) ||
+    orders.data.length === 0
+  ) {
     return (
       <div className="text-center text-lg font-semibold text-gray-600">
         You have no orders yet.
@@ -50,11 +72,44 @@ const MyOrders = () => {
   }
 
   return (
-    <div className="p-4 w-full max-w-4xl mx-auto">
-      {orders.map((order: Order) => (
-        <OrderCard key={order._id} order={order} />
-      ))}
-    </div>
+    <>
+      <div className="flex justify-between items-center mt-4">
+        <p className="text-gray-600">
+          Showing{" "}
+          {Math.min(
+            (queryParams.page - 1) * queryParams.limit + 1,
+            totalOrders
+          )}{" "}
+          - {Math.min(queryParams.page * queryParams.limit, totalOrders)} of{" "}
+          {totalOrders} orders
+        </p>
+        <div className="flex items-center space-x-2">
+          <button
+            className="p-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition"
+            onClick={() => handlePageChange(queryParams.page - 1)}
+            disabled={queryParams.page === 1}
+          >
+            <BiChevronLeft className="w-5 h-5" />
+          </button>
+          <span className="px-3 py-1 border rounded-lg text-gray-900">
+            {queryParams.page} / {totalPages}
+          </span>
+          <button
+            className="p-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition"
+            onClick={() => handlePageChange(queryParams.page + 1)}
+            disabled={queryParams.page >= totalPages}
+          >
+            <BiChevronRight className="w-5 h-5" />
+          </button>
+        </div>
+      </div>
+
+      <div className="p-4 w-full mx-auto">
+        {orders.data.map((order: Order) => (
+          <OrderCard key={order._id} order={order} />
+        ))}
+      </div>
+    </>
   );
 };
 
@@ -107,7 +162,7 @@ const OrderCard: React.FC<{ order: Order }> = ({ order }) => {
         </div>
       </div>
 
-      {/* Progress Bar */}
+      {/* ✅ Restored Timeline with Progress Bar */}
       <div className="mt-4 relative w-full">
         <div className="w-full h-1 bg-gray-300 rounded-full absolute top-2 left-0" />
         <motion.div
