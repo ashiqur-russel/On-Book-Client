@@ -24,13 +24,27 @@ const MyOrders = () => {
   const { data: orders, isLoading, isError } = useGetMyordersQuery("");
 
   if (isLoading) {
-    return <div className="text-center text-lg font-semibold">Loading...</div>;
+    return (
+      <div className="flex justify-center items-center h-40">
+        <div className="w-10 h-10 border-4 border-gray-300 border-t-primary rounded-full animate-spin"></div>
+      </div>
+    );
   }
 
-  if (isError || !orders || !Array.isArray(orders)) {
+  // ✅ Handle API errors properly
+  if (isError) {
     return (
       <div className="text-center text-lg font-semibold text-red-600">
-        Something went wrong! Please logout and try again later.
+        Something went wrong! Please try again later.
+      </div>
+    );
+  }
+
+  // ✅ Correctly handle empty orders case
+  if (!orders || orders.length === 0) {
+    return (
+      <div className="text-center text-lg font-semibold text-gray-600">
+        You have no orders yet.
       </div>
     );
   }

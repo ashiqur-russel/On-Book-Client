@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
@@ -17,7 +17,6 @@ export type TUser = {
 };
 
 const DashboardLayout = () => {
-  const [isOpen, setIsOpen] = useState(true);
   const token = useAppSelector(selectCurrentToken);
   const dispatch = useAppDispatch();
   const { data: myData, refetch } = useGetMeQuery("");
@@ -35,17 +34,9 @@ const DashboardLayout = () => {
 
   return (
     <div className="flex h-screen">
-      <Sidebar
-        isOpen={isOpen}
-        toggleSidebar={() => setIsOpen(!isOpen)}
-        role={userRole}
-      />
-
-      <div
-        className={`flex-1 transition-all ${
-          isOpen ? "ml-1" : "ml-2"
-        } p-6 overflow-y-auto`}
-      >
+      <Sidebar role={userRole} />{" "}
+      {/* ✅ No need to pass isOpen and toggleSidebar */}
+      <div className="flex-1 p-6 overflow-y-auto">
         <Outlet />
       </div>
     </div>

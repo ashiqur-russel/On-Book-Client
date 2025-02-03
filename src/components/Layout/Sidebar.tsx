@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import {
   FaBars,
@@ -17,36 +17,47 @@ type UserRole = "admin" | "user";
 
 interface SidebarProps {
   role: UserRole;
-  isOpen: boolean;
-  toggleSidebar: () => void;
 }
 
-const Sidebar: FC<SidebarProps> = ({ role, isOpen, toggleSidebar }) => {
+const Sidebar: FC<SidebarProps> = ({ role }) => {
   const dispatch = useAppDispatch();
   const { data: myData } = useGetMeQuery("");
+
+  // ✅ Ensure Sidebar starts closed on mobile & open on larger screens
+  const [isOpen, setIsOpen] = useState(window.innerWidth >= 1024);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsOpen(window.innerWidth >= 1024); // Open sidebar only for large screens
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const user = myData?.[0] || null;
+  const menuItems = role === "admin" ? adminPaths : userPaths;
 
   const handleLogout = () => {
     dispatch(logOut());
   };
 
-  const menuItems = role === "admin" ? adminPaths : userPaths;
-
   return (
     <>
-      {/* Burger Icon */}
-      <button
-        className="fixed top-4 left-4 z-50 text-gray-700 text-2xl lg:hidden"
-        onClick={toggleSidebar}
-      >
-        <FaBars />
-      </button>
+      {/* Burger Icon - Mobile Only */}
+      {!isOpen && (
+        <button
+          className="fixed top-4 left-4 z-50 text-gray-700 text-2xl lg:hidden"
+          onClick={() => setIsOpen(true)}
+        >
+          <FaBars />
+        </button>
+      )}
 
-      {/* Sidebar Overlay */}
-      {isOpen && (
+      {/* Sidebar Overlay - Only on Mobile */}
+      {isOpen && window.innerWidth < 1024 && (
         <div
-          className="fixed inset-0 bg-black opacity-50 lg:opacity-0  z-40"
-          onClick={toggleSidebar}
+          className="fixed inset-0 bg-black opacity-50 z-40"
+          onClick={() => setIsOpen(false)}
         ></div>
       )}
 
@@ -56,13 +67,15 @@ const Sidebar: FC<SidebarProps> = ({ role, isOpen, toggleSidebar }) => {
           isOpen ? "translate-x-0" : "-translate-x-full"
         } lg:relative lg:translate-x-0 lg:w-64`}
       >
-        {/* Close Icon */}
-        <button
-          className="absolute top-4 right-4 text-gray-700 text-2xl lg:hidden"
-          onClick={toggleSidebar}
-        >
-          <FaTimes />
-        </button>
+        {/* Close Icon - Mobile Only */}
+        {window.innerWidth < 1024 && (
+          <button
+            className="absolute top-4 right-4 text-gray-700 text-2xl lg:hidden"
+            onClick={() => setIsOpen(false)}
+          >
+            <FaTimes />
+          </button>
+        )}
 
         {/* Sidebar Header */}
         <h2 className="text-xl font-bold text-gray-900 mb-6">
@@ -81,7 +94,7 @@ const Sidebar: FC<SidebarProps> = ({ role, isOpen, toggleSidebar }) => {
           ))}
         </nav>
 
-        {/* User Profile and Actions in One Row */}
+        {/* User Profile and Actions */}
         <div className="mt-auto border-t pt-4 flex items-center justify-between absolute bottom-0 w-55 mb-2">
           <div className="flex items-center space-x-3">
             <FaUserCircle size={34} className="text-gray-600" />
