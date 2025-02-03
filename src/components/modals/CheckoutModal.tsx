@@ -118,20 +118,20 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
         {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
 
-        <div className="flex justify-between">
+        <div className="flex justify-between gap-2">
           <button
             type="button"
             onClick={onClose}
-            className="w-1/3 bg-gray-300 text-gray-800 py-2 rounded-md"
+            className="w-full btn-error text-white py-2"
           >
-            Cancel
+            CANCEL
           </button>
           <button
             type="submit"
-            className="w-1/3 bg-gray-600 text-white py-2 rounded-md"
+            className="w-full btn-primary text-white py-2"
             disabled={isLoading}
           >
-            {isLoading ? "Processing..." : "Confirm"}
+            {isLoading ? "PROCESSING..." : "CONFIRM"}
           </button>
         </div>
       </form>

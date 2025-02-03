@@ -16,9 +16,9 @@
     --secondary-active: #c5ccd3;
 
     /* Updated Status Colors */
-    --error-base: #ff445b;
-    --error-light: #ff7dc;
-    --error-outline: #ff7dc;
+    --error-base: #da6270;
+    --error-light: #a03340;
+    --error-outline: #a03340;
     --success-base: #2cc479;
     --warning-base: #FFF2DC;
     --warning-dark: #f5a623;

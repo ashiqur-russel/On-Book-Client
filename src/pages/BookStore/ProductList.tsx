@@ -25,7 +25,7 @@ const Products = () => {
       let filtered: IProduct[] = data.data as IProduct[];
 
       if (filters.themes.length > 0) {
-        filtered = filtered.filter((p) => filters.themes.includes(p.title)); 
+        filtered = filtered.filter((p) => filters.themes.includes(p.title));
       }
 
       if (filters.authors.length > 0) {
@@ -71,7 +71,7 @@ const Products = () => {
           <div
             className={`grid ${
               gridView
-                ? "grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5"
+                ? "grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5"
                 : "grid-cols-1"
             } gap-6`}
           >

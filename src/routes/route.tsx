@@ -11,6 +11,7 @@ import DashboardLayout from "../components/Layout/DashboardLayout";
 import ErrorPage from "../pages/Error/ErrorsPage";
 import Product from "../pages/BookStore/ProductDetails";
 import Products from "../pages/BookStore/ProductList";
+import PaymentSuccess from "@/pages/Payment/Sucess";
 
 const router = createBrowserRouter([
   {
@@ -48,6 +49,11 @@ const router = createBrowserRouter([
         children: routeGenerator(userPaths),
       },
     ],
+  },
+
+  {
+    path: "/payment-success",
+    element: <PaymentSuccess />,
   },
 
   {

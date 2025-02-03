@@ -38,24 +38,7 @@ const Navbar = () => {
             >
               Books
             </NavLink>
-            <NavLink
-              to="/categories"
-              className="text-gray-800 font-medium hover:text-gray-600 transition"
-            >
-              Categories
-            </NavLink>
-            <NavLink
-              to="/wishlist"
-              className="text-gray-800 font-medium hover:text-gray-600 transition"
-            >
-              Wishlist
-            </NavLink>
-            <NavLink
-              to="/blog"
-              className="text-gray-800 font-medium hover:text-gray-600 transition"
-            >
-              Blog
-            </NavLink>
+
             {user && (
               <NavLink
                 to={`/dashboard/${user.role}`}
@@ -140,33 +123,6 @@ const Navbar = () => {
               onClick={() => setMenuOpen(false)}
             >
               Books
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
-              to="/categories"
-              className="text-gray-800 hover:text-gray-600"
-              onClick={() => setMenuOpen(false)}
-            >
-              Categories
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
-              to="/wishlist"
-              className="text-gray-800 hover:text-gray-600"
-              onClick={() => setMenuOpen(false)}
-            >
-              Wishlist
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
-              to="/blog"
-              className="text-gray-800 hover:text-gray-600"
-              onClick={() => setMenuOpen(false)}
-            >
-              Blog
             </NavLink>
           </li>
 

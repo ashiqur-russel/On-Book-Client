@@ -1,4 +1,5 @@
-import { IoBagHandle, IoEye, IoChatbubbleEllipses } from "react-icons/io5";
+import { FaShoppingCart } from "react-icons/fa";
+import { IoEye } from "react-icons/io5";
 
 interface ProductProps {
   product: {
@@ -15,72 +16,73 @@ interface ProductProps {
 
 const ProductCard: React.FC<ProductProps> = ({ product }) => {
   return (
-    <div className="relative bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition duration-300 cursor-pointer">
-      {/** Offer Badge */}
+    <div className="relative bg-white p-4 border border-gray-200 rounded-md flex flex-col w-full">
+      {/* Offer Badge (Correctly Positioned) */}
       {product.hasOffer && (
-        <div className="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-3 py-1">
+        <div className="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-sm">
           OFFER
         </div>
       )}
 
-      {/** Product Image */}
-
-      <img
-        src={product.productImg || "/default-image.jpg"}
-        alt={product.title}
-        className="w-full h-56 object-cover rounded-md"
-      />
-
-      {/** Title & Author */}
-      <h3 className="text-md font-semibold mt-2">{product.title}</h3>
-      <p className="text-gray-600 text-sm">{product.author}</p>
-
-      {/** Star Ratings */}
-      <div className="flex items-center mt-1">
-        {[...Array(5)].map((_, index) => (
-          <span
-            key={index}
-            className={`text-lg ${
-              index < (product.rating || 0)
-                ? "text-yellow-500"
-                : "text-gray-300"
-            }`}
-          >
-            ★
-          </span>
-        ))}
+      {/* Product Image - Fixed Height for Large Screens, Larger for Small Screens */}
+      <div className="w-full h-[240px] sm:h-[280px] lg:h-[260px] flex-shrink-0">
+        <img
+          src={product.productImg || "/default-image.jpg"}
+          alt={product.title}
+          className="w-full h-full object-cover rounded-md"
+        />
       </div>
 
-      {/** Price Section */}
-      <div className="flex justify-between items-center mt-2">
-        <span className="text-xl font-bold text-red-600">${product.price}</span>
-        {product.oldPrice && (
-          <span className="text-sm line-through text-gray-400">
-            ${product.oldPrice}
-          </span>
-        )}
+      {/* Product Details */}
+      <div className="flex-1 flex flex-col justify-between mt-3 w-full">
+        <div>
+          <h3 className="text-md font-semibold">{product.title}</h3>
+          <p className="text-gray-600 text-sm">{product.author}</p>
+
+          {/* Star Ratings */}
+          <div className="flex items-center mt-1">
+            {[...Array(5)].map((_, index) => (
+              <span
+                key={index}
+                className={`text-lg ${
+                  index < (product.rating || 0)
+                    ? "text-yellow-500"
+                    : "text-gray-300"
+                }`}
+              >
+                ★
+              </span>
+            ))}
+          </div>
+
+          <div className="flex justify-between items-center mt-2">
+            <span className="text-xl font-bold text-red-600">
+              ${product.price}
+            </span>
+            {product.oldPrice && (
+              <span className="text-sm line-through text-gray-400">
+                ${product.oldPrice}
+              </span>
+            )}
+          </div>
+        </div>
       </div>
 
-      {/** Action Buttons */}
-      <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:gap-1">
-        {/** View Details */}
+      {/* Action Buttons */}
+      <div className="mt-4 flex flex-col lg:flex-row  gap-2">
         <button
-          className="flex items-center justify-center gap-1 bg-red-700 text-white text-sm py-2 px-3 w-full hover:bg-red-400"
+          className="flex items-center justify-center gap-2 bg-gray-200 px-4 py-2  text-sm hover:bg-gray-300 transition w-full"
           onClick={() => (window.location.href = `/products/${product.id}`)}
         >
-          <IoEye size={16} /> Details
+          <IoEye size={18} />
+          View
         </button>
 
-        {/** Buy Now (Triggers Checkout Modal) */}
-        <button className="flex items-center justify-center gap-1 bg-red-700 text-white text-sm py-2 px-3 w-full hover:bg-red-400">
-          <IoBagHandle size={16} /> Buy
+        <button className="flex items-center justify-center gap-2 bg-red-600 text-white px-4 py-2 text-sm hover:bg-red-500 transition w-full">
+          <FaShoppingCart size={18} />
+          Buy
         </button>
       </div>
-
-      {/** Comment Icon */}
-      <button className="absolute top-2 right-2 bg-gray-100 p-2 rounded-full hover:bg-gray-200 transition duration-300">
-        <IoChatbubbleEllipses size={18} className="text-gray-600" />
-      </button>
     </div>
   );
 };

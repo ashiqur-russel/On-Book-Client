@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useAppDispatch } from "@/redux/hooks";
 import { addToCart } from "@/redux/features/product/productSlice";
 import { IProduct } from "@/types";
+import { FaMinus, FaPlus } from "react-icons/fa";
 import OnModal from "@/components/utils/OnModal";
 import CheckoutModal from "./CheckoutModal";
 
@@ -57,42 +58,55 @@ const BuyProductModal: React.FC<BuyProductModalProps> = ({
     <>
       {!isHidden && (
         <OnModal title="Buy Product" onClose={onClose}>
-          <div>
-            <p className="text-lg font-semibold">{product.title}</p>
-            <p className="text-gray-600">{product.description}</p>
-            <p className="text-xl font-bold mt-2">${product.price} per unit</p>
+          <div className="p-4">
+            {/* Product Title */}
+            <h3 className="text-lg font-semibold text-gray-900">
+              {product.title}
+            </h3>
+            <p className="text-gray-600 text-sm mb-3">{product.description}</p>
+
+            {/* Price */}
+            <p className="text-xl font-bold mt-2 text-gray-900">
+              ${product.price}
+            </p>
 
             {/* Quantity Selector */}
-            <div className="flex items-center mt-4">
-              <button
-                onClick={decreaseQuantity}
-                className="p-2 bg-gray-200 rounded-md"
-              >
-                -
-              </button>
-              <span className="px-4 text-lg">{quantity}</span>
-              <button
-                onClick={increaseQuantity}
-                className="p-2 bg-gray-200 rounded-md"
-              >
-                +
-              </button>
+            <div className="flex items-center space-x-4 mt-4">
+              <div className="flex items-center border border-red-500">
+                <button
+                  onClick={decreaseQuantity}
+                  className="p-2 text-red-500 hover:bg-red-100 transition"
+                >
+                  <FaMinus />
+                </button>
+                <span className="px-4 py-2 text-gray-900">{quantity}</span>
+                <button
+                  onClick={increaseQuantity}
+                  className="p-2 text-red-500 hover:bg-red-100 transition"
+                >
+                  <FaPlus />
+                </button>
+              </div>
             </div>
 
-            <p className="text-xl font-semibold mt-2">Total: ${totalPrice}</p>
+            {/* Total Price */}
+            <p className="text-lg font-semibold text-gray-900 mt-3">
+              Total: ${totalPrice}
+            </p>
 
-            <div className="mt-4 flex gap-4">
+            {/* Buttons */}
+            <div className="mt-4 flex gap-2">
               <button
                 onClick={handleBuyNow}
-                className="bg-black text-white px-4 py-2 rounded-md w-full"
+                className="flex-1 btn-primary text-white py-3  transition"
               >
-                Buy Now
+                NEXT
               </button>
               <button
                 onClick={handleAddToCart}
-                className="bg-gray-300 px-4 py-2 rounded-md w-full"
+                className="flex-1 btn-error py-3  transition"
               >
-                Add to Cart
+                CANCEL
               </button>
             </div>
           </div>
