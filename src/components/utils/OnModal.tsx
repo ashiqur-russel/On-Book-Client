@@ -66,7 +66,7 @@ const OnModal: React.FC<ModalProps> = ({
           {cancelLabel && (
             <button
               onClick={onCancel || handleClose}
-              className="   bg-gray-300 text-gray-800 py-2 rounded-md hover:bg-gray-400 transition"
+              className=" btn-secondary transition"
             >
               {cancelLabel}
             </button>

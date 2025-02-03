@@ -1,74 +1,66 @@
-import DeleteConfirmModal from "@/components/modals/DeleteConfirmModal";
+import { useState } from "react";
+import {
+  FaUsers,
+  FaUserCheck,
+  FaUserTimes,
+  FaUserShield,
+} from "react-icons/fa";
+import { BsSearch } from "react-icons/bs";
+import { BiChevronLeft, BiChevronRight } from "react-icons/bi";
 import {
   useGetUsersQuery,
   useUpdateUserStatusMutation,
   useDeleteUserMutation,
 } from "@/redux/features/user/registerApi";
-import { useState, useEffect } from "react";
-import ReactPaginate from "react-paginate";
+import DeleteConfirmModal from "@/components/modals/DeleteConfirmModal";
+import SummaryCard from "./SummayCard";
+
+const getStatusBadge = (status: string) => {
+  const statusClasses: Record<string, string> = {
+    pending: "bg-yellow-100 text-yellow-800",
+    approved: "bg-green-100 text-green-800",
+    active: "bg-blue-100 text-blue-800",
+    blocked: "bg-red-100 text-red-800",
+  };
+
+  return (
+    <span
+      className={`px-2 py-1 rounded-full text-xs font-semibold ${
+        statusClasses[status] || "bg-gray-100 text-gray-800"
+      }`}
+    >
+      {status.charAt(0).toUpperCase() + status.slice(1)}
+    </span>
+  );
+};
 
 const Users = () => {
-  const [page, setPage] = useState(1);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [sortColumn, setSortColumn] = useState("createdAt");
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
-  const [statusFilters, setStatusFilters] = useState<string[]>([]);
+  const [queryParams, setQueryParams] = useState({
+    status: "",
+    searchTerm: "",
+    page: 1,
+    limit: 10,
+  });
+
+  const queryArray = Object.entries(queryParams)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    .filter(([_, value]) => value !== "")
+    .map(([key, value]) => ({ name: key, value }));
+
+  const { data, isLoading, error, refetch } = useGetUsersQuery(queryArray);
+  const users = data?.data ?? [];
+  const totalUsers = data?.meta?.total ?? 0;
+  const totalPages = data?.meta?.totalPage ?? 1;
+
+  const [updateUserStatus] = useUpdateUserStatusMutation();
+  const [deleteUser] = useDeleteUserMutation();
   const [deleteUserInfo, setDeleteUserInfo] = useState<{
     id: string;
     name: string;
   } | null>(null);
 
-  const handleSort = (column: string) => {
-    if (sortColumn === column) {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-    } else {
-      setSortColumn(column);
-      setSortOrder("asc");
-    }
-  };
-
-  const toggleStatusFilter = (status: string) => {
-    setStatusFilters((prev) =>
-      prev.includes(status)
-        ? prev.filter((s) => s !== status)
-        : [...prev, status]
-    );
-  };
-
-  const queryParams = [
-    { name: "page", value: page.toString() },
-    { name: "limit", value: "10" },
-    { name: "searchTerm", value: searchTerm || "" },
-    { name: "sort", value: `${sortColumn}:${sortOrder}` },
-    ...statusFilters.map((status) => ({ name: "status", value: status })),
-  ];
-
-  const { data, isLoading, isFetching, refetch } = useGetUsersQuery(
-    queryParams,
-    {
-      refetchOnFocus: true,
-    }
-  );
-
-  const [updateUserStatus] = useUpdateUserStatusMutation();
-  const [deleteUser] = useDeleteUserMutation();
-
-  useEffect(() => {
-    refetch();
-  }, [searchTerm, sortColumn, sortOrder, page, statusFilters, refetch]);
-
-  if (isLoading) {
-    return (
-      <div className="text-center text-lg font-semibold">Loading users...</div>
-    );
-  }
-
-  const users = data?.data ?? [];
-  const totalPages = data?.meta?.totalPage ?? 1;
-
   const handleUserStatus = async (userId: string, currentStatus: string) => {
     let newStatus: string = "";
-
     switch (currentStatus) {
       case "pending":
         newStatus = "approved";
@@ -92,6 +84,7 @@ const Users = () => {
     }
   };
 
+  // ✅ Handle Delete
   const handleDeleteUser = async () => {
     if (deleteUserInfo) {
       await deleteUser(deleteUserInfo.id);
@@ -100,187 +93,171 @@ const Users = () => {
     }
   };
 
+  // ✅ Handle Filter
+  const handleFilterClick = (filter: string) => {
+    setQueryParams({
+      ...queryParams,
+      status: filter === "All" ? "" : filter.toLowerCase(),
+      page: 1,
+    });
+  };
+
+  const handlePageChange = (newPage: number) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setQueryParams({ ...queryParams, page: newPage });
+    }
+  };
+
   return (
-    <div className="container mx-auto p-6">
-      <h2 className="text-2xl font-bold mb-6 text-center text-primary-dark">
-        Users Management
-      </h2>
-
-      {/* Filters & Search */}
-      <div className="flex flex-col md:flex-row items-center justify-between mb-4 bg-neutral-light p-3 rounded-md shadow">
-        <input
-          type="text"
-          placeholder="Search by name, email, or role"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full md:w-1/3 px-4 py-2 border border-neutral-dark text-primary-dark"
-        />
-
-        <div className="flex space-x-4 mt-2 md:mt-0">
-          {["pending", "approved", "blocked"].map((status) => (
-            <label key={status} className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                checked={statusFilters.includes(status)}
-                onChange={() => toggleStatusFilter(status)}
-                className="w-4 h-4"
-              />
-              <span className="text-neutral-dark capitalize">{status}</span>
-            </label>
-          ))}
-        </div>
-
-        <button
-          onClick={refetch}
-          className="px-4 py-2 bg-primary text-white hover:bg-neutral-dark transition w-32 text-center"
-        >
-          Refresh
-        </button>
-      </div>
-
-      {isFetching && (
-        <div className="text-center text-neutral-dark text-sm">
-          Fetching latest data...
+    <div className="p-6">
+      {error && (
+        <div className="bg-red-100 text-red-700 p-3 mb-4 rounded-md">
+          Error fetching data: {JSON.stringify(error)}
         </div>
       )}
 
-      {/* Table for Large Screens */}
-      <div className="hidden md:block bg-white shadow-md rounded-md overflow-x-auto">
-        <table className="w-full border-collapse  border-gray-100">
-          <thead className="bg-neutral-lighter">
-            <tr className="text-primary-dark text-left">
-              <th
-                className="p-3 cursor-pointer w-1/5"
-                onClick={() => handleSort("name")}
-              >
-                Name{" "}
-                {sortColumn === "name" && (sortOrder === "asc" ? "↑" : "↓")}
-              </th>
-              <th
-                className="p-3 cursor-pointer w-1/5"
-                onClick={() => handleSort("email")}
-              >
-                Email{" "}
-                {sortColumn === "email" && (sortOrder === "asc" ? "↑" : "↓")}
-              </th>
-              <th className="p-3 w-1/5">Role</th>
-              <th className="p-3 w-1/5">Status</th>
-              <th
-                className="p-3 cursor-pointer w-1/5"
-                onClick={() => handleSort("createdAt")}
-              >
-                Created{" "}
-                {sortColumn === "createdAt" &&
-                  (sortOrder === "asc" ? "↑" : "↓")}
-              </th>
-              <th className="p-3 text-center w-1/5">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((user) => (
-              <tr
-                key={user.id}
-                className="border-t border-gray-100 hover:bg-neutral-light"
-              >
-                <td className="p-3">{user.name}</td>
-                <td className="p-3">{user.email}</td>
-                <td className="p-3 capitalize">{user.role}</td>
-                <td className="p-3 font-semibold text-primary-dark">
-                  {user.status}
-                </td>
-                <td className="p-3">
-                  {new Date(user.createdAt).toLocaleDateString()}
-                </td>
-                <td className="p-3 flex justify-center gap-2">
-                  {user.status !== "blocked" ? (
-                    <button
-                      onClick={() => handleUserStatus(user.id, user.status)}
-                      className="px-4 py-2 bg-zinc-800 text-white w-32"
-                    >
-                      {user.status === "pending" ? "Approve" : "Block"}
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => handleUserStatus(user.id, user.status)}
-                      className="px-4 py-2 bg-gray-600 text-white w-32"
-                    >
-                      Unblock
-                    </button>
-                  )}
-                  <button
-                    onClick={() =>
-                      setDeleteUserInfo({ id: user.id, name: user.name })
-                    }
-                    className="px-4 py-2 bg-red-300 text-white w-32"
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        {deleteUserInfo && (
-          <DeleteConfirmModal
-            itemName={deleteUserInfo.name}
-            onClose={() => setDeleteUserInfo(null)}
-            onConfirm={handleDeleteUser}
-          />
-        )}
-      </div>
+      <h1 className="text-3xl font-bold text-gray-900 mb-6">
+        Users Management
+      </h1>
 
-      {/* Pagination */}
-      <div className="flex justify-center mt-6">
-        <ReactPaginate
-          previousLabel="◀"
-          nextLabel="▶"
-          pageCount={totalPages}
-          onPageChange={({ selected }) => setPage(selected + 1)}
-          containerClassName="flex space-x-2"
-          activeClassName="bg-primary text-white px-4 py-2 w-10 text-center"
-          pageClassName="px-4 py-2 border border-neutral-dark w-10 text-center hover:bg-neutral-light"
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        <SummaryCard
+          icon={<FaUsers />}
+          title="Total Users"
+          value={totalUsers.toString()}
         />
+        <SummaryCard icon={<FaUserCheck />} title="Active Users" value="75" />
+        <SummaryCard icon={<FaUserShield />} title="Blocked Users" value="5" />
+        <SummaryCard icon={<FaUserTimes />} title="Pending Users" value="20" />
       </div>
 
-      <div className="space-y-4  p-4 lg:hidden md:hidden">
-        {users.map((user) => (
-          <div key={user.id} className="bg-white shadow-md p-4 ">
-            <p className="text-lg font-semibold">{user.name}</p>
-            <p className="text-sm text-gray-500">{user.email}</p>
-            <p className="text-sm capitalize">Role: {user.role}</p>
-            <p className="text-sm font-bold">Status: {user.status}</p>
-            <p className="text-sm text-gray-600">
-              Joined: {new Date(user.createdAt).toLocaleDateString()}
-            </p>
+      <div className="flex flex-col lg:flex-row justify-between gap-2 items-center mb-4">
+        <div className="grid grid-cols-5 gap-2">
+          {["All", "Pending", "Approved", "Active", "Blocked"].map((filter) => (
+            <button
+              key={filter}
+              onClick={() => handleFilterClick(filter)}
+              className={`px-2 py-1 border rounded-sm text-xs ${
+                queryParams.status === filter.toLowerCase()
+                  ? "bg-blue-600 text-white"
+                  : "text-gray-600 hover:bg-gray-100"
+              }`}
+            >
+              {filter}
+            </button>
+          ))}
+        </div>
 
-            <div className="mt-4 flex flex-wrap gap-2">
-              {user.status !== "blocked" ? (
-                <button
-                  onClick={() => handleUserStatus(user.id, user.status)}
-                  className="px-4 py-2 bg-zinc-800 text-white w-full rounded-md"
-                >
-                  {user.status === "pending" ? "Approve" : "Block"}
-                </button>
+        <div className="relative">
+          <BsSearch className="absolute left-3 top-2.5 text-gray-500" />
+          <input
+            type="text"
+            placeholder="Search Users..."
+            value={queryParams.searchTerm}
+            onChange={(e) =>
+              setQueryParams({
+                ...queryParams,
+                searchTerm: e.target.value,
+                page: 1,
+              })
+            }
+            className="border border-gray-300 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+      </div>
+
+      {/* Users Table */}
+      <div className="bg-white p-6 rounded-lg shadow-md text-black">
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse rounded-lg overflow-hidden min-w-[800px]">
+            <thead className="bg-gray-200 text-gray-600 text-left">
+              <tr>
+                <th className="px-4 py-2">Name</th>
+                <th className="px-4 py-2">Email</th>
+                <th className="px-4 py-2">Role</th>
+                <th className="px-4 py-2">Status</th>
+                <th className="px-4 py-2 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {!isLoading && users.length > 0 ? (
+                users.map((user) => (
+                  <tr
+                    key={user.id}
+                    className="border-t border-gray-200 hover:bg-gray-100"
+                  >
+                    <td className="px-4 py-3">{user.name}</td>
+                    <td className="px-4 py-3">{user.email}</td>
+                    <td className="px-4 py-3">{user.role}</td>
+                    <td className="px-4 py-3">{getStatusBadge(user.status)}</td>
+                    <td className="px-4 py-3 text-right flex space-x-2 w-full">
+                      <button
+                        onClick={() => handleUserStatus(user.id, user.status)}
+                        className="px-3 py-1 w-full cursor-pointer text-sm bg-gray-600 text-white rounded"
+                      >
+                        {user.status === "pending"
+                          ? "Approve"
+                          : user.status === "blocked"
+                          ? "Unblock"
+                          : "Block"}
+                      </button>
+                      <button
+                        onClick={() =>
+                          setDeleteUserInfo({ id: user.id, name: user.name })
+                        }
+                        className="px-3 py-1 w-full cursor-pointer text-sm bg-red-500 text-white rounded"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))
               ) : (
-                <button
-                  onClick={() => handleUserStatus(user.id, user.status)}
-                  className="px-4 py-2 bg-gray-600 text-white w-full rounded-md"
-                >
-                  Unblock
-                </button>
+                <tr>
+                  <td colSpan={5} className="text-center py-4">
+                    No users found
+                  </td>
+                </tr>
               )}
-              <button
-                onClick={() =>
-                  setDeleteUserInfo({ id: user.id, name: user.name })
-                }
-                className="px-4 py-2 bg-red-500 text-white w-full rounded-md"
-              >
-                Delete
-              </button>
-            </div>
+            </tbody>
+          </table>
+        </div>
+        <div className="flex justify-between items-center mt-4">
+          <p className="text-gray-600">
+            Showing {(queryParams.page - 1) * queryParams.limit + 1} -{" "}
+            {Math.min(queryParams.page * queryParams.limit, totalUsers)} of{" "}
+            {totalUsers} users
+          </p>
+          <div className="flex items-center space-x-2">
+            <button
+              className="p-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition"
+              onClick={() => handlePageChange(queryParams.page - 1)}
+              disabled={queryParams.page === 1}
+            >
+              <BiChevronLeft className="w-5 h-5" />
+            </button>
+            <span className="px-3 py-1 border rounded-lg text-gray-900">
+              {queryParams.page} / {totalPages}
+            </span>
+            <button
+              className="p-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition"
+              onClick={() => handlePageChange(queryParams.page + 1)}
+              disabled={queryParams.page === totalPages}
+            >
+              <BiChevronRight className="w-5 h-5" />
+            </button>
           </div>
-        ))}
+        </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {deleteUserInfo && (
+        <DeleteConfirmModal
+          itemName={deleteUserInfo.name}
+          onClose={() => setDeleteUserInfo(null)}
+          onConfirm={handleDeleteUser}
+        />
+      )}
     </div>
   );
 };
