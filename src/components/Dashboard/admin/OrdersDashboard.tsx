@@ -39,6 +39,7 @@ const OrdersDashboard = () => {
   });
 
   const queryArray = Object.entries(queryParams)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     .filter(([_, value]) => value !== "")
     .map(([key, value]) => ({ name: key, value }));
 
@@ -51,7 +52,7 @@ const OrdersDashboard = () => {
   const handleFilterClick = (filter: string) => {
     setQueryParams({
       ...queryParams,
-      deliveryStatus: filter.toLowerCase(),
+      deliveryStatus: filter === "All" ? "" : filter.toLowerCase(),
       page: 1,
     });
   };
@@ -118,7 +119,6 @@ const OrdersDashboard = () => {
           )}
         </div>
 
-        {/* Search Input */}
         <div className="relative">
           <BsSearch className="absolute left-3 top-2.5 text-gray-500" />
           <input
@@ -137,7 +137,6 @@ const OrdersDashboard = () => {
         </div>
       </div>
 
-      {/* Orders Table */}
       <div className="bg-white p-6 rounded-lg shadow-md text-black">
         <div className="overflow-x-auto">
           <table className="w-full border-collapse rounded-lg overflow-hidden min-w-[800px]">
@@ -190,8 +189,6 @@ const OrdersDashboard = () => {
             </tbody>
           </table>
         </div>
-
-        {/* Pagination */}
         <div className="flex justify-between items-center mt-4">
           <p className="text-gray-600">
             Showing {(queryParams.page - 1) * queryParams.limit + 1} -{" "}
