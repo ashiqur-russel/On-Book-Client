@@ -117,7 +117,7 @@ const OrderCard: React.FC<{ order: Order }> = ({ order }) => {
           transition={{ duration: 0.5, ease: "easeInOut" }}
         />
         <div className="flex items-center justify-between w-full relative z-10">
-          {["pending", "shipped", "delivered"].map((status, index) => (
+          {["pending", "shipped", "delivered"].map((_, index) => (
             <motion.div
               key={index}
               className={`h-5 w-5 rounded-full flex items-center justify-center ${

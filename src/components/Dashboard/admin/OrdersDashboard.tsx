@@ -8,118 +8,75 @@ import {
 } from "react-icons/fa";
 import { BsSearch } from "react-icons/bs";
 import { BiChevronLeft, BiChevronRight } from "react-icons/bi";
+import { useGetAllOrdersQuery } from "@/redux/features/orders/orderApi";
 
-// Define Allowed Statuses
-type PaymentStatus = "Pending" | "Success";
-type FulfillmentStatus = "Unfulfilled" | "Fulfilled";
-
-// Order Type Interface
-interface OrderType {
-  id: string;
-  date: string;
-  customer: string;
-  payment: PaymentStatus;
-  total: string;
-  items: string;
-  fulfillment: FulfillmentStatus;
-}
-
-// Mock Orders Data
-const ordersData: OrderType[] = [
-  {
-    id: "#1002",
-    date: "11 Feb, 2024",
-    customer: "Wade Warren",
-    payment: "Pending",
-    total: "$20.00",
-    items: "2 items",
-    fulfillment: "Unfulfilled",
-  },
-  {
-    id: "#1004",
-    date: "13 Feb, 2024",
-    customer: "Esther Howard",
-    payment: "Success",
-    total: "$22.00",
-    items: "3 items",
-    fulfillment: "Fulfilled",
-  },
-  {
-    id: "#1007",
-    date: "15 Feb, 2024",
-    customer: "Jenny Wilson",
-    payment: "Pending",
-    total: "$25.00",
-    items: "1 item",
-    fulfillment: "Unfulfilled",
-  },
-  {
-    id: "#1009",
-    date: "17 Feb, 2024",
-    customer: "Guy Hawkins",
-    payment: "Success",
-    total: "$27.00",
-    items: "5 items",
-    fulfillment: "Fulfilled",
-  },
-  {
-    id: "#1011",
-    date: "19 Feb, 2024",
-    customer: "Jacob Jones",
-    payment: "Pending",
-    total: "$32.00",
-    items: "4 items",
-    fulfillment: "Unfulfilled",
-  },
-  {
-    id: "#1013",
-    date: "21 Feb, 2024",
-    customer: "Kristin Watson",
-    payment: "Success",
-    total: "$25.00",
-    items: "3 items",
-    fulfillment: "Fulfilled",
-  },
-];
-
-// Get Status Badge with TypeScript Validation
-const getStatusBadge = (status: PaymentStatus | FulfillmentStatus) => {
-  const statusClasses: Record<PaymentStatus | FulfillmentStatus, string> = {
-    Pending: "bg-yellow-100 text-yellow-800",
-    Success: "bg-green-100 text-green-800",
-    Unfulfilled: "bg-red-100 text-red-800",
-    Fulfilled: "bg-blue-100 text-blue-800",
+const getStatusBadge = (status: string) => {
+  const statusClasses: Record<string, string> = {
+    pending: "bg-yellow-100 text-yellow-800",
+    completed: "bg-green-100 text-green-800",
+    delivered: "bg-blue-100 text-blue-800",
+    shipped: "bg-purple-100 text-purple-800",
+    cancelled: "bg-red-100 text-red-800",
   };
 
   return (
     <span
-      className={`px-2 py-1 rounded-full text-xs font-semibold ${statusClasses[status]}`}
+      className={`px-2 py-1 rounded-full text-xs font-semibold ${
+        statusClasses[status] || "bg-gray-100 text-gray-800"
+      }`}
     >
-      {status}
+      {status.charAt(0).toUpperCase() + status.slice(1)}
     </span>
   );
 };
 
 const OrdersDashboard = () => {
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const ordersPerPage = 5;
+  const [queryParams, setQueryParams] = useState({
+    deliveryStatus: "",
+    searchTerm: "",
+    page: 1,
+    limit: 10,
+  });
 
-  const indexOfLastOrder = currentPage * ordersPerPage;
-  const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
-  const currentOrders = ordersData.slice(indexOfFirstOrder, indexOfLastOrder);
-  const totalPages = Math.ceil(ordersData.length / ordersPerPage);
+  const queryArray = Object.entries(queryParams)
+    .filter(([_, value]) => value !== "")
+    .map(([key, value]) => ({ name: key, value }));
+
+  const { data, isLoading, error } = useGetAllOrdersQuery(queryArray);
+
+  const orders = data?.data || [];
+  const totalOrders = data?.meta?.total || 0;
+  const totalPages = data?.meta?.totalPage || 1;
+
+  const handleFilterClick = (filter: string) => {
+    setQueryParams({
+      ...queryParams,
+      deliveryStatus: filter.toLowerCase(),
+      page: 1,
+    });
+  };
+
+  const handlePageChange = (newPage: number) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setQueryParams({ ...queryParams, page: newPage });
+    }
+  };
 
   return (
     <div className="p-6">
-      {/* Dashboard Header */}
+      {error && (
+        <div className="bg-red-100 text-red-700 p-3 mb-4 rounded-md">
+          Error fetching data: {JSON.stringify(error)}
+        </div>
+      )}
+
       <h1 className="text-3xl font-bold text-gray-900 mb-6">Orders</h1>
 
-      {/* Order Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
         <SummaryCard
           icon={<FaShoppingCart />}
           title="Total Orders"
-          value="21"
+          value={totalOrders.toString()}
           change="+25.2%"
         />
         <SummaryCard
@@ -142,27 +99,39 @@ const OrdersDashboard = () => {
         />
       </div>
 
-      {/* Filters & Actions */}
-      <div className="flex justify-between items-center mb-4">
-        <div className="flex space-x-4">
-          {["All", "Unfulfilled", "Unpaid", "Open", "Closed"].map((filter) => (
-            <button
-              key={filter}
-              className="px-4 py-2 border rounded-md text-gray-600 hover:bg-gray-100"
-            >
-              {filter}
-            </button>
-          ))}
-          <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
-            + Add
-          </button>
+      <div className="flex flex-col lg:flex-row justify-between gap-2 items-center mb-4">
+        <div className="grid grid-cols-5 gap-2">
+          {["All", "PENDING", "DELIVERED", "SHIPPED", "CANCELLED"].map(
+            (filter) => (
+              <button
+                key={filter}
+                onClick={() => handleFilterClick(filter)}
+                className={`px-2 py-1 border rounded-sm text-xs ${
+                  queryParams.deliveryStatus === filter.toLowerCase()
+                    ? "bg-blue-600 text-white"
+                    : "text-gray-600 hover:bg-gray-100"
+                }`}
+              >
+                {filter}
+              </button>
+            )
+          )}
         </div>
 
+        {/* Search Input */}
         <div className="relative">
           <BsSearch className="absolute left-3 top-2.5 text-gray-500" />
           <input
             type="text"
             placeholder="Search Orders..."
+            value={queryParams.searchTerm}
+            onChange={(e) =>
+              setQueryParams({
+                ...queryParams,
+                searchTerm: e.target.value,
+                page: 1,
+              })
+            }
             className="border border-gray-300 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -174,7 +143,7 @@ const OrdersDashboard = () => {
           <table className="w-full border-collapse rounded-lg overflow-hidden min-w-[800px]">
             <thead className="bg-gray-200 text-gray-600 text-left">
               <tr>
-                <th className="px-4 py-2">Order</th>
+                <th className="px-4 py-2">Order ID</th>
                 <th className="px-4 py-2">Date</th>
                 <th className="px-4 py-2">Customer</th>
                 <th className="px-4 py-2">Payment</th>
@@ -185,52 +154,65 @@ const OrdersDashboard = () => {
               </tr>
             </thead>
             <tbody>
-              {currentOrders.map((order) => (
-                <tr
-                  key={order.id}
-                  className="border-t border-gray-200 hover:bg-gray-100"
-                >
-                  <td className="px-4 py-3">{order.id}</td>
-                  <td className="px-4 py-3">{order.date}</td>
-                  <td className="px-4 py-3">{order.customer}</td>
-                  <td className="px-4 py-3">{getStatusBadge(order.payment)}</td>
-                  <td className="px-4 py-3">{order.total}</td>
-                  <td className="px-4 py-3">{order.items}</td>
-                  <td className="px-4 py-3">
-                    {getStatusBadge(order.fulfillment)}
-                  </td>
-                  <td className="px-4 py-3 text-right">
-                    <button className="text-gray-600 hover:text-gray-900">
-                      <FaEllipsisH />
-                    </button>
+              {!isLoading && orders.length > 0 ? (
+                orders.map((order) => (
+                  <tr
+                    key={order._id}
+                    className="border-t border-gray-200 hover:bg-gray-100"
+                  >
+                    <td className="px-4 py-3">{order._id}</td>
+                    <td className="px-4 py-3">
+                      {new Date(order.createdAt).toLocaleDateString()}
+                    </td>
+                    <td className="px-4 py-3">{order.user.name}</td>
+                    <td className="px-4 py-3">
+                      {getStatusBadge(order.status)}
+                    </td>
+                    <td className="px-4 py-3">${order.totalPrice}</td>
+                    <td className="px-4 py-3">{order.quantity} item(s)</td>
+                    <td className="px-4 py-3">
+                      {getStatusBadge(order.deliveryStatus)}
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      <button className="text-gray-600 hover:text-gray-900">
+                        <FaEllipsisH />
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={8} className="text-center text-gray-500 py-4">
+                    {isLoading ? "Loading orders..." : "No orders found"}
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
 
-        {/* Pagination Controls */}
+        {/* Pagination */}
         <div className="flex justify-between items-center mt-4">
           <p className="text-gray-600">
-            Showing {indexOfFirstOrder + 1} - {indexOfLastOrder} of{" "}
-            {ordersData.length} orders
+            Showing {(queryParams.page - 1) * queryParams.limit + 1} -{" "}
+            {Math.min(queryParams.page * queryParams.limit, totalOrders)} of{" "}
+            {totalOrders} orders
           </p>
           <div className="flex items-center space-x-2">
             <button
               className="p-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition"
-              onClick={() => setCurrentPage(currentPage - 1)}
-              disabled={currentPage === 1}
+              onClick={() => handlePageChange(queryParams.page - 1)}
+              disabled={queryParams.page === 1}
             >
               <BiChevronLeft className="w-5 h-5" />
             </button>
             <span className="px-3 py-1 border rounded-lg text-gray-900">
-              {currentPage} / {totalPages}
+              {queryParams.page} / {totalPages}
             </span>
             <button
               className="p-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition"
-              onClick={() => setCurrentPage(currentPage + 1)}
-              disabled={currentPage === totalPages}
+              onClick={() => handlePageChange(queryParams.page + 1)}
+              disabled={queryParams.page === totalPages}
             >
               <BiChevronRight className="w-5 h-5" />
             </button>
@@ -241,6 +223,7 @@ const OrdersDashboard = () => {
   );
 };
 
+// TODO: Summary Card  (Static data now)
 interface SummaryCardProps {
   icon: JSX.Element;
   title: string;
