@@ -35,12 +35,12 @@ const OnModal: React.FC<ModalProps> = ({
 
   return (
     <div
-      className={`fixed inset-0 flex items-center justify-center bg-black/50 transition-opacity duration-300 ${
+      className={`fixed inset-0 flex items-center  justify-center bg-black/50 transition-opacity duration-300 ${
         isVisible ? "opacity-100" : "opacity-0"
       }`}
     >
       <div
-        className={`bg-white p-6 rounded-xl shadow-lg w-full max-w-md relative transform transition-transform duration-300 ${
+        className={`bg-white p-6  shadow-lg w-full max-w-md relative transform transition-transform duration-300 ${
           isVisible ? "scale-100" : "scale-95"
         }`}
       >

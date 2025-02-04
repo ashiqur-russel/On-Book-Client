@@ -18,7 +18,6 @@ const Bestsellers = () => {
 
   const { data, isLoading } = useGetAllProductsQuery(queryArray);
 
-  // Handle loading state
   if (isLoading) {
     return (
       <p className="text-center text-lg text-gray-600">Data is Loading...</p>
@@ -33,7 +32,9 @@ const Bestsellers = () => {
       <div className="container mx-auto px-10">
         {/* Header Section */}
         <div className="flex px-1 justify-between items-center">
-          <h2 className="text-4xl text-gray-900">Bestsellers</h2>
+          <h2 className="text-4xl text-gray-900 mb-3 text-center">
+            Bestsellers
+          </h2>
           <NavLink
             to={"/products"}
             className="text-gray-700 hover:underline text-sm hidden md:inline lg:inline"
