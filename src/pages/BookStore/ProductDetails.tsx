@@ -11,18 +11,24 @@ import { useGetProductByIdQuery } from "../../redux/features/product/productApi"
 import { useState } from "react";
 import BuyProductModal from "@/components/modals/BuyProductModal";
 import { useGetMeQuery } from "@/redux/features/user/registerApi";
+import { DeleteIcon } from "lucide-react";
 
 const ProductDetails = () => {
   const { id } = useParams<{ id: string }>();
 
   const { data: product, isLoading, isError } = useGetProductByIdQuery(id!);
-  const { data: user } = useGetMeQuery("");
+  const { data: user, isLoading: userLoading } = useGetMeQuery("");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   if (isLoading) {
     return <div className="text-center text-lg font-semibold">Loading...</div>;
   }
+
+  if (userLoading) {
+    return <p>Loading...</p>;
+  }
+  const userRole = user[0]?.role;
 
   if (isError || !product) {
     return (
@@ -89,18 +95,30 @@ const ProductDetails = () => {
             <p className="mt-4 text-gray-600">{product.description}</p>
           </div>
 
-          <div className="mt-6">
+          {userRole !== "admin" && (
+            <div className="mt-6">
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="w-full bg-red-600 text-white py-3 rounded-lg text-lg flex items-center justify-center gap-2 hover:bg-red-700 transition duration-200"
+              >
+                <IoCart size={20} /> Buy Now
+              </button>
+
+              <button className="w-full mt-3 bg-gray-100 text-black py-3 rounded-lg text-lg flex items-center justify-center gap-2 hover:bg-gray-200 transition duration-200">
+                <IoHeart size={20} /> Add on Wishlist
+              </button>
+            </div>
+          )}
+
+          {userRole === "admin" && (
             <button
-              onClick={() => setIsModalOpen(true)}
+              onClick={() => ""}
+              disabled={true}
               className="w-full bg-red-600 text-white py-3 rounded-lg text-lg flex items-center justify-center gap-2 hover:bg-red-700 transition duration-200"
             >
-              <IoCart size={20} /> Buy Now
+              <DeleteIcon size={20} /> DELETE
             </button>
-
-            <button className="w-full mt-3 bg-gray-100 text-black py-3 rounded-lg text-lg flex items-center justify-center gap-2 hover:bg-gray-200 transition duration-200">
-              <IoHeart size={20} /> Add on Wishlist
-            </button>
-          </div>
+          )}
 
           <div className="mt-6">
             <h3 className="text-lg font-semibold">Recommend:</h3>

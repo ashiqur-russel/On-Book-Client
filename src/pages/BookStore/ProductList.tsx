@@ -5,6 +5,7 @@ import { useGetAllProductsQuery } from "../../redux/features/product/productApi"
 import { IoFilter } from "react-icons/io5";
 import { BiChevronLeft, BiChevronRight } from "react-icons/bi";
 import { BsSearch } from "react-icons/bs";
+import { useGetMeQuery } from "@/redux/features/user/registerApi";
 
 const Products = () => {
   const [queryParams, setQueryParams] = useState({
@@ -21,8 +22,6 @@ const Products = () => {
 
   const { data } = useGetAllProductsQuery(queryArray);
 
-  console.log(data);
-
   const [showFilters, setShowFilters] = useState<boolean>(false);
   const [gridView] = useState<boolean>(true);
 
@@ -34,6 +33,13 @@ const Products = () => {
       setQueryParams({ ...queryParams, page: newPage });
     }
   };
+
+  const { data: user, isLoading } = useGetMeQuery("");
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
+  const role = user[0]?.role;
+
 
   const handleFilterClick = (filter: string) => {
     setQueryParams({
@@ -73,7 +79,6 @@ const Products = () => {
               ))}
             </div>
 
-            {/* 🔍 Search Bar */}
             <div className="relative flex items-center w-full md:w-auto">
               <BsSearch className="absolute left-3 top-2.5 text-gray-500" />
               <input
@@ -104,7 +109,7 @@ const Products = () => {
           >
             {product.length > 0 ? (
               product.map((product) => (
-                <ProductCard key={product.id} product={product} />
+                <ProductCard key={product.id} product={product} role={role} />
               ))
             ) : (
               <p className="col-span-full text-center text-gray-500">

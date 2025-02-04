@@ -1,5 +1,6 @@
 import { FaShoppingCart } from "react-icons/fa";
 import { IoEye } from "react-icons/io5";
+import { useNavigate } from "react-router";
 
 interface ProductProps {
   product: {
@@ -12,19 +13,19 @@ interface ProductProps {
     rating?: number;
     hasOffer?: boolean;
   };
+  role?: string;
 }
 
-const ProductCard: React.FC<ProductProps> = ({ product }) => {
+const ProductCard: React.FC<ProductProps> = ({ product, role }) => {
+  const navigate = useNavigate();
   return (
     <div className="relative bg-white border-gray-200 flex flex-col w-full">
-      {/* Offer Badge (Correctly Positioned) */}
       {product.hasOffer && (
         <div className="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-sm">
           OFFER
         </div>
       )}
 
-      {/* Product Image - Fixed Height for Large Screens, Larger for Small Screens */}
       <div className="w-full h-[240px] sm:h-[280px] lg:h-[260px] flex-shrink-0">
         <img
           src={product.productImg || "/default-image.jpg"}
@@ -33,7 +34,6 @@ const ProductCard: React.FC<ProductProps> = ({ product }) => {
         />
       </div>
 
-      {/* Product Details */}
       <div className="flex-1 flex flex-col justify-between mt-3 w-full">
         <div>
           <h3 className="text-md font-semibold">{product.title}</h3>
@@ -72,16 +72,18 @@ const ProductCard: React.FC<ProductProps> = ({ product }) => {
       <div className="mt-4 flex flex-col lg:flex-row  gap-2">
         <button
           className="flex items-center justify-center gap-2 bg-gray-200 px-4 py-2  text-sm hover:bg-gray-300 transition w-full"
-          onClick={() => (window.location.href = `/products/${product.id}`)}
+          onClick={() => navigate(`/products/${product.id}`)}
         >
           <IoEye size={18} />
           View
         </button>
 
-        <button className="flex items-center justify-center gap-2 bg-red-600 text-white px-4 py-2 text-sm hover:bg-red-500 transition w-full">
-          <FaShoppingCart size={18} />
-          Buy
-        </button>
+        {role !== "admin" && (
+          <button className="flex items-center justify-center gap-2 bg-red-600 text-white px-4 py-2 text-sm hover:bg-red-500 transition w-full">
+            <FaShoppingCart size={18} />
+            Buy
+          </button>
+        )}
       </div>
     </div>
   );
