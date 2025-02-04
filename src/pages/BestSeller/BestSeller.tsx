@@ -1,4 +1,5 @@
 import { AiOutlineShoppingCart } from "react-icons/ai";
+import { NavLink } from "react-router";
 
 const books = [
   {
@@ -46,12 +47,12 @@ const Bestsellers = () => {
         {/* Header Section */}
         <div className="flex px-1 justify-between items-center">
           <h2 className="text-4xl text-gray-900">Bestsellers</h2>
-          <a
-            href="#"
+          <NavLink
+            to={"/products"}
             className="text-gray-700 hover:underline text-sm hidden md:inline lg:inline"
           >
             See all
-          </a>
+          </NavLink>
         </div>
 
         {/* Books Grid */}

@@ -20,7 +20,9 @@ interface Order {
   status: string;
   quantity: number;
   totalPrice: number;
-  payment: string | null;
+  payment: {
+    status: string;
+  };
   deliveryStatus: "pending" | "shipped" | "delivered" | "revoked";
   createdAt: string;
   updatedAt: string;
@@ -40,6 +42,7 @@ const MyOrders = () => {
     isError,
     refetch,
   } = useGetMyordersQuery(queryParams);
+  console.log("orders", orders);
 
   const totalOrders = orders?.meta?.total || 0;
   const totalPages = Math.max(1, Math.ceil(totalOrders / queryParams.limit));
@@ -228,7 +231,7 @@ const OrderCard: React.FC<{ order: Order; refetch: () => void }> = ({
         </button>
       )}
 
-      {order.status === "cancelled" && (
+      {order.status === "cancelled" && order.payment.status !== "refunded" && (
         <button
           disabled={order.status === "cancelled"}
           className={`w-full md:w-auto mt-4 md:mt-0 md:absolute md:top-6 md:right-4 px-4 py-2 rounded-lg text-sm font-medium transition ${
@@ -237,7 +240,19 @@ const OrderCard: React.FC<{ order: Order; refetch: () => void }> = ({
               : "bg-red-600 text-white hover:bg-red-700"
           }`}
         >
-          Refund
+          Refund Processing...
+        </button>
+      )}
+      {order.status === "cancelled" && order.payment.status === "refunded" && (
+        <button
+          disabled={order.status === "cancelled"}
+          className={`w-full md:w-auto mt-4 md:mt-0 md:absolute md:top-6 md:right-4 px-4 py-2 rounded-lg text-sm font-medium transition ${
+            order.deliveryStatus !== "pending"
+              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+              : "bg-red-600 text-white hover:bg-red-700"
+          }`}
+        >
+          Refund Completed
         </button>
       )}
     </div>

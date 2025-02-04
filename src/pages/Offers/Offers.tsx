@@ -1,3 +1,5 @@
+import { NavLink } from "react-router";
+
 const offers = [
   {
     id: 1,
@@ -56,7 +58,7 @@ const Offers = () => {
 
         <div className="mt-10 text-center">
           <button className="px-6 py-2 border border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white transition">
-            See all
+            <NavLink to={"/products"}>SEE ALL</NavLink>
           </button>
         </div>
       </div>

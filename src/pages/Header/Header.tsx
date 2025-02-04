@@ -1,3 +1,5 @@
+import { NavLink } from "react-router";
+
 const books = [
   {
     id: 1,
@@ -38,7 +40,7 @@ const Header = () => {
               Not sure what to read now? Match your next reading mood perfectly.
             </p>
             <button className="mt-6 bg-black text-white px-8 py-3 text-lg hover:bg-gray-700 transition">
-              Explore Now
+              <NavLink to={"/products"}> Explore Now</NavLink>
             </button>
           </div>
 
@@ -46,7 +48,7 @@ const Header = () => {
           <div className="relative lg:w-1/2 hidden lg:flex flex-col items-center mt-12 lg:mt-0">
             <div className="flex space-x-6 overflow-x-auto no-scrollbar scroll-smooth">
               {books.map((book, index) => {
-                const isMiddle = index === 1; // Middle card should be flipped
+                const isMiddle = index === 1;
                 return (
                   <div key={book.id} className="text-center flex-shrink-0">
                     <div

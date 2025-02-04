@@ -147,19 +147,23 @@ const Navbar = () => {
             </NavLink>
           </li>
 
-          {user && (
-            <li>
-              <button
-                onClick={() => {
-                  handleLogout();
-                  setMenuOpen(false);
-                }}
-                className="text-gray-800 hover:text-gray-600 flex items-center space-x-2"
-              >
-                <AiOutlineLogout className="w-5 h-5" />
-                <span>Logout</span>
-              </button>
-            </li>
+          {/* Login / Logout Button */}
+          {user ? (
+            <button
+              onClick={handleLogout}
+              className="flex items-center space-x-1 text-gray-800 hover:text-gray-600 font-medium"
+            >
+              <AiOutlineLogout className="w-5 h-5" />
+              <span>Logout</span>
+            </button>
+          ) : (
+            <NavLink
+              to={"/signin"}
+              className="flex items-center space-x-1 text-gray-800 hover:text-gray-600 font-medium"
+            >
+              <AiOutlineLock className="w-5 h-5" />
+              <span>Login</span>
+            </NavLink>
           )}
         </ul>
       </div>
