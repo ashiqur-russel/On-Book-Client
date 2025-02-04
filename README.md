@@ -1,50 +1,94 @@
-# React + TypeScript + Vite
+<h1 align="center">
+    <img alt="Book Shop" title="#BookShop" src="./assets/banner.jpg" />
+</h1>
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+<h1 align="center">
+  <a href="#"> Book Shop Application </a>
+</h1>
 
-Currently, two official plugins are available:
+<h3 align="center">A modern e-commerce platform for buying and selling books!</h3>
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+<p align="center">
 
-## Expanding the ESLint configuration
+  <img alt="Stars" src="https://img.shields.io/github/stars/your-username/book-shop-app?style=social">
+  
+  <a href="https://github.com/your-username/book-shop-app">
+    <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/your-username/book-shop-app">
+  </a>
+    
+  <img alt="License" src="https://img.shields.io/badge/license-MIT-brightgreen">
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+  <a href="https://github.com/your-username">
+    <img alt="made by Your Name" src="https://img.shields.io/badge/made%20by-Your%20Name-ff69b4">
+  </a>
+</p>
 
-- Configure the top-level `parserOptions` property like this:
+<h4 align="center"> 
+	 Status: Finished
+</h4>
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+<p align="center">
+ <a href="#about">About</a> •
+ <a href="#features">Features</a> •
+ <a href="#how-it-works">How it works</a> • 
+ <a href="#tech-stack">Tech Stack</a> •  
+ <a href="#author">Author</a> • 
+ <a href="#user-content-license">License</a>
+</p>
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+## About
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+**Book Shop Application** is a modern e-commerce platform designed for buying and selling books. It features secure user authentication, role-based access control, product management, and a seamless payment system. The platform is responsive, visually appealing, and provides a smooth user experience.
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+---
+
+## Features
+
+- [x] **User Authentication:**
+  - Secure registration and login with JWT token-based authentication.
+  - Role-based access control (user and admin roles).
+- [x] **Product Management:**
+  - Admins can add, update, and delete books.
+  - Users can browse, search, and filter books.
+- [x] **Order Management:**
+  - Users can place orders, track order status, and cancel orders.
+  - Admins can manage all orders (view, update, and cancel).
+- [x] **Payment Integration:**
+  - Integrated with **SurjoPay** for secure payments.
+- [x] **Responsive Design:**
+  - Fully responsive and works seamlessly on all devices.
+- [x] **Product Reviews:**
+  - Users can add reviews for books with ratings and comments.
+
+---
+
+## How it works
+
+The project is divided into two parts:
+
+1. **Backend** (another repo) - Handles API requests, database operations, and authentication.
+2. **Frontend** (this repo) - Provides the user interface and interacts with the backend.
+
+### Pre-requisites
+
+Before you begin, ensure you have the following tools installed:
+- [Git](https://git-scm.com/)
+- [Node.js](https://nodejs.org/en/)
+- A code editor like [VSCode](https://code.visualstudio.com/)
+
+#### Running the web application (Frontend)
+
+```bash
+# Clone this repository
+$ git clone https://github.com/your-username/book-shop-app.git
+
+# Access the project folder in your terminal
+$ cd book-shop-app
+
+# Install the dependencies
+$ npm install
+
+# Run the application in development mode
+$ npm start
+
+# The application will open on port 3000 - go to http://localhost:3000
