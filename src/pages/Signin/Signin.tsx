@@ -42,8 +42,11 @@ const SignIn = () => {
 
       await new Promise((resolve) => setTimeout(resolve, 200));
 
+      const redirectPath =
+        new URLSearchParams(location.search).get("redirect") || "/";
+
       if (user.role === "user") {
-        navigate(`/`);
+        navigate(redirectPath);
       } else {
         navigate(`/dashboard/${user.role}`);
       }
@@ -66,7 +69,7 @@ const SignIn = () => {
             Sign in with Google
           </button>
 
-          <div className="relative z-0  my-6 text-center">
+          <div className="relative z-1  my-6 text-center">
             <span className="text-gray-500 text-sm">or sign in with email</span>
             <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-1/3 border-t border-gray-300"></div>
             <div className="absolute right-0 top-1/2 transform -translate-y-1/2 w-1/3 border-t border-gray-300"></div>

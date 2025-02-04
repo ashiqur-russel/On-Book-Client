@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import {
   IoCart,
   IoHeart,
@@ -15,18 +15,22 @@ import { useGetMeQuery } from "@/redux/features/user/registerApi";
 const ProductDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
 
+  const { data: myData, refetch } = useGetMeQuery("");
+
+  const userRole = myData?.[0]?.role;
   const { data: product, isLoading, isError } = useGetProductByIdQuery(id!);
-  const { data: user, isLoading: userLoading } = useGetMeQuery("");
-
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Redirect to login if user is not found
-  useEffect(() => {
-    if (!userLoading && (!user || user.length === 0)) {
-      navigate("/signin");
+  const handleBuyNow = () => {
+    if (!myData || myData.length === 0) {
+      navigate(`/signin?redirect=${encodeURIComponent(location.pathname)}`);
+    } else {
+      setIsModalOpen(true);
     }
-  }, [user, userLoading, navigate]);
+    refetch();
+  };
 
   if (isLoading) {
     return <div className="text-center text-lg font-semibold">Loading...</div>;
@@ -99,13 +103,25 @@ const ProductDetails = () => {
 
           <div className="mt-6">
             <button
-              onClick={() => setIsModalOpen(true)}
-              className="w-full bg-red-600 text-white py-3 rounded-lg text-lg flex items-center justify-center gap-2 hover:bg-red-700 transition duration-200"
+              onClick={handleBuyNow}
+              className={`w-full py-3 rounded-lg text-lg flex items-center justify-center gap-2 transition duration-200 ${
+                userRole === "admin"
+                  ? "bg-gray-400 text-gray-700 cursor-not-allowed"
+                  : "bg-red-600 text-white hover:bg-red-700"
+              }`}
+              disabled={userRole === "admin"}
             >
               <IoCart size={20} /> Buy Now
             </button>
 
-            <button className="w-full mt-3 bg-gray-100 text-black py-3 rounded-lg text-lg flex items-center justify-center gap-2 hover:bg-gray-200 transition duration-200">
+            <button
+              className={`w-full mt-3 py-3 rounded-lg text-lg flex items-center justify-center gap-2 transition duration-200 ${
+                userRole === "admin"
+                  ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                  : "bg-gray-100 text-black hover:bg-gray-200"
+              }`}
+              disabled={userRole === "admin"}
+            >
               <IoHeart size={20} /> Add on Wishlist
             </button>
           </div>
@@ -142,11 +158,11 @@ const ProductDetails = () => {
         </div>
       </div>
 
-      {isModalOpen && (
+      {myData && userRole === "user" && isModalOpen && (
         <BuyProductModal
           product={product}
           onClose={() => setIsModalOpen(false)}
-          user={user[0]?.name}
+          user={myData[0]?.name}
         />
       )}
     </div>

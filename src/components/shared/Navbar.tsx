@@ -9,6 +9,7 @@ import {
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 import { logOut, selectCurrentUser } from "../../redux/features/auth/authSlice";
+import { ShoppingBag } from "lucide-react";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -22,8 +23,8 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="p-4 w-full">
-      <div className="container mx-auto flex items-center justify-between">
+    <nav className="w-full px-3 md:px-10 lg:px-24  py-0 mt-4 ">
+      <div className="  flex items-center justify-between  w-full">
         {/* Logo & Desktop Navigation */}
         <div className="flex items-center space-x-8">
           <h1 className="text-3xl font-bold text-gray-900">
@@ -53,31 +54,39 @@ const Navbar = () => {
         <div className="hidden lg:flex items-center space-x-6">
           {/* Search Bar */}
           <div className="relative flex items-center">
-            <AiOutlineSearch className="text-gray-600 w-5 h-5 absolute left-2" />
+            <AiOutlineSearch className="hidden text-gray-600 w-5 h-5 absolute left-2" />
             <input
+              disabled
               type="text"
               placeholder="Search book..."
-              className="border-b border-gray-300 pl-8 pr-4 py-1 text-sm text-gray-800 focus:outline-none focus:border-gray-500"
+              className="border-b w-0 hidden  border-gray-300 pl-8 pr-4 py-1 text-sm text-gray-800 focus:outline-none focus:border-gray-500"
             />
+            <ShoppingBag size={20} className="mr-4" />
           </div>
 
           {/* Login / Logout Button */}
           {user ? (
-            <button
-              onClick={handleLogout}
-              className="flex items-center space-x-1 text-gray-800 hover:text-gray-600 font-medium"
-            >
-              <AiOutlineLogout className="w-5 h-5" />
-              <span>Logout</span>
-            </button>
+            <>
+              <button
+                onClick={handleLogout}
+                className="flex items-center space-x-1 text-gray-800 hover:text-gray-600 font-medium"
+              >
+                <AiOutlineLogout className="w-5 h-5" />
+                <span>Logout</span>
+              </button>
+            </>
           ) : (
-            <NavLink
-              to={"/signin"}
-              className="flex items-center space-x-1 text-gray-800 hover:text-gray-600 font-medium"
-            >
-              <AiOutlineLock className="w-5 h-5" />
-              <span>Login</span>
-            </NavLink>
+            <>
+              <ShoppingBag />
+
+              <NavLink
+                to={"/signin"}
+                className="flex items-center space-x-1 text-gray-800 hover:text-gray-600 font-medium"
+              >
+                <AiOutlineLock className="w-5 h-5" />
+                <span>Login</span>
+              </NavLink>
+            </>
           )}
         </div>
 
@@ -96,16 +105,21 @@ const Navbar = () => {
 
       {/* Mobile Menu */}
       <div
-        className={`fixed top-0 right-0 h-full w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:hidden ${
+        className={`fixed top-0 right-0 z-30 h-full w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:hidden ${
           menuOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
         <div className="p-4 flex justify-between items-center border-b border-gray-200">
-          <h2 className="text-xl font-bold text-gray-800">Menu</h2>
+          <span className="flex items-center gap-2">
+            {" "}
+            <h2 className="text-xl font-bold text-gray-800">Menu </h2>{" "}
+            <ShoppingBag size={18} />
+          </span>
           <button
             className="text-gray-600 focus:outline-none"
             onClick={() => setMenuOpen(false)}
           >
+            {" "}
             <AiOutlineClose className="w-6 h-6" />
           </button>
         </div>
@@ -142,13 +156,15 @@ const Navbar = () => {
               <span>Logout</span>
             </button>
           ) : (
-            <NavLink
-              to={"/signin"}
-              className="flex items-center space-x-1 text-gray-800 hover:text-gray-600 font-medium"
-            >
-              <AiOutlineLock className="w-5 h-5" />
-              <span>Login</span>
-            </NavLink>
+            <>
+              <NavLink
+                to={"/signin"}
+                className="flex items-center space-x-1 text-gray-800 hover:text-gray-600 font-medium"
+              >
+                <AiOutlineLock className="w-5 h-5" />
+                <span>Login</span>
+              </NavLink>
+            </>
           )}
         </ul>
       </div>

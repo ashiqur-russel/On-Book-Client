@@ -12,8 +12,8 @@ import { toast } from "sonner";
 import { RootState } from "../store";
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: "https://book-on.vercel.app/api",
-  // baseUrl: "http://localhost:5001/api",
+  //baseUrl: "https://book-on.vercel.app/api",
+  baseUrl: "http://localhost:5001/api",
 
   credentials: "include",
   prepareHeaders: (headers, { getState }) => {
@@ -32,7 +32,6 @@ const baseQueryWithRefreshToken: BaseQueryFn<
   DefinitionType
 > = async (args, api, extraOptions): Promise<any> => {
   let result = await baseQuery(args, api, extraOptions);
-  console.log(result);
 
   if (result?.error?.status === 409) {
     toast.error((result?.error?.data as { message: string })?.message);

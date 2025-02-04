@@ -43,7 +43,7 @@ const Products = () => {
 
   return (
     <>
-      <div className="flex flex-col min-h-screen p-4 md:p-6 lg:p-11">
+      <div className="flex flex-col px-3 md:px-10 lg:px-24  py-0 mt-4">
         <div className="flex justify-between items-center mb-4">
           <button
             className="btn-primary flex items-center gap-2 w-full sm:w-auto sm:gap-2"
@@ -93,7 +93,7 @@ const Products = () => {
         {/** Product List */}
         <div className="">
           <div
-            className={`grid ${
+            className={`grid relative ${
               gridView
                 ? "grid-cols-1  md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
                 : "grid-cols-1"
@@ -109,9 +109,9 @@ const Products = () => {
               </p>
             )}
           </div>
-          <div className="flex justify-between items-center mt-4 mb-4">
+          <div className="flex justify-between items-center mt-4 mb-4 ">
             <p className="text-gray-600"></p>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 z-4">
               <button
                 className="p-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition"
                 onClick={() => handlePageChange(queryParams.page - 1)}
