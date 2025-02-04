@@ -52,7 +52,22 @@ const orderApi = baseApi.injectEndpoints({
         };
       },
     }),
+
+    cancelOrder: builder.mutation({
+      query: (orderId) => ({
+        url: `/orders/${orderId}/cancel`,
+        method: "PATCH",
+      }),
+
+      transformResponse: (response: TResponseRedux<any>) => {
+        return response.data;
+      },
+    }),
   }),
 });
 
-export const { useGetAllOrdersQuery, useGetMyordersQuery } = orderApi;
+export const {
+  useGetAllOrdersQuery,
+  useGetMyordersQuery,
+  useCancelOrderMutation,
+} = orderApi;

@@ -1,7 +1,11 @@
 import React, { useState } from "react";
-import { useGetMyordersQuery } from "@/redux/features/orders/orderApi";
+import {
+  useCancelOrderMutation,
+  useGetMyordersQuery,
+} from "@/redux/features/orders/orderApi";
 import { motion } from "framer-motion";
 import { BiChevronLeft, BiChevronRight } from "react-icons/bi";
+import { toast } from "sonner";
 
 interface Order {
   _id: string;
@@ -13,6 +17,7 @@ interface Order {
     productImg: string;
     price: number;
   };
+  status: string;
   quantity: number;
   totalPrice: number;
   payment: string | null;
@@ -29,7 +34,12 @@ const MyOrders = () => {
     limit: 10,
   });
 
-  const { data: orders, isLoading, isError } = useGetMyordersQuery(queryParams);
+  const {
+    data: orders,
+    isLoading,
+    isError,
+    refetch,
+  } = useGetMyordersQuery(queryParams);
 
   console.log("Orders API Response:", orders);
 
@@ -106,14 +116,32 @@ const MyOrders = () => {
 
       <div className="p-4 w-full mx-auto">
         {orders.data.map((order: Order) => (
-          <OrderCard key={order._id} order={order} />
+          <OrderCard key={order._id} order={order} refetch={refetch} />
         ))}
       </div>
     </>
   );
 };
 
-const OrderCard: React.FC<{ order: Order }> = ({ order }) => {
+const OrderCard: React.FC<{ order: Order; refetch: () => void }> = ({
+  order,
+  refetch,
+}) => {
+  const [cancelOrder, { data, isLoading }] = useCancelOrderMutation();
+
+  console.log("AFTER cacnel order:", data);
+
+  const handleCancelOrder = async () => {
+    try {
+      cancelOrder(order._id);
+      toast.success("Order cancelled successfully!");
+      refetch();
+    } catch (error) {
+      console.error("Cancel Order Failed:", error);
+      toast.error("Failed to cancel order. Try again.");
+    }
+  };
+
   const getStatusText = (status: string) => {
     switch (status) {
       case "pending":
@@ -162,7 +190,6 @@ const OrderCard: React.FC<{ order: Order }> = ({ order }) => {
         </div>
       </div>
 
-      {/* ✅ Restored Timeline with Progress Bar */}
       <div className="mt-4 relative w-full">
         <div className="w-full h-1 bg-gray-300 rounded-full absolute top-2 left-0" />
         <motion.div
@@ -189,17 +216,33 @@ const OrderCard: React.FC<{ order: Order }> = ({ order }) => {
             />
           ))}
         </div>
-
-        <div className="flex justify-between text-xs mt-2 text-gray-500">
-          <span>Order Placed</span>
-          <span>Shipped</span>
-          <span>Delivered</span>
-        </div>
       </div>
+      {order.status === "completed" && (
+        <button
+          onClick={() => handleCancelOrder}
+          disabled={isLoading || order.deliveryStatus !== "pending"}
+          className={`w-full md:w-auto mt-4 md:mt-0 md:absolute md:top-6 md:right-4 px-4 py-2 rounded-lg text-sm font-medium transition ${
+            order.deliveryStatus !== "pending"
+              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+              : "bg-red-600 text-white hover:bg-red-700"
+          }`}
+        >
+          {isLoading ? "Cancelling..." : "Cancel Order"}
+        </button>
+      )}
 
-      <button className="w-full cursor-pointer md:w-auto mt-4 md:mt-0 md:absolute md:top-6 md:right-4 bg-gray-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-600">
-        Cancel Order
-      </button>
+      {order.status === "cancelled" && (
+        <button
+          disabled={order.status === "cancelled"}
+          className={`w-full md:w-auto mt-4 md:mt-0 md:absolute md:top-6 md:right-4 px-4 py-2 rounded-lg text-sm font-medium transition ${
+            order.deliveryStatus !== "pending"
+              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+              : "bg-red-600 text-white hover:bg-red-700"
+          }`}
+        >
+          Refund
+        </button>
+      )}
     </div>
   );
 };
