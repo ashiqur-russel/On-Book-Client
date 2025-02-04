@@ -9,6 +9,8 @@ import {
 import { BsSearch } from "react-icons/bs";
 import { BiChevronLeft, BiChevronRight } from "react-icons/bi";
 import { useGetAllOrdersQuery } from "@/redux/features/orders/orderApi";
+import { useIssueRefundMutation } from "@/redux/features/payment/paymentApi";
+import { toast } from "sonner";
 
 const getStatusBadge = (status: string) => {
   const statusClasses: Record<string, string> = {
@@ -17,6 +19,8 @@ const getStatusBadge = (status: string) => {
     delivered: "bg-blue-100 text-blue-800",
     shipped: "bg-purple-100 text-purple-800",
     cancelled: "bg-red-100 text-red-800",
+    refunded: "bg-green-100 text-green-800",
+    refundRequested: "bg-orange-100 text-orange-800",
   };
 
   return (
@@ -43,7 +47,8 @@ const OrdersDashboard = () => {
     .filter(([_, value]) => value !== "")
     .map(([key, value]) => ({ name: key, value }));
 
-  const { data, isLoading, error } = useGetAllOrdersQuery(queryArray);
+  const { data, isLoading, error, refetch } = useGetAllOrdersQuery(queryArray);
+  const [issueRefund, { isLoading: isRefunding }] = useIssueRefundMutation();
 
   const orders = data?.data || [];
   const totalOrders = data?.meta?.total || 0;
@@ -55,6 +60,27 @@ const OrdersDashboard = () => {
       deliveryStatus: filter === "All" ? "" : filter.toLowerCase(),
       page: 1,
     });
+  };
+
+  const handleIssueRefund = async (paymentId: string | null | undefined) => {
+    let loadingToast;
+
+    if (!paymentId) {
+      toast.error("Payment ID is missing!");
+      return;
+    }
+    try {
+      toast.loading("Processing refund...");
+      toast.dismiss(loadingToast);
+      await issueRefund(paymentId).unwrap();
+      toast.success("Refund processed successfully!");
+
+      refetch();
+      toast.dismiss(loadingToast);
+    } catch {
+      toast.dismiss(loadingToast);
+      toast.error("Failed to issue refund. Please try again.");
+    }
   };
 
   const handlePageChange = (newPage: number) => {
@@ -165,17 +191,41 @@ const OrdersDashboard = () => {
                     </td>
                     <td className="px-4 py-3">{order.user.name}</td>
                     <td className="px-4 py-3">
-                      {getStatusBadge(order.status)}
+                      {order.status === "cancelled" &&
+                        getStatusBadge(
+                          order.payment?.status === "refunded"
+                            ? "Refund Completed"
+                            : "Refund Requested"
+                        )}
                     </td>
                     <td className="px-4 py-3">${order.totalPrice}</td>
-                    <td className="px-4 py-3">{order.quantity} item(s)</td>
+                    <td className="px-4 py-3">{order.quantity} </td>
                     <td className="px-4 py-3">
                       {getStatusBadge(order.deliveryStatus)}
                     </td>
                     <td className="px-4 py-3 text-right">
-                      <button className="text-gray-600 hover:text-gray-900">
-                        <FaEllipsisH />
-                      </button>
+                      {order.status === "cancelled" &&
+                        order.payment?.status !== "refunded" && (
+                          <button
+                            onClick={() => handleIssueRefund(order.payment._id)}
+                            className="px-4 py-2 bg-red-600 text-white text-xs rounded-md hover:bg-red-700 transition"
+                            disabled={isRefunding}
+                          >
+                            {isRefunding ? "Processing..." : "Issue Refund"}
+                          </button>
+                        )}
+
+                      {order.payment?.status === "refunded" && (
+                        <span className="text-green-600 font-semibold text-xs">
+                          Refund Completed
+                        </span>
+                      )}
+
+                      {order.status !== "cancelled" && (
+                        <button className="text-gray-600 hover:text-gray-900">
+                          <FaEllipsisH />
+                        </button>
+                      )}
                     </td>
                   </tr>
                 ))

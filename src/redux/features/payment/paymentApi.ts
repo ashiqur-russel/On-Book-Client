@@ -14,8 +14,16 @@ const paymentApi = baseApi.injectEndpoints({
         },
       }),
     }),
+
+    issueRefund: builder.mutation({
+      query: (paymentId) => ({
+        url: `/payment/${paymentId}/issue-refund`,
+        method: "POST",
+      }),
+    }),
   }),
   overrideExisting: true,
 });
 
-export const { useCreateCheckoutSessionMutation } = paymentApi;
+export const { useCreateCheckoutSessionMutation, useIssueRefundMutation } =
+  paymentApi;
