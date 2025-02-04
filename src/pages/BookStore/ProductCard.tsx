@@ -16,7 +16,7 @@ interface ProductProps {
 
 const ProductCard: React.FC<ProductProps> = ({ product }) => {
   return (
-    <div className="relative bg-white p-4 border border-gray-200 rounded-md flex flex-col w-full">
+    <div className="relative bg-white border-gray-200 flex flex-col w-full">
       {/* Offer Badge (Correctly Positioned) */}
       {product.hasOffer && (
         <div className="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-sm">
