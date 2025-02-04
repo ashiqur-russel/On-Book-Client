@@ -47,12 +47,6 @@ const Navbar = () => {
                 Dashboard
               </NavLink>
             )}
-            <NavLink
-              to="/about"
-              className="text-gray-800 font-medium hover:text-gray-600 transition"
-            >
-              About Us
-            </NavLink>
           </div>
         </div>
 
@@ -137,15 +131,6 @@ const Navbar = () => {
               </NavLink>
             </li>
           )}
-          <li>
-            <NavLink
-              to="/about"
-              className="text-gray-800 hover:text-gray-600"
-              onClick={() => setMenuOpen(false)}
-            >
-              About Us
-            </NavLink>
-          </li>
 
           {/* Login / Logout Button */}
           {user ? (

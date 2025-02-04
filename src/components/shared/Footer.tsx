@@ -8,11 +8,7 @@ const Footer = () => {
           <div>
             <h3 className="text-lg font-semibold mb-3">Company</h3>
             <ul className="space-y-2 text-sm">
-              <li>
-                <a href="#" className="hover:underline">
-                  About Us
-                </a>
-              </li>
+              
               <li>
                 <a href="#" className="hover:underline">
                   Contact Us
