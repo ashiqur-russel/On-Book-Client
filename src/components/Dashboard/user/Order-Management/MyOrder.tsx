@@ -41,8 +41,6 @@ const MyOrders = () => {
     refetch,
   } = useGetMyordersQuery(queryParams);
 
-  console.log("Orders API Response:", orders);
-
   const totalOrders = orders?.meta?.total || 0;
   const totalPages = Math.max(1, Math.ceil(totalOrders / queryParams.limit));
 
@@ -133,11 +131,10 @@ const OrderCard: React.FC<{ order: Order; refetch: () => void }> = ({
 
   const handleCancelOrder = async () => {
     try {
-      cancelOrder(order._id);
+      await cancelOrder(order._id);
       toast.success("Order cancelled successfully!");
       refetch();
-    } catch (error) {
-      console.error("Cancel Order Failed:", error);
+    } catch {
       toast.error("Failed to cancel order. Try again.");
     }
   };
@@ -219,7 +216,7 @@ const OrderCard: React.FC<{ order: Order; refetch: () => void }> = ({
       </div>
       {order.status === "completed" && (
         <button
-          onClick={() => handleCancelOrder}
+          onClick={() => handleCancelOrder()}
           disabled={isLoading || order.deliveryStatus !== "pending"}
           className={`w-full md:w-auto mt-4 md:mt-0 md:absolute md:top-6 md:right-4 px-4 py-2 rounded-lg text-sm font-medium transition ${
             order.deliveryStatus !== "pending"
