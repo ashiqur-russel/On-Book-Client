@@ -13,10 +13,9 @@ interface ProductProps {
     rating?: number;
     hasOffer?: boolean;
   };
-  role?: string;
 }
 
-const ProductCard: React.FC<ProductProps> = ({ product, role }) => {
+const ProductCard: React.FC<ProductProps> = ({ product }) => {
   const navigate = useNavigate();
   return (
     <div className="relative bg-white border-gray-200 flex flex-col w-full">
@@ -78,12 +77,10 @@ const ProductCard: React.FC<ProductProps> = ({ product, role }) => {
           View
         </button>
 
-        {role !== "admin" && (
-          <button className="flex items-center justify-center gap-2 bg-red-600 text-white px-4 py-2 text-sm hover:bg-red-500 transition w-full">
-            <FaShoppingCart size={18} />
-            Buy
-          </button>
-        )}
+        <button className="flex items-center justify-center gap-2 bg-red-600 text-white px-4 py-2 text-sm hover:bg-red-500 transition w-full">
+          <FaShoppingCart size={18} />
+          Buy
+        </button>
       </div>
     </div>
   );

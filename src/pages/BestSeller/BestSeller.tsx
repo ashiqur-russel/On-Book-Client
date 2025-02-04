@@ -1,46 +1,33 @@
+import { useGetAllProductsQuery } from "@/redux/features/product/productApi";
+import { useState } from "react";
 import { AiOutlineShoppingCart } from "react-icons/ai";
 import { NavLink } from "react-router";
 
-const books = [
-  {
-    id: 1,
-    title: "The Spoke Zaratusra",
-    author: "Friedrich Nietzsche",
-    price: "$32.00",
-    rating: 4,
-    image:
-      "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=800&auto=format&fit=crop&q=60",
-  },
-  {
-    id: 2,
-    title: "Confession of a Mask",
-    author: "Yukio Mishima",
-    price: "$28.00",
-    rating: 4,
-    image:
-      "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=800&auto=format&fit=crop&q=60",
-  },
-  {
-    id: 3,
-    title: "The Rebel",
-    author: "Albert Camus",
-    price: "$18.00",
-    rating: 4,
-    image:
-      "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=800&auto=format&fit=crop&q=60",
-  },
-  {
-    id: 4,
-    title: "1984",
-    author: "George Orwell",
-    price: "$36.00",
-    rating: 4,
-    image:
-      "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=800&auto=format&fit=crop&q=60",
-  },
-];
-
 const Bestsellers = () => {
+  const [queryParams] = useState({
+    deliveryStatus: "",
+    searchTerm: "",
+    page: 1,
+    limit: 10,
+  });
+
+  const queryArray = Object.entries(queryParams)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    .filter(([_, value]) => value !== "")
+    .map(([key, value]) => ({ name: key, value }));
+
+  const { data, isLoading } = useGetAllProductsQuery(queryArray);
+
+  // Handle loading state
+  if (isLoading) {
+    return (
+      <p className="text-center text-lg text-gray-600">Data is Loading...</p>
+    );
+  }
+
+  const bestSoldProducts =
+    data?.data?.filter((product) => product.isBestSold)?.slice(0, 4) || [];
+
   return (
     <div className="fontMona">
       <div className="container mx-auto px-10">
@@ -56,48 +43,54 @@ const Bestsellers = () => {
         </div>
 
         {/* Books Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-          {books.map((book) => (
-            <div
-              key={book.id}
-              className=" border-gray-200  p-2  hover:border-2 transition"
-            >
-              {/* Book Image */}
-              <div className="w-full h-60 overflow-hidden mb-4">
-                <img
-                  src={book.image}
-                  alt={book.title}
-                  className="w-full h-full object-cover"
-                />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {bestSoldProducts && bestSoldProducts.length > 0 ? (
+            bestSoldProducts?.map((book) => (
+              <div
+                key={book._id}
+                className="border border-gray-200 p-4 hover:shadow-lg transition"
+              >
+                {/* Book Image */}
+                <div className="w-full h-60 overflow-hidden mb-4">
+                  <img
+                    src={book.productImg}
+                    alt={book.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+
+                {/* Book Details */}
+                <h3 className="text-lg font-semibold text-gray-900 truncate">
+                  {book.title}
+                </h3>
+                <p className="text-sm text-gray-600 mb-2">by: {book.author}</p>
+                <p className="text-lg font-bold text-gray-900">${book.price}</p>
+
+                {/* Ratings (Placeholder - Adjust as needed) */}
+                <div className="flex items-center mt-2">
+                  {Array.from({ length: 5 }).map((_, index) => (
+                    <span
+                      key={index}
+                      className={`text-yellow-400 ${
+                        index < 4 ? "text-yellow-400" : "text-gray-300"
+                      }`}
+                    >
+                      ★
+                    </span>
+                  ))}
+                </div>
+
+                <button className="mt-4 flex items-center justify-center w-full bg-gray-900 text-white py-2 hover:bg-gray-700 transition">
+                  Buy
+                  <AiOutlineShoppingCart className="ml-2" />
+                </button>
               </div>
-
-              {/* Book Details */}
-              <h3 className="text-lg font-semibold text-gray-900 truncate">
-                {book.title}
-              </h3>
-              <p className="text-sm text-gray-600 mb-2">by: {book.author}</p>
-              <p className="text-lg font-bold text-gray-900">{book.price}</p>
-
-              {/* Ratings */}
-              <div className="flex items-center mt-2">
-                {Array.from({ length: 5 }).map((_, index) => (
-                  <span
-                    key={index}
-                    className={`text-yellow-400 ${
-                      index < book.rating ? "text-yellow-400" : "text-gray-300"
-                    }`}
-                  >
-                    ★
-                  </span>
-                ))}
-              </div>
-
-              {/* Add to Cart Button */}
-              <button className="mt-4 flex items-center  justify-center w-22 bg-gray-900 text-white py-2  hover:bg-gray-700 transition">
-                Add <AiOutlineShoppingCart className="ml-2" />
-              </button>
-            </div>
-          ))}
+            ))
+          ) : (
+            <p className="col-span-4 text-center text-gray-600">
+              No best-selling products found.
+            </p>
+          )}
         </div>
       </div>
     </div>

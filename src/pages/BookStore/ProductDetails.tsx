@@ -1,4 +1,5 @@
-import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   IoCart,
   IoHeart,
@@ -8,27 +9,28 @@ import {
   IoLogoWhatsapp,
 } from "react-icons/io5";
 import { useGetProductByIdQuery } from "../../redux/features/product/productApi";
-import { useState } from "react";
 import BuyProductModal from "@/components/modals/BuyProductModal";
 import { useGetMeQuery } from "@/redux/features/user/registerApi";
-import { DeleteIcon } from "lucide-react";
 
 const ProductDetails = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
 
   const { data: product, isLoading, isError } = useGetProductByIdQuery(id!);
   const { data: user, isLoading: userLoading } = useGetMeQuery("");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // Redirect to login if user is not found
+  useEffect(() => {
+    if (!userLoading && (!user || user.length === 0)) {
+      navigate("/signin");
+    }
+  }, [user, userLoading, navigate]);
+
   if (isLoading) {
     return <div className="text-center text-lg font-semibold">Loading...</div>;
   }
-
-  if (userLoading) {
-    return <p>Loading...</p>;
-  }
-  const userRole = user[0]?.role;
 
   if (isError || !product) {
     return (
@@ -95,30 +97,18 @@ const ProductDetails = () => {
             <p className="mt-4 text-gray-600">{product.description}</p>
           </div>
 
-          {userRole !== "admin" && (
-            <div className="mt-6">
-              <button
-                onClick={() => setIsModalOpen(true)}
-                className="w-full bg-red-600 text-white py-3 rounded-lg text-lg flex items-center justify-center gap-2 hover:bg-red-700 transition duration-200"
-              >
-                <IoCart size={20} /> Buy Now
-              </button>
-
-              <button className="w-full mt-3 bg-gray-100 text-black py-3 rounded-lg text-lg flex items-center justify-center gap-2 hover:bg-gray-200 transition duration-200">
-                <IoHeart size={20} /> Add on Wishlist
-              </button>
-            </div>
-          )}
-
-          {userRole === "admin" && (
+          <div className="mt-6">
             <button
-              onClick={() => ""}
-              disabled={true}
+              onClick={() => setIsModalOpen(true)}
               className="w-full bg-red-600 text-white py-3 rounded-lg text-lg flex items-center justify-center gap-2 hover:bg-red-700 transition duration-200"
             >
-              <DeleteIcon size={20} /> DELETE
+              <IoCart size={20} /> Buy Now
             </button>
-          )}
+
+            <button className="w-full mt-3 bg-gray-100 text-black py-3 rounded-lg text-lg flex items-center justify-center gap-2 hover:bg-gray-200 transition duration-200">
+              <IoHeart size={20} /> Add on Wishlist
+            </button>
+          </div>
 
           <div className="mt-6">
             <h3 className="text-lg font-semibold">Recommend:</h3>
@@ -151,11 +141,12 @@ const ProductDetails = () => {
           </div>
         </div>
       </div>
+
       {isModalOpen && (
         <BuyProductModal
           product={product}
           onClose={() => setIsModalOpen(false)}
-          user={user[0].name}
+          user={user[0]?.name}
         />
       )}
     </div>
