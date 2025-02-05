@@ -43,7 +43,6 @@ const SignUp = () => {
       };
 
       const result = await registerUser(formattedData).unwrap();
-      console.log(result);
 
       if (result?.success) {
         toast.success("Account created successfully! Redirecting to login...", {

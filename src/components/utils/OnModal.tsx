@@ -3,7 +3,7 @@ import { FaTimes } from "react-icons/fa";
 
 interface ModalProps {
   title: string;
-  content?: React.ReactNode;
+  content?: React.ReactNode; // Accepts JSX for styling
   buttonLabel?: string;
   cancelLabel?: string;
   onClose: () => void;
@@ -35,12 +35,12 @@ const OnModal: React.FC<ModalProps> = ({
 
   return (
     <div
-      className={`fixed inset-0 flex items-center  justify-center bg-black/50 transition-opacity duration-300 ${
+      className={`fixed inset-0 flex items-center justify-center bg-black/50 transition-opacity duration-300 z-50 ${
         isVisible ? "opacity-100" : "opacity-0"
       }`}
     >
       <div
-        className={`bg-white p-6  shadow-lg w-full max-w-md relative transform transition-transform duration-300 ${
+        className={`bg-white p-6 shadow-lg w-full max-w-md relative transform transition-transform duration-300 ${
           isVisible ? "scale-100" : "scale-95"
         }`}
       >
@@ -58,15 +58,17 @@ const OnModal: React.FC<ModalProps> = ({
         </h2>
 
         {/* Modal Content */}
-        <div className="mb-4">{content || children}</div>
+        <div className="mb-4 text-center text-gray-800">
+          {content || children}
+        </div>
 
         {/* Buttons Section */}
-        <div className="grid grid-cols-1  md:grid-cols-2  mt-4 md:flex-row w-full gap-1">
+        <div className="grid grid-cols-1 md:grid-cols-2 mt-4 md:flex-row w-full gap-1">
           {/* Cancel Button */}
           {cancelLabel && (
             <button
               onClick={onCancel || handleClose}
-              className=" btn-secondary transition"
+              className=" cursor-pointer bg-red-300  text-white hover:bg-red-400 transition"
             >
               {cancelLabel}
             </button>
@@ -76,7 +78,7 @@ const OnModal: React.FC<ModalProps> = ({
           {buttonLabel && (
             <button
               onClick={onConfirm}
-              className=" bg-black text-white py-2 rounded-md hover:bg-gray-800 transition"
+              className="cursor-pointer bg-black text-white py-2  hover:bg-gray-800 transition"
             >
               {buttonLabel}
             </button>

@@ -27,7 +27,6 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    console.log("📡 Checkout Modal Opened. Items:", items);
   }, [items]);
 
   const handlePayment = async (e: React.FormEvent) => {

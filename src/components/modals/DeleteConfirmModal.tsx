@@ -2,17 +2,16 @@ import React from "react";
 import OnModal from "@/components/utils/OnModal";
 
 interface DeleteConfirmModalProps {
-  itemName: string;
+  content?: React.ReactNode;
   onClose: () => void;
   onConfirm: () => void;
 }
 
 const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
-  itemName,
+  content,
   onClose,
   onConfirm,
 }) => {
-  console.log(itemName);
   return (
     <OnModal
       title="Confirm Deletion"
@@ -20,7 +19,7 @@ const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
       onClose={onClose}
       buttonLabel="DELETE"
       cancelLabel="CANCEL"
-      content="Are you sure want to delete user?"
+      content={content}
     ></OnModal>
   );
 };

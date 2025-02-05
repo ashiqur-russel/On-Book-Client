@@ -46,13 +46,33 @@ const ProductDetails = () => {
 
   return (
     <div className="container mx-auto p-6 text-black">
-      <div className="text-sm text-gray-600 mb-4">
-        <span className="hover:text-red-600 cursor-pointer">Startseite</span>{" "}
+      {/* Breadcrumb Navigation */}
+      <div className="text-sm text-gray-600 mb-4 flex items-center">
+        <span
+          className="hover:text-red-600 cursor-pointer"
+          onClick={() => navigate("/")}
+        >
+          home
+        </span>{" "}
         &gt;
-        <span className="hover:text-red-600 cursor-pointer"> Bücher</span> &gt;
-        <span className="font-semibold text-gray-900"> {product.category}</span>
+        <span
+          className="hover:text-red-600 cursor-pointer"
+          onClick={() => navigate("/products")}
+        >
+          books
+        </span>{" "}
+        &gt;
+        <span
+          className="hover:text-red-600 cursor-pointer"
+          onClick={() => navigate(`/products?category=${product.category}`)}
+        >
+          {product.category}
+        </span>{" "}
+        &gt;
+        <span className="font-semibold text-gray-900">{product.title}</span>
       </div>
 
+      {/* Product Details */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="flex flex-col">
           <img

@@ -253,7 +253,14 @@ const Users = () => {
       {/* Delete Confirmation Modal */}
       {deleteUserInfo && (
         <DeleteConfirmModal
-          itemName={deleteUserInfo.name}
+          content={
+            <div className="text-center">
+              <p className="text-lg font-semibold text-red-600">
+                Are you sure you want to delete user{" "}
+                <span className="font-bold">{deleteUserInfo.name}</span>?
+              </p>
+            </div>
+          }
           onClose={() => setDeleteUserInfo(null)}
           onConfirm={handleDeleteUser}
         />

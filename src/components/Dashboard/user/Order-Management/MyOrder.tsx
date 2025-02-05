@@ -42,7 +42,6 @@ const MyOrders = () => {
     isError,
     refetch,
   } = useGetMyordersQuery(queryParams);
-  console.log("orders", orders);
 
   const totalOrders = orders?.meta?.total || 0;
   const totalPages = Math.max(1, Math.ceil(totalOrders / queryParams.limit));
@@ -128,9 +127,7 @@ const OrderCard: React.FC<{ order: Order; refetch: () => void }> = ({
   order,
   refetch,
 }) => {
-  const [cancelOrder, { data, isLoading }] = useCancelOrderMutation();
-
-  console.log("AFTER cacnel order:", data);
+  const [cancelOrder, { isLoading }] = useCancelOrderMutation();
 
   const handleCancelOrder = async () => {
     try {

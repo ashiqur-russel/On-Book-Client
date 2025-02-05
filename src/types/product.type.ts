@@ -21,4 +21,5 @@ export interface IProduct {
   productImg?: string;
   language?: string;
   totalPrice?: number;
+  rating?: number;
 }

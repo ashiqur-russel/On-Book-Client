@@ -91,7 +91,7 @@ const Products = () => {
         )}
 
         {/** Product List */}
-        <div className="">
+        <div className="relative z-0">
           <div
             className={`grid relative ${
               gridView

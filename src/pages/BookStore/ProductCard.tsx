@@ -1,22 +1,39 @@
 import { FaShoppingCart } from "react-icons/fa";
 import { IoEye } from "react-icons/io5";
-import { useNavigate } from "react-router";
+import { useGetMeQuery } from "@/redux/features/user/registerApi";
+import { useLocation, useNavigate } from "react-router";
+import { useState } from "react";
+import BuyProductModal from "@/components/modals/BuyProductModal";
+import { IProduct } from "@/types";
+import { useAppSelector } from "@/redux/hooks";
+import { selectCurrentUser } from "@/redux/features/auth/authSlice";
 
 interface ProductProps {
-  product: {
-    id: string;
-    productImg?: string;
-    title: string;
-    author: string;
-    price: number;
-    oldPrice?: number;
-    rating?: number;
-    hasOffer?: boolean;
-  };
+  product: IProduct;
 }
 
 const ProductCard: React.FC<ProductProps> = ({ product }) => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const user = useAppSelector(selectCurrentUser);
+
+  const { data: myData, refetch, isLoading } = useGetMeQuery("");
+
+  const userRole = user?.role;
+
+  const handleBuyNow = () => {
+    if (!user || user === null) {
+      navigate(`/signin?redirect=${encodeURIComponent(location.pathname)}`);
+    } else {
+      setIsModalOpen(true);
+    }
+    refetch();
+  };
+
+  if (isLoading) {
+    <p> Loading...</p>;
+  }
   return (
     <div className="relative bg-white border-gray-200 flex flex-col w-full">
       {product.hasOffer && (
@@ -58,11 +75,6 @@ const ProductCard: React.FC<ProductProps> = ({ product }) => {
             <span className="text-xl font-bold text-red-600">
               ${product.price}
             </span>
-            {product.oldPrice && (
-              <span className="text-sm line-through text-gray-400">
-                ${product.oldPrice}
-              </span>
-            )}
           </div>
         </div>
       </div>
@@ -77,11 +89,27 @@ const ProductCard: React.FC<ProductProps> = ({ product }) => {
           View
         </button>
 
-        <button className="flex items-center justify-center gap-2 bg-red-600 text-white px-4 py-2 text-sm hover:bg-red-500 transition w-full">
+        <button
+          className={`flex items-center justify-center gap-2 px-4 py-2 text-sm transition w-full ${
+            userRole === "admin"
+              ? "bg-gray-400 text-gray-700 cursor-not-allowed"
+              : "bg-red-600 text-white hover:bg-red-500"
+          }`}
+          disabled={userRole === "admin"}
+          onClick={handleBuyNow}
+        >
           <FaShoppingCart size={18} />
           Buy
         </button>
       </div>
+
+      {myData !== null && userRole === "user" && isModalOpen && (
+        <BuyProductModal
+          product={product}
+          onClose={() => setIsModalOpen(false)}
+          user={myData[0]?.name}
+        />
+      )}
     </div>
   );
 };
