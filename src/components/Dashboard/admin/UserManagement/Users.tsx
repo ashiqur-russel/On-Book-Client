@@ -59,6 +59,10 @@ const Users = () => {
     name: string;
   } | null>(null);
 
+  const activeUsers = users.filter((user) => user.status === "active").length;
+  const blockedUsers = users.filter((user) => user.status === "blocked").length;
+  const pendingUsers = users.filter((user) => user.status === "pending").length;
+
   const handleUserStatus = async (userId: string, currentStatus: string) => {
     let newStatus: string = "";
     switch (currentStatus) {
@@ -84,7 +88,6 @@ const Users = () => {
     }
   };
 
-  // ✅ Handle Delete
   const handleDeleteUser = async () => {
     if (deleteUserInfo) {
       await deleteUser(deleteUserInfo.id);
@@ -93,7 +96,6 @@ const Users = () => {
     }
   };
 
-  // ✅ Handle Filter
   const handleFilterClick = (filter: string) => {
     setQueryParams({
       ...queryParams,
@@ -126,9 +128,21 @@ const Users = () => {
           title="Total Users"
           value={totalUsers.toString()}
         />
-        <SummaryCard icon={<FaUserCheck />} title="Active Users" value="75" />
-        <SummaryCard icon={<FaUserShield />} title="Blocked Users" value="5" />
-        <SummaryCard icon={<FaUserTimes />} title="Pending Users" value="20" />
+        <SummaryCard
+          icon={<FaUserCheck />}
+          title="Active Users"
+          value={activeUsers.toString()}
+        />
+        <SummaryCard
+          icon={<FaUserShield />}
+          title="Blocked Users"
+          value={blockedUsers.toString()}
+        />
+        <SummaryCard
+          icon={<FaUserTimes />}
+          title="Pending Users"
+          value={pendingUsers.toString()}
+        />
       </div>
 
       <div className="flex flex-col lg:flex-row justify-between gap-2 items-center mb-4">

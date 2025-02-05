@@ -54,6 +54,21 @@ const OrdersDashboard = () => {
   const totalOrders = data?.meta?.total || 0;
   const totalPages = data?.meta?.totalPage || 1;
 
+  const returnOrders = orders.filter(
+    (order) =>
+      order.status === "cancelled" || order.payment?.status === "refunded"
+  ).length;
+
+  const fulfilledOrders = orders.filter(
+    (order) =>
+      order.deliveryStatus === "shipped" || order.deliveryStatus === "delivered"
+  ).length;
+
+  const orderItems = orders.reduce(
+    (sum, order) => sum + (order.quantity || 0),
+    0
+  );
+
   const handleFilterClick = (filter: string) => {
     setQueryParams({
       ...queryParams,
@@ -109,19 +124,19 @@ const OrdersDashboard = () => {
         <SummaryCard
           icon={<FaBoxOpen />}
           title="Order Items Over Time"
-          value="15"
+          value={orderItems.toString()}
           change="-18.2%"
         />
         <SummaryCard
           icon={<FaRedo />}
           title="Return Orders"
-          value="0"
+          value={returnOrders.toString()}
           change="-1.2%"
         />
         <SummaryCard
           icon={<FaChartBar />}
           title="Fulfilled Orders Over Time"
-          value="12"
+          value={fulfilledOrders.toString()}
           change="+12.2%"
         />
       </div>
