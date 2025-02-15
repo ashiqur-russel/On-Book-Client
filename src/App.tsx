@@ -24,9 +24,9 @@ const App = () => {
           <BookCarousel />
           <Offers />
           <TopSellingBooks />
-          <Footer />
         </Suspense>
       </main>
+      <Footer />
     </div>
   );
 };
