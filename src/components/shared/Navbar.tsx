@@ -77,6 +77,17 @@ const Navbar = () => {
           {/* Login / Logout Button */}
           {user ? (
             <>
+              <div
+                onClick={openCartHandler}
+                className="relative cursor-pointer"
+              >
+                <ShoppingBag width={18} />
+                {totalItems > 0 && (
+                  <span className="absolute inline-flex size-3 -top-3 bg-amber-100 text-amber-700  -right-2 rounded-full animate text-center items-center p-2 justify-center text-sm">
+                    {totalItems}
+                  </span>
+                )}
+              </div>
               <button
                 onClick={handleLogout}
                 className="flex items-center space-x-1 text-gray-800 hover:text-gray-600 font-medium"
@@ -87,8 +98,11 @@ const Navbar = () => {
             </>
           ) : (
             <div className="flex gap-4">
-              <div onClick={openCartHandler} className="relative">
-                <ShoppingBag onClick={openCartHandler} width={18} />
+              <div
+                onClick={openCartHandler}
+                className="relative cursor-pointer"
+              >
+                <ShoppingBag width={18} />
                 {totalItems > 0 && (
                   <span className="absolute inline-flex size-3 -top-3 bg-amber-100 text-amber-700  -right-2 rounded-full animate text-center items-center p-2 justify-center text-sm">
                     {totalItems}

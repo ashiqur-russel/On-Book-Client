@@ -45,7 +45,7 @@ export default function Cart() {
                     </h2>
                     <button
                       onClick={closeCartHandler}
-                      className="relative -m-2 p-2 text-gray-400 hover:text-gray-500"
+                      className="relative -m-2 p-2 text-gray-400 cursor-pointer hover:text-gray-500"
                     >
                       <CgClose className="w-6 h-6" />
                     </button>
