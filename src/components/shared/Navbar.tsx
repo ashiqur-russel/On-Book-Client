@@ -61,7 +61,6 @@ const Navbar = () => {
               placeholder="Search book..."
               className="border-b w-0 hidden  border-gray-300 pl-8 pr-4 py-1 text-sm text-gray-800 focus:outline-none focus:border-gray-500"
             />
-            <ShoppingBag size={20} className="mr-4" />
           </div>
 
           {/* Login / Logout Button */}
