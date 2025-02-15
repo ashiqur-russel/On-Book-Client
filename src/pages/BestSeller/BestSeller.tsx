@@ -1,9 +1,12 @@
 import { useGetAllProductsQuery } from "@/redux/features/product/productApi";
+import { addToCart } from "@/redux/features/product/productSlice";
+import { useAppDispatch } from "@/redux/hooks";
 import { useState } from "react";
 import { AiOutlineShoppingCart } from "react-icons/ai";
 import { NavLink } from "react-router";
 
 const Bestsellers = () => {
+  const dispatch = useAppDispatch();
   const [queryParams] = useState({
     deliveryStatus: "",
     searchTerm: "",
@@ -81,7 +84,10 @@ const Bestsellers = () => {
                   ))}
                 </div>
 
-                <button className="mt-4 flex items-center justify-center w-full bg-gray-900 text-white py-2 hover:bg-gray-700 transition">
+                <button
+                  onClick={() => dispatch(addToCart({ ...book }))}
+                  className="mt-4 flex items-center justify-center w-full bg-gray-900 text-white py-2 hover:bg-gray-700 transition"
+                >
                   Buy
                   <AiOutlineShoppingCart className="ml-2" />
                 </button>

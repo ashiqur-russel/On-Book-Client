@@ -27,7 +27,7 @@ const productSlice = createSlice({
 
     addToCart: (state, action: PayloadAction<IProduct>) => {
       const existingItem = state.cart.find(
-        (item) => item.title === action.payload.title
+        (item) => item.id === action.payload.id
       );
 
       if (existingItem) {
@@ -43,7 +43,7 @@ const productSlice = createSlice({
     },
 
     incrementQuantity: (state, action: PayloadAction<string>) => {
-      const item = state.cart.find((item) => item.title === action.payload);
+      const item = state.cart.find((item) => item.id === action.payload);
       if (item) {
         item.quantity += 1;
         item.totalPrice = item.quantity * item.price;
@@ -51,15 +51,21 @@ const productSlice = createSlice({
     },
 
     decrementQuantity: (state, action: PayloadAction<string>) => {
-      const item = state.cart.find((item) => item.title === action.payload);
-      if (item && item.quantity > 1) {
-        item.quantity -= 1;
-        item.totalPrice = item.quantity * item.price;
+      const item = state.cart.find((item) => item.id === action.payload);
+      if (item) {
+        if (item.quantity > 1) {
+          item.quantity -= 1;
+          item.totalPrice = item.quantity * item.price;
+        } else {
+          state.cart = state.cart.filter(
+            (cartItem) => cartItem.id !== action.payload
+          );
+        }
       }
     },
 
     removeFromCart: (state, action: PayloadAction<string>) => {
-      state.cart = state.cart.filter((item) => item.title !== action.payload);
+      state.cart = state.cart.filter((item) => item.id !== action.payload);
     },
 
     clearCart: (state) => {

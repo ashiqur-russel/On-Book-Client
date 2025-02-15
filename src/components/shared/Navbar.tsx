@@ -29,7 +29,7 @@ const Navbar = () => {
   };
 
   const { cart } = useAppSelector(selectCurrentStore);
-  const totalItems = cart.length | 1;
+  const totalItems = cart.length | 0;
 
   console.log(cart);
 
