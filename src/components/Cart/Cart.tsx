@@ -50,7 +50,7 @@ export default function Cart() {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", stiffness: 120, damping: 20 }}
-            className="fixed right-0 top-0 h-screen w-[400px] bg-white shadow-xl z-[70] flex flex-col"
+            className="fixed right-0 top-0 h-screen w-[400px] bg-white shadow-xl z-70 flex flex-col"
           >
             {/* Cart Header */}
             <div className="flex justify-between items-center p-4 border-b">
@@ -61,7 +61,7 @@ export default function Cart() {
                 onClick={closeCartHandler}
                 className="p-2 text-gray-400 hover:text-gray-500"
               >
-                <CgClose className="w-6 h-6" />
+                <CgClose className="w-6 h-6 cursor-pointer" />
               </button>
             </div>
 
@@ -150,7 +150,7 @@ export default function Cart() {
                 <div className="mt-6">
                   <motion.button
                     whileTap={{ scale: 0.95 }}
-                    className="flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-xs hover:bg-indigo-700"
+                    className="flex w-full items-center justify-center border border-transparent hover:bg-gray-600 px-6 py-3 text-base font-medium text-white shadow-xs bg-black"
                     disabled={cart.cart.length === 0}
                   >
                     Checkout
@@ -162,7 +162,7 @@ export default function Cart() {
                   <motion.button
                     whileTap={{ scale: 0.95 }}
                     onClick={() => dispatch(clearCart())}
-                    className="w-full py-2 px-4 text-white bg-red-500 hover:bg-red-600 rounded-md"
+                    className="w-full py-2 px-4 text-white bg-red-500 hover:bg-red-600 "
                   >
                     Reset Cart
                   </motion.button>

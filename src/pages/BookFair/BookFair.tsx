@@ -54,7 +54,7 @@ const books = [
 const BookFairSection = () => {
   return (
     <>
-      <div className="bg-[#0A0E1A] mx-20 text-white relative mt-16 ">
+      <div className="bg-[#0A0E1A]  text-white relative mt-16 container mx-auto px-2 py-10 ">
         <div className="container mx-auto  flex flex-col lg:flex-row justify-between items-center gap-10">
           {/* Left Side - Book Cards */}
           <div className="relative overflow-hidden -z-0 lg:inline hidden w-full lg:w-1/2 h-[400px]">
