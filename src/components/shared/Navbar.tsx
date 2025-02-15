@@ -10,6 +10,8 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 import { logOut, selectCurrentUser } from "../../redux/features/auth/authSlice";
 import { ShoppingBag } from "lucide-react";
+import { selectCurrentStore } from "@/redux/features/product/productSlice";
+import { toggleCart } from "@/redux/features/global/globalSlice";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -21,6 +23,15 @@ const Navbar = () => {
     dispatch(logOut());
     navigate("/signin");
   };
+
+  const openCartHandler = () => {
+    dispatch(toggleCart());
+  };
+
+  const { cart } = useAppSelector(selectCurrentStore);
+  const totalItems = cart.length | 1;
+
+  console.log(cart);
 
   return (
     <nav className="w-full px-3 md:px-10 lg:px-24  py-0 mt-4 ">
@@ -75,8 +86,15 @@ const Navbar = () => {
               </button>
             </>
           ) : (
-            <>
-              <ShoppingBag />
+            <div className="flex gap-4">
+              <div onClick={openCartHandler} className="relative">
+                <ShoppingBag onClick={openCartHandler} width={18} />
+                {totalItems > 0 && (
+                  <span className="absolute inline-flex size-3 -top-3 bg-amber-100 text-amber-700  -right-2 rounded-full animate text-center items-center p-2 justify-center text-sm">
+                    {totalItems}
+                  </span>
+                )}
+              </div>
 
               <NavLink
                 to={"/signin"}
@@ -85,7 +103,7 @@ const Navbar = () => {
                 <AiOutlineLock className="w-5 h-5" />
                 <span>Login</span>
               </NavLink>
-            </>
+            </div>
           )}
         </div>
 
