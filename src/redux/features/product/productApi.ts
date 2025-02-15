@@ -2,7 +2,7 @@
 import { TQueryParam, TResponseRedux } from "../../../types";
 import { baseApi } from "../../api/baseApi";
 
-const authApi = baseApi.injectEndpoints({
+const productApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getAllProducts: builder.query({
       query: (args) => {
@@ -25,6 +25,15 @@ const authApi = baseApi.injectEndpoints({
           data: response.data,
           meta: response.meta,
         };
+      },
+    }),
+    getBestSellingProducts: builder.query({
+      query: () => ({
+        url: "/products/best-sellers",
+        method: "GET",
+      }),
+      transformResponse: (response: TResponseRedux<any[]>) => {
+        return response.data;
       },
     }),
     getProductById: builder.query({
@@ -50,4 +59,5 @@ export const {
   useGetAllProductsQuery,
   useGetProductByIdQuery,
   useCreateProductMutation,
-} = authApi;
+  useGetBestSellingProductsQuery,
+} = productApi;

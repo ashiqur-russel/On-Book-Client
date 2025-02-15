@@ -122,14 +122,14 @@ const Bestsellers = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-1">
                   <button
                     onClick={() => dispatch(addToCart(book))}
-                    className="mt-4 flex items-center justify-center w-full bg-gray-900 text-white py-2 hover:bg-gray-700 transition"
+                    className="mt-4 cursor-pointer flex items-center justify-center w-full bg-gray-900 text-white py-2 hover:bg-gray-700 transition"
                   >
                     Add
                     <RiMoneyEuroCircleFill className="ml-2" />
                   </button>
                   <button
                     onClick={() => handleBuyNow(book)}
-                    className="mt-4 flex items-center justify-center w-full bg-gray-900 text-white py-2 hover:bg-gray-700 transition"
+                    className="mt-4  cursor-pointer flex items-center justify-center w-full bg-gray-900 text-white py-2 hover:bg-gray-700 transition"
                   >
                     Buy
                     <AiOutlineShoppingCart className="ml-2" />
