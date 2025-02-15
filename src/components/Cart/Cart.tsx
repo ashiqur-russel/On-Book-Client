@@ -1,5 +1,3 @@
-"use client";
-
 import { motion, AnimatePresence } from "framer-motion";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { RootState } from "@/redux/store";
@@ -38,7 +36,7 @@ export default function Cart() {
         <>
           {/* Background Overlay */}
           <motion.div
-            className="fixed inset-0 bg-gray-500/75 z-10"
+            className="fixed inset-0 bg-gray-500/75 z-50"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -52,7 +50,7 @@ export default function Cart() {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", stiffness: 120, damping: 20 }}
-            className="fixed right-0 top-0 h-screen w-[400px] bg-white shadow-xl z-20 flex flex-col"
+            className="fixed right-0 top-0 h-screen w-[400px] bg-white shadow-xl z-[70] flex flex-col"
           >
             {/* Cart Header */}
             <div className="flex justify-between items-center p-4 border-b">
@@ -84,21 +82,20 @@ export default function Cart() {
                     >
                       {/* Product Image */}
                       <div className="h-24 w-24 overflow-hidden rounded-md border border-gray-200 bg-gray-100 flex items-center justify-center">
-                        <span className="text-gray-400">item name</span>
+                        <span className="text-gray-400">image</span>
                       </div>
 
                       {/* Product Details */}
                       <div className="ml-4 flex-1 flex flex-col">
                         <div>
                           <div className="flex justify-between text-base font-medium text-gray-900">
-                            <h3>product details</h3>
+                            <h3>name</h3>
                             <p className="ml-4">
                               ${(item.quantity * item.price).toFixed(2)}
                             </p>
                           </div>
                         </div>
 
-                        {/* Quantity Controls */}
                         <div className="flex items-end justify-between text-sm mt-2">
                           <div className="flex items-center space-x-2 bg-gray-200 rounded-md px-2 py-1">
                             <button

@@ -34,7 +34,7 @@ const Navbar = () => {
   console.log(cart);
 
   return (
-    <nav className="fixed  bg-amber-50 z-50 w-full px-3 md:px-10 lg:px-24  py-4">
+    <nav className="fixed  bg-amber-50 z-40 w-full px-3 md:px-10 lg:px-24  py-4">
       <div className="  flex items-center justify-between  w-full">
         {/* Logo & Desktop Navigation */}
         <div className="flex items-center space-x-8">

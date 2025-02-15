@@ -35,7 +35,6 @@ const DashboardLayout = () => {
   return (
     <div className="flex h-screen">
       <Sidebar role={userRole} />{" "}
-      {/* ✅ No need to pass isOpen and toggleSidebar */}
       <div className="flex-1 p-6 overflow-y-auto">
         <Outlet />
       </div>
