@@ -3,8 +3,15 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { FaShoppingCart } from "react-icons/fa";
 import { useGetBestSellingProductsQuery } from "@/redux/features/product/productApi";
-import { addToCart } from "@/redux/features/product/productSlice";
-import { useAppDispatch } from "@/redux/hooks";
+import {
+  addToCart,
+  highlightCartItem,
+  incrementQuantity,
+  selectCurrentStore,
+} from "@/redux/features/product/productSlice";
+import { toggleCart } from "@/redux/features/global/globalSlice";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { IProduct } from "@/types";
 
 const TopSellingBooks = () => {
   const settings = {
@@ -37,13 +44,27 @@ const TopSellingBooks = () => {
       },
     ],
   };
+
   const dispatch = useAppDispatch();
+  const cart = useAppSelector(selectCurrentStore).cart;
 
   const {
     data: products,
     isLoading,
     error,
   } = useGetBestSellingProductsQuery("");
+
+  const handleAddToCart = (product: IProduct) => {
+    const isInCart = cart.find((item) => item.id === product.id);
+
+    if (isInCart) {
+      dispatch(incrementQuantity(product.id));
+      dispatch(toggleCart());
+      dispatch(highlightCartItem(product.id));
+    } else {
+      dispatch(addToCart(product));
+    }
+  };
 
   if (isLoading) {
     return (
@@ -70,44 +91,53 @@ const TopSellingBooks = () => {
       {/* Carousel */}
       <Slider {...settings}>
         {products && products.length > 0 ? (
-          products.map((book) => (
-            <div key={book._id} className="px-2">
-              <div className="flex overflow-hidden shadow-md border hover:shadow-lg transition-all h-36">
-                {/* Left - Book Cover Image */}
-                <div className="w-1/2">
-                  <img
-                    src={book.productImg}
-                    alt={book.title}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-
-                {/* Right - Book Details */}
-                <div className="w-1/2 p-3 bg-gray-900 text-white flex flex-col justify-between">
-                  <div>
-                    <h3 className="text-sm font-semibold leading-tight">
-                      {book.title}
-                    </h3>
-                    <p className="text-xs text-gray-300">by {book.author}</p>
-
-                    {/* Star Rating (Placeholder) */}
-                    <div className="flex mt-1 text-yellow-400 text-xs">
-                      {"★★★★★"}
-                    </div>
-
-                    <p className="text-sm font-semibold mt-1">${book.price}</p>
+          products.map((book) => {
+            return (
+              <div key={book._id} className="px-2">
+                <div
+                  className={`flex overflow-hidden shadow-md border hover:shadow-lg transition-all h-36`}
+                >
+                  {/* Left - Book Cover Image */}
+                  <div className="w-1/2">
+                    <img
+                      src={book.productImg}
+                      alt={book.title}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
 
-                  <button
-                    onClick={() => dispatch(addToCart(book))}
-                    className="mt-2 cursor-pointer w-20 flex items-center justify-center border border-gray-400 px-3 py-1 text-xs hover:bg-gray-400 hover:text-black transition"
-                  >
-                    Add <FaShoppingCart className="ml-1 text-sm" />
-                  </button>
+                  {/* Right - Book Details */}
+                  <div className="w-1/2 p-3 bg-gray-900 text-white flex flex-col justify-between">
+                    <div>
+                      <h3 className="text-sm font-semibold leading-tight">
+                        {book.title}
+                      </h3>
+                      <p className="text-xs text-gray-300">by {book.author}</p>
+
+                      {/* Star Rating -> Todo: have to make dynamic */}
+                      <div className="flex mt-1 text-yellow-400 text-xs">
+                        {"★★★★★"}
+                      </div>
+
+                      <p className="text-sm font-semibold mt-1">
+                        ${book.price}
+                      </p>
+                    </div>
+
+                    <button
+                      onClick={() => handleAddToCart(book)}
+                      className={`mt-2 cursor-pointer w-20 flex items-center justify-center border px-3 py-1 text-xs transition 
+                          : "border-gray-400 hover:bg-gray-400 hover:text-black"
+                      `}
+                    >
+                      {"Add"}
+                      <FaShoppingCart className="ml-1 text-sm" />
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))
+            );
+          })
         ) : (
           <div className="text-center text-gray-600">
             No best-selling books found.

@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { RootState } from "@/redux/store";
@@ -10,6 +11,7 @@ import {
   decrementQuantity,
   incrementQuantity,
   removeFromCart,
+  resetHighlight,
   selectCurrentStore,
 } from "@/redux/features/product/productSlice";
 
@@ -20,21 +22,35 @@ export default function Cart() {
     (state: RootState) => state.global.isCartOpen
   );
 
-  // Calculate total price
+  const highlightedItemId = useAppSelector(
+    (state: RootState) => state.product.highlightedItemId
+  );
+
   const totalPrice = cart.cart.reduce(
     (total, item) => total + item.quantity * item.price,
     0
   );
 
+  const itemRefs = useRef<{ [key: string]: HTMLLIElement | null }>({});
+
+  useEffect(() => {
+    if (highlightedItemId && isCartOpen) {
+      const itemElement = itemRefs.current[highlightedItemId];
+      if (itemElement) {
+        itemElement.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }
+  }, [highlightedItemId, isCartOpen]);
+
   const closeCartHandler = () => {
     dispatch(toggleCart());
+    dispatch(resetHighlight());
   };
 
   return (
     <AnimatePresence>
       {isCartOpen && (
         <>
-          {/* Background Overlay */}
           <motion.div
             className="fixed inset-0 bg-gray-500/75 z-50"
             initial={{ opacity: 0 }}
@@ -44,7 +60,6 @@ export default function Cart() {
             onClick={closeCartHandler}
           />
 
-          {/* Sliding Cart Panel */}
           <motion.div
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
@@ -52,8 +67,7 @@ export default function Cart() {
             transition={{ type: "spring", stiffness: 120, damping: 20 }}
             className="fixed right-0 top-0 h-screen w-[400px] bg-white shadow-xl z-70 flex flex-col"
           >
-            {/* Cart Header */}
-            <div className="flex justify-between items-center p-4 border-b">
+            <div className="flex justify-between items-center p-4 shadow-md">
               <h2 className="text-lg font-medium text-gray-900">
                 Shopping Cart
               </h2>
@@ -65,35 +79,36 @@ export default function Cart() {
               </button>
             </div>
 
-            {/* Cart Items (Scrollable) */}
             <div className="overflow-y-auto flex-1 p-4">
               {cart?.cart.length === 0 ? (
                 <p className="text-center text-gray-600">Your cart is empty</p>
               ) : (
-                <ul role="list" className="-my-6 divide-y divide-gray-200">
+                <ul role="list" className="my-2 divide-y divide-gray-200">
                   {cart?.cart.map((item) => (
                     <motion.li
                       key={item.id}
-                      className="flex py-6"
+                      ref={(el) => (itemRefs.current[item.id] = el)}
+                      className={`flex py-6 transition ${
+                        highlightedItemId === item.id
+                          ? "border-l-4 border-green-800  border p-1 shadow-md   animate-pulse"
+                          : ""
+                      }`}
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
                       transition={{ duration: 0.3 }}
                     >
-                      {/* Product Image */}
-                      <div className="h-24 w-24 overflow-hidden rounded-md border border-gray-200 bg-gray-100 flex items-center justify-center">
-                        <span className="text-gray-400">image</span>
+                      <div className="h-24 w-24 overflow-hidden rounded-md border border-gray-200 flex items-center justify-center shadow-md">
+                        <img src={item.productImg} alt={item.title} />
                       </div>
 
                       {/* Product Details */}
                       <div className="ml-4 flex-1 flex flex-col">
-                        <div>
-                          <div className="flex justify-between text-base font-medium text-gray-900">
-                            <h3>name</h3>
-                            <p className="ml-4">
-                              ${(item.quantity * item.price).toFixed(2)}
-                            </p>
-                          </div>
+                        <div className="flex justify-between text-base font-medium text-gray-900">
+                          <h3>{item.title}</h3>
+                          <p className="ml-4">
+                            ${(item.quantity * item.price).toFixed(2)}
+                          </p>
                         </div>
 
                         <div className="flex items-end justify-between text-sm mt-2">
@@ -120,7 +135,6 @@ export default function Cart() {
                             </button>
                           </div>
 
-                          {/* Remove Button */}
                           <button
                             onClick={() => dispatch(removeFromCart(item.id))}
                             className="font-medium text-red-500 hover:text-red-700 transition"
@@ -135,7 +149,6 @@ export default function Cart() {
               )}
             </div>
 
-            {/* Cart Footer (Always at Bottom) */}
             {cart?.cart.length > 0 && (
               <div className="border-t border-gray-200 p-4">
                 <div className="flex justify-between text-base font-medium text-gray-900">
@@ -157,7 +170,6 @@ export default function Cart() {
                   </motion.button>
                 </div>
 
-                {/* Reset Cart Button */}
                 <div className="mt-6 flex justify-between">
                   <motion.button
                     whileTap={{ scale: 0.95 }}
@@ -168,7 +180,6 @@ export default function Cart() {
                   </motion.button>
                 </div>
 
-                {/* Continue Shopping Button */}
                 <div className="mt-6 flex justify-center text-center text-sm text-gray-500">
                   <p>
                     or{" "}

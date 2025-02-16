@@ -10,11 +10,13 @@ interface CartItem extends IProduct {
 interface ProductState {
   filteredProducts: IProduct[];
   cart: CartItem[];
+  highlightedItemId: string | null;
 }
 
 const initialState: ProductState = {
   filteredProducts: [],
   cart: [],
+  highlightedItemId: null,
 };
 
 const productSlice = createSlice({
@@ -40,6 +42,8 @@ const productSlice = createSlice({
           totalPrice: action.payload.price,
         });
       }
+
+      state.highlightedItemId = action.payload.id;
     },
 
     incrementQuantity: (state, action: PayloadAction<string>) => {
@@ -66,10 +70,21 @@ const productSlice = createSlice({
 
     removeFromCart: (state, action: PayloadAction<string>) => {
       state.cart = state.cart.filter((item) => item.id !== action.payload);
+      if (state.highlightedItemId === action.payload) {
+        state.highlightedItemId = null;
+      }
     },
 
     clearCart: (state) => {
       state.cart = [];
+      state.highlightedItemId = null;
+    },
+
+    highlightCartItem: (state, action: PayloadAction<string>) => {
+      state.highlightedItemId = action.payload;
+    },
+    resetHighlight: (state) => {
+      state.highlightedItemId = null;
     },
   },
 });
@@ -81,6 +96,8 @@ export const {
   decrementQuantity,
   removeFromCart,
   clearCart,
+  highlightCartItem,
+  resetHighlight,
 } = productSlice.actions;
 
 export default productSlice.reducer;
