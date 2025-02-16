@@ -23,6 +23,10 @@ const ProductCard: React.FC<ProductProps> = ({ product }) => {
   const userRole = user?.role;
 
   const handleBuyNow = () => {
+    if (!myData || myData === undefined || myData === null) {
+      navigate(`/signin?redirect=${encodeURIComponent(location.pathname)}`);
+    }
+
     if (!user || user === null) {
       navigate(`/signin?redirect=${encodeURIComponent(location.pathname)}`);
     } else {
