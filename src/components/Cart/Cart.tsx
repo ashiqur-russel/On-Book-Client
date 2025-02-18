@@ -21,7 +21,7 @@ import { useCreateCheckoutSessionMutation } from "@/redux/features/payment/payme
 export default function Cart() {
   const dispatch = useAppDispatch();
   const cart = useAppSelector(selectCurrentStore);
-  const [createCheckoutSession, { isLoading }] =
+  const [createCheckoutSession] =
     useCreateCheckoutSessionMutation();
 
   const [error, setError] = useState<string | null>(null);
@@ -55,13 +55,6 @@ export default function Cart() {
     dispatch(resetHighlight());
   };
 
-  // {
-  //   name: '1984',
-  //   price: 7,
-  //   quantity: 1,
-  //   productId: '67a00107ccaf6c921d268e3b'
-  // }
-
   const formattedData = cart.cart.map((item) => {
     return {
       name: item.title,
@@ -71,7 +64,6 @@ export default function Cart() {
     };
   });
 
-  console.log(formattedData);
 
   const handleCheckout = async () => {
     console.log("checkout");
@@ -96,6 +88,8 @@ export default function Cart() {
       const redirectResult = await stripe.redirectToCheckout({
         sessionId: response?.data?.sessionId,
       });
+
+      dispatch(clearCart())
 
       if (redirectResult.error) {
         throw new Error(redirectResult.error.message);
