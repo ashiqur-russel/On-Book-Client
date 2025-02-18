@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { RootState } from "@/redux/store";
@@ -6,6 +6,8 @@ import { CgClose } from "react-icons/cg";
 import { FiTrash2 } from "react-icons/fi";
 import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai";
 import { toggleCart } from "@/redux/features/global/globalSlice";
+import { loadStripe } from "@stripe/stripe-js";
+
 import {
   clearCart,
   decrementQuantity,
@@ -14,10 +16,16 @@ import {
   resetHighlight,
   selectCurrentStore,
 } from "@/redux/features/product/productSlice";
+import { useCreateCheckoutSessionMutation } from "@/redux/features/payment/paymentApi";
 
 export default function Cart() {
   const dispatch = useAppDispatch();
   const cart = useAppSelector(selectCurrentStore);
+  const [createCheckoutSession, { isLoading }] =
+    useCreateCheckoutSessionMutation();
+
+  const [error, setError] = useState<string | null>(null);
+
   const isCartOpen = useAppSelector(
     (state: RootState) => state.global.isCartOpen
   );
@@ -45,6 +53,59 @@ export default function Cart() {
   const closeCartHandler = () => {
     dispatch(toggleCart());
     dispatch(resetHighlight());
+  };
+
+  // {
+  //   name: '1984',
+  //   price: 7,
+  //   quantity: 1,
+  //   productId: '67a00107ccaf6c921d268e3b'
+  // }
+
+  const formattedData = cart.cart.map((item) => {
+    return {
+      name: item.title,
+      price: item.price,
+      quantity: item.quantity,
+      productId: item.id,
+    };
+  });
+
+  console.log(formattedData);
+
+  const handleCheckout = async () => {
+    console.log("checkout");
+    setError(null);
+
+    try {
+      const response = await createCheckoutSession({
+        items: formattedData,
+        successUrl: "http://localhost:5173/dashboard/user/my-orders",
+        cancelUrl: "http://localhost:5173",
+      }).unwrap();
+
+      if (!response?.data?.sessionId) {
+        throw new Error("No sessionId returned from API.");
+      }
+
+      const stripe = await loadStripe(import.meta.env.VITE_APP_STRIPE_KEY);
+      if (!stripe) {
+        throw new Error("Stripe failed to initialize.");
+      }
+
+      const redirectResult = await stripe.redirectToCheckout({
+        sessionId: response?.data?.sessionId,
+      });
+
+      if (redirectResult.error) {
+        throw new Error(redirectResult.error.message);
+      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      console.error("Payment Error:", error);
+
+      setError(error.message || "An unknown error occurred.");
+    }
   };
 
   return (
@@ -160,7 +221,7 @@ export default function Cart() {
                 </p>
 
                 {/* Checkout Button */}
-                <div className="mt-6">
+                <div className="mt-6" onClick={handleCheckout}>
                   <motion.button
                     whileTap={{ scale: 0.95 }}
                     className="flex w-full items-center justify-center border border-transparent hover:bg-gray-600 px-6 py-3 text-base font-medium text-white shadow-xs bg-black"
@@ -169,6 +230,7 @@ export default function Cart() {
                     Checkout
                   </motion.button>
                 </div>
+                {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
 
                 <div className="mt-6 flex justify-between">
                   <motion.button
