@@ -25,9 +25,10 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
   const [createCheckoutSession, { isLoading }] =
     useCreateCheckoutSessionMutation();
   const [error, setError] = useState<string | null>(null);
+  console.log("Items=>", items);
+  console.log("AMount=>", amount);
 
-  useEffect(() => {
-  }, [items]);
+  useEffect(() => {}, [items]);
 
   const handlePayment = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,7 +43,10 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
         name: item.title,
         price: item.price,
         quantity: item.quantity,
+        productId: item.id,
       }));
+
+      console.log("Sending Checkout Request:", formattedItems);
 
       const product = items[0]?.id;
 
@@ -53,8 +57,11 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
       // Create Stripe Checkout Session
       const response = await createCheckoutSession({
         items: formattedItems,
-        product,
+        successUrl: "http://localhost:5173/dashboard/user/my-orders",
+        cancelUrl: "http://localhost:5173",
       }).unwrap();
+
+      console.log("Received Response from API:", response);
 
       if (!response?.data?.sessionId) {
         throw new Error("No sessionId returned from API.");
@@ -65,6 +72,8 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
         throw new Error("Stripe failed to initialize.");
       }
 
+      console.log("Stripe Initialized Successfully");
+
       const redirectResult = await stripe.redirectToCheckout({
         sessionId: response?.data?.sessionId,
       });
@@ -74,6 +83,8 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
+      console.error("Payment Error:", error);
+
       setError(error.message || "An unknown error occurred.");
     }
   };

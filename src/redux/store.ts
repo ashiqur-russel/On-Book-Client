@@ -19,7 +19,7 @@ import { baseApi } from "./api/baseApi";
 const authPersistConfig = {
   key: "auth",
   storage,
-  whitelist: ["user"], // Optional: Persist only specific fields
+  whitelist: ["user", "token"], // Optional: Persist only specific fields
 };
 
 const productPersistConfig = {

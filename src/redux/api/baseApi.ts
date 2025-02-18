@@ -12,56 +12,54 @@ import { toast } from "sonner";
 import { RootState } from "../store";
 
 const baseQuery = fetchBaseQuery({
-  //baseUrl: "https://book-on.vercel.app/api",
   baseUrl: "http://localhost:5001/api",
-
   credentials: "include",
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as RootState).auth.token;
     if (token) {
       headers.set("authorization", `Bearer ${token}`);
     }
-
     return headers;
   },
 });
 
-const baseQueryWithRefreshToken: BaseQueryFn<
+const baseQueryWithAuthHandling: BaseQueryFn<
   FetchArgs,
   BaseQueryApi,
   DefinitionType
 > = async (args, api, extraOptions): Promise<any> => {
-  let result = await baseQuery(args, api, extraOptions);
+  const result = await baseQuery(args, api, extraOptions);
 
-  if (result?.error?.status === 409) {
-    toast.error((result?.error?.data as { message: string })?.message);
+  if (result?.error) {
+    const { status, data } = result.error as {
+      status: number;
+      data?: { message: string };
+    };
+
+    if ([404, 409].includes(status)) {
+      toast.error(data?.message || "An error occurred");
+    }
+
+    if (status === 401) {
+      api.dispatch(logOut());
+      toast.error("Unauthorized. Logging out...");
+    }
+
+    return result;
   }
 
-  if (result?.error?.status === 404) {
-    toast.error((result?.error?.data as { message: string })?.message);
-  }
+  // If the API call is successful and user is logged in, set the user immediately
+  if (result?.data) {
+    const user = (api.getState() as RootState).auth.user;
+    const token = (api.getState() as RootState).auth.token;
 
-  if (result?.error?.status === 401) {
-    const res = await fetch("http://localhost:5173/api/auth/refresh-token", {
-      method: "POST",
-      credentials: "include",
-    });
-
-    const data = await res.json();
-
-    if (data?.data?.accessToken) {
-      const user = (api.getState() as RootState).auth.user;
-
+    if (user && token) {
       api.dispatch(
         setUser({
           user,
-          token: data.data.accessToken,
+          token,
         })
       );
-
-      result = await baseQuery(args, api, extraOptions);
-    } else {
-      api.dispatch(logOut());
     }
   }
 
@@ -70,6 +68,6 @@ const baseQueryWithRefreshToken: BaseQueryFn<
 
 export const baseApi = createApi({
   reducerPath: "baseApi",
-  baseQuery: baseQueryWithRefreshToken,
+  baseQuery: baseQueryWithAuthHandling,
   endpoints: () => ({}),
 });
