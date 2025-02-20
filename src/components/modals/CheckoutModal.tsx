@@ -57,7 +57,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
       // Create Stripe Checkout Session
       const response = await createCheckoutSession({
         items: formattedItems,
-        successUrl: "https://book-on-client.vercel.app//user/my-orders",
+        successUrl: "https://book-on-client.vercel.app/user/my-orders",
         cancelUrl: "https://book-on-client.vercel.app",
       }).unwrap();
 
