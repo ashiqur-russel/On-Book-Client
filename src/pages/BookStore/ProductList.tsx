@@ -43,7 +43,7 @@ const Products = () => {
 
   return (
     <>
-      <div className="flex flex-col px-3 md:px-10 lg:px-24  py-0 mt-4">
+      <div className="flex flex-col px-3 md:px-10 lg:px-24  py-0 mt-4 pt-[60px]">
         <div className="flex justify-between items-center mb-4">
           <button
             className="btn-primary flex items-center gap-2 w-full sm:w-auto sm:gap-2"

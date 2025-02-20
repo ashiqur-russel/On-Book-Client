@@ -26,7 +26,7 @@ const books = [
 
 const Header = () => {
   return (
-    <div className="py-12 px-6 lg:px-12">
+    <div className="w-full px-3 md:px-10 lg:px-24  py-12">
       <div className="container mx-auto">
         {/* Heading Section */}
         <div className="lg:flex lg:items-center lg:justify-between text-center lg:text-left">

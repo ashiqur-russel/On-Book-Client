@@ -8,7 +8,6 @@ const Footer = () => {
           <div>
             <h3 className="text-lg font-semibold mb-3">Company</h3>
             <ul className="space-y-2 text-sm">
-              
               <li>
                 <a href="#" className="hover:underline">
                   Contact Us
@@ -100,9 +99,9 @@ const Footer = () => {
               <input
                 type="email"
                 placeholder="Enter email here"
-                className="border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500"
+                className="border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-gray-500"
               />
-              <button className="bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition">
+              <button className="bg-black text-white px-4 py-2  hover:bg-gray-800 transition">
                 Send Email
               </button>
             </form>

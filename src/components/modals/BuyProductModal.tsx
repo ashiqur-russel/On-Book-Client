@@ -71,18 +71,18 @@ const BuyProductModal: React.FC<BuyProductModalProps> = ({
             </p>
 
             {/* Quantity Selector */}
-            <div className="flex items-center space-x-4 mt-4">
-              <div className="flex items-center border border-red-500">
+            <div className="flex items-center justify-center space-x-4 mt-4 ">
+              <div className="flex items-center shadow-md p-2 bg-rose-50  ">
                 <button
                   onClick={decreaseQuantity}
-                  className="p-2 text-red-500 hover:bg-red-100 transition"
+                  className="p-2 text-gray-500 hover:bg-rose-100 border transition"
                 >
                   <FaMinus />
                 </button>
                 <span className="px-4 py-2 text-gray-900">{quantity}</span>
                 <button
                   onClick={increaseQuantity}
-                  className="p-2 text-red-500 hover:bg-red-100 transition"
+                  className="p-2 text-gray-500 border hover:bg-rose-100 transition"
                 >
                   <FaPlus />
                 </button>
@@ -120,7 +120,7 @@ const BuyProductModal: React.FC<BuyProductModalProps> = ({
           onClose={handleCloseCheckout}
           onSuccess={handleCompletePayment}
           customer={user.name}
-          amount={`$${totalPrice}`}
+          amount={`${totalPrice}`}
         />
       )}
     </>

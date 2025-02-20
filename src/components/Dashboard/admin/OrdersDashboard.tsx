@@ -56,7 +56,7 @@ const OrdersDashboard = () => {
 
   const returnOrders = orders.filter(
     (order) =>
-      order.status === "cancelled" || order.payment?.status === "refunded"
+      order.status === "cancelled" || order.refundStatus === "completed"
   ).length;
 
   const fulfilledOrders = orders.filter(
@@ -208,8 +208,8 @@ const OrdersDashboard = () => {
                     <td className="px-4 py-3">
                       {order.status === "cancelled" &&
                         getStatusBadge(
-                          order.payment?.status === "refunded"
-                            ? "Refund Completed"
+                          order.refundStatus === "completed"
+                            ? "Refund Issued"
                             : "Refund Requested"
                         )}
                     </td>
@@ -220,7 +220,7 @@ const OrdersDashboard = () => {
                     </td>
                     <td className="px-4 py-3 text-right">
                       {order.status === "cancelled" &&
-                        order.payment?.status !== "refunded" && (
+                        order.refundStatus !== "completed" && (
                           <button
                             onClick={() => handleIssueRefund(order.payment._id)}
                             className="px-4 py-2 bg-red-600 text-white text-xs rounded-md hover:bg-red-700 transition"
@@ -230,7 +230,7 @@ const OrdersDashboard = () => {
                           </button>
                         )}
 
-                      {order.payment?.status === "refunded" && (
+                      {order?.refundStatus === "completed" && (
                         <span className="text-green-600 font-semibold text-xs">
                           Refund Completed
                         </span>
