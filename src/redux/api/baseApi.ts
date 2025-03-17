@@ -42,9 +42,8 @@ const baseQueryWithAuthHandling: BaseQueryFn<
     }
 
     if (status === 401) {
-      toast.error("Your session has expired. Please log in again.");
-
       api.dispatch(logOut());
+      toast.error("Unauthorized. Logging out...");
     }
 
     return result;

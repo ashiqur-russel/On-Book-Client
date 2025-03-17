@@ -17,17 +17,12 @@ import {
   selectCurrentStore,
 } from "@/redux/features/product/productSlice";
 import { useCreateCheckoutSessionMutation } from "@/redux/features/payment/paymentApi";
-import { selectCurrentUser } from "@/redux/features/auth/authSlice";
-import { useNavigate } from "react-router";
 
 export default function Cart() {
   const dispatch = useAppDispatch();
   const cart = useAppSelector(selectCurrentStore);
-  const [createCheckoutSession] = useCreateCheckoutSessionMutation();
-  const user = useAppSelector(selectCurrentUser);
-  console.log(user);
-
-  const navigate = useNavigate();
+  const [createCheckoutSession] =
+    useCreateCheckoutSessionMutation();
 
   const [error, setError] = useState<string | null>(null);
 
@@ -69,15 +64,10 @@ export default function Cart() {
     };
   });
 
+
   const handleCheckout = async () => {
     console.log("checkout");
     setError(null);
-
-    if (!user) {
-      setError("You must be logged in to proceed with checkout.");
-
-      return;
-    }
 
     try {
       const response = await createCheckoutSession({
@@ -99,12 +89,11 @@ export default function Cart() {
         sessionId: response?.data?.sessionId,
       });
 
+      dispatch(clearCart())
+
       if (redirectResult.error) {
         throw new Error(redirectResult.error.message);
       }
-
-      dispatch(clearCart());
-
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error("Payment Error:", error);
@@ -225,32 +214,16 @@ export default function Cart() {
                   Shipping and taxes calculated at checkout.
                 </p>
 
-                <div className="mt-6">
-                  {!user ? (
-                    <motion.button
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() =>
-                        navigate(
-                          "/signin?redirect=" +
-                            encodeURIComponent(location.pathname)
-                        )
-                      }
-                      className="w-full bg-black text-white py-3  hover:bg-gray-800 transition"
-                    >
-                      Log in
-                    </motion.button>
-                  ) : (
-                    <motion.button
-                      whileTap={{ scale: 0.95 }}
-                      onClick={handleCheckout}
-                      className="flex w-full items-center justify-center border border-transparent hover:bg-gray-600 px-6 py-3 text-base font-medium text-white shadow-xs bg-black"
-                      disabled={cart.cart.length === 0}
-                    >
-                      Checkout
-                    </motion.button>
-                  )}
+                {/* Checkout Button */}
+                <div className="mt-6" onClick={handleCheckout}>
+                  <motion.button
+                    whileTap={{ scale: 0.95 }}
+                    className="flex w-full items-center justify-center border border-transparent hover:bg-gray-600 px-6 py-3 text-base font-medium text-white shadow-xs bg-black"
+                    disabled={cart.cart.length === 0}
+                  >
+                    Checkout
+                  </motion.button>
                 </div>
-
                 {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
 
                 <div className="mt-6 flex justify-between">

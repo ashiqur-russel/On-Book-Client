@@ -1,6 +1,6 @@
 import { useForm, SubmitHandler } from "react-hook-form";
 import { FaGoogle } from "react-icons/fa";
-import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../redux/hooks";
 import { useLoginMutation } from "../../redux/features/auth/authApi";
 import { verifyToken } from "../../utils/verifyToken";
@@ -17,9 +17,6 @@ const SignIn = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [login, { isLoading }] = useLoginMutation();
-  const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
-  const errorParam = searchParams.get("error");
 
   const {
     handleSubmit,
@@ -77,7 +74,6 @@ const SignIn = () => {
             <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-1/3 border-t border-gray-300"></div>
             <div className="absolute right-0 top-1/2 transform -translate-y-1/2 w-1/3 border-t border-gray-300"></div>
           </div>
-          {errorParam && <p className="text-red-500">{errorParam}</p>}
 
           <OnForm<LoginForm>
             title="Sign in to On.Book"
