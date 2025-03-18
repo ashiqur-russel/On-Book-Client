@@ -195,7 +195,109 @@ const Navbar = () => {
           menuOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        {/* ...mobile menu items */}
+        <div className="p-4 flex justify-between items-center border-b border-gray-700">
+          <span className="flex items-center gap-2">
+            <h2 className="text-xl font-bold text-white">Menu</h2>
+            <ShoppingBag size={18} className="text-white" />
+          </span>
+          {user && (
+            <div className="relative">
+              <FaBell
+                onClick={() => setNotificationOpen((prev) => !prev)}
+                className="w-5 h-5 cursor-pointer text-white hover:text-gray-300 transition"
+              />
+              {/* Show unread count if > 0 */}
+              {unreadCount > 0 && (
+                <span className="absolute inline-flex items-center justify-center rounded-full text-xs bg-red-600 text-white -top-2 -right-2 w-5 h-5">
+                  {unreadCount}
+                </span>
+              )}
+
+              {/* Dropdown */}
+              {notificationOpen && (
+                <div className="absolute right-0 mt-2 w-72 bg-white rounded shadow-lg p-2 z-50">
+                  <h3 className="text-gray-700 font-semibold border-b pb-1 mb-2">
+                    Notifications
+                  </h3>
+                  {isLoading && <div className="text-gray-500">Loading...</div>}
+                  {!isLoading && notifications?.data?.length === 0 && (
+                    <div className="text-gray-500">No notifications</div>
+                  )}
+                  {!isLoading &&
+                    notifications?.data?.map((notification: INotification) => (
+                      <div
+                        key={notification._id}
+                        onClick={() =>
+                          handleNotificationClick(notification._id)
+                        }
+                        className="p-2 border-b last:border-b-0 border-gray-200 cursor-pointer"
+                      >
+                        <p className="text-gray-800 text-sm">
+                          {notification.message}
+                        </p>
+                        {notification.status === "unread" && (
+                          <span className="text-xs text-blue-500">
+                            Mark as read
+                          </span>
+                        )}
+                      </div>
+                    ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          <button
+            className="text-white focus:outline-none hover:text-gray-300"
+            onClick={() => setMenuOpen(false)}
+          >
+            <AiOutlineClose className="w-6 h-6" />
+          </button>
+        </div>
+        <ul className="p-4 space-y-4">
+          <li>
+            <NavLink
+              to="/products"
+              className="text-white hover:text-gray-300 transition"
+              onClick={() => setMenuOpen(false)}
+            >
+              Books
+            </NavLink>
+          </li>
+
+          {user && (
+            <li>
+              <NavLink
+                to={`/dashboard/${user.role}`}
+                className="text-white hover:text-gray-300 transition"
+                onClick={() => setMenuOpen(false)}
+              >
+                Dashboard
+              </NavLink>
+            </li>
+          )}
+
+          {/* Login / Logout Button */}
+          {user ? (
+            <button
+              onClick={handleLogout}
+              className="flex items-center space-x-1 text-white hover:text-gray-300 font-medium transition"
+            >
+              <AiOutlineLogout className="w-5 h-5" />
+              <span>Logout</span>
+            </button>
+          ) : (
+            <>
+              <NavLink
+                to={"/signin"}
+                className="flex items-center space-x-1 text-white hover:text-gray-300 font-medium transition"
+              >
+                <AiOutlineLock className="w-5 h-5" />
+                <span>Login</span>
+              </NavLink>
+            </>
+          )}
+        </ul>
       </div>
     </nav>
   );
