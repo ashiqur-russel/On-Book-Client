@@ -5,5 +5,4 @@ export type TUser = {
   role: string;
   createdAt: string;
   updatedAt: string;
-  __v: number;
 };

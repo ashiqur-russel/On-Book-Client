@@ -1,7 +1,8 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import io from "socket.io-client";
 import { toast } from "sonner";
 
+//TODO: Replace the URL and Move it to a config file
 const socket = io("http://localhost:5001");
 
 interface NotificationProps {
@@ -19,11 +20,9 @@ const Notification = ({ userId }: NotificationProps) => {
       console.log("Received notification:", message);
     });
 
-    // Listen for refund notifications
     socket.on(
       "refundNotification",
       (data: { message: string; refundAmount: number }) => {
-        console.log("Refund notification received:", data);
         toast.success(`${data.message} Amount: $${data.refundAmount}`, {
           duration: Infinity,
           action: {

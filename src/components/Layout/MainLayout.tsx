@@ -1,8 +1,8 @@
 import { Outlet } from "react-router-dom";
-import Navbar from "../shared/Navbar";
 import Cart from "../Cart/Cart";
 import { useAppSelector } from "@/redux/hooks";
 import { RootState } from "@/redux/store";
+import Navbar from "../shared/Navbar/Navbar";
 
 const MainLayout = () => {
   const isCartOpen = useAppSelector(
