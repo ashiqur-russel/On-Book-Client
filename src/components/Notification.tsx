@@ -1,0 +1,42 @@
+import React, { useEffect } from "react";
+import io from "socket.io-client";
+import { toast } from "sonner";
+
+const socket = io("http://localhost:5001");
+
+interface NotificationProps {
+  userId: string;
+}
+
+const Notification = ({ userId }: NotificationProps) => {
+  useEffect(() => {
+    socket.on("connect", () => {
+      console.log("Connected with socket id", socket.id);
+      socket.emit("joinRoom", userId);
+    });
+
+    // Listen for refund notifications
+    socket.on(
+      "refundNotification",
+      (data: { message: string; refundAmount: number }) => {
+        console.log("Refund notification received:", data);
+        toast.success(`${data.message} Amount: $${data.refundAmount}`, {
+          duration: Infinity,
+          action: {
+            label: "Close",
+            onClick: () => console.log("Undo"),
+          },
+        });
+      }
+    );
+
+    return () => {
+      socket.off("connect");
+      socket.off("refundNotification");
+    };
+  }, [userId]);
+
+  return <div></div>;
+};
+
+export default Notification;

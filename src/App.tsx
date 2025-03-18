@@ -7,6 +7,7 @@ const Bestsellers = lazy(() => import("./pages/BestSeller/BestSeller"));
 const BookFairSection = lazy(() => import("./pages/BookFair/BookFair"));
 const BookCarousel = lazy(() => import("./components/BookCarousel"));
 const Offers = lazy(() => import("./pages/Offers/Offers"));
+
 const TopSellingBooks = lazy(
   () => import("./pages/TopSellingBooks/TopSellingBooks")
 );
