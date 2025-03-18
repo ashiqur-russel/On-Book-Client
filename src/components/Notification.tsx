@@ -15,6 +15,10 @@ const Notification = ({ userId }: NotificationProps) => {
       socket.emit("joinRoom", userId);
     });
 
+    socket.on("notification", (message: string) => {
+      console.log("Received notification:", message);
+    });
+
     // Listen for refund notifications
     socket.on(
       "refundNotification",
@@ -33,6 +37,7 @@ const Notification = ({ userId }: NotificationProps) => {
     return () => {
       socket.off("connect");
       socket.off("refundNotification");
+      socket.off("notification");
     };
   }, [userId]);
 
