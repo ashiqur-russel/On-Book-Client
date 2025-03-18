@@ -1,16 +1,22 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState } from "react";
 import {
   FaShoppingCart,
   FaBoxOpen,
   FaRedo,
   FaChartBar,
-  FaEllipsisH,
+  FaCheckCircle,
+  FaTimesCircle,
 } from "react-icons/fa";
 import { BsSearch } from "react-icons/bs";
 import { BiChevronLeft, BiChevronRight } from "react-icons/bi";
-import { useGetAllOrdersQuery } from "@/redux/features/orders/orderApi";
-import { useIssueRefundMutation } from "@/redux/features/payment/paymentApi";
 import { toast } from "sonner";
+
+import {
+  useGetAllOrdersQuery,
+  useChangeDeliveryStatusMutation,
+} from "@/redux/features/orders/orderApi";
+import { useIssueRefundMutation } from "@/redux/features/payment/paymentApi";
 
 const getStatusBadge = (status: string) => {
   const statusClasses: Record<string, string> = {
@@ -21,15 +27,21 @@ const getStatusBadge = (status: string) => {
     cancelled: "bg-red-100 text-red-800",
     refunded: "bg-green-100 text-green-800",
     refundRequested: "bg-orange-100 text-orange-800",
+    paid: "bg-gray-900 text-white",
   };
+
+  let label = status.charAt(0).toUpperCase() + status.slice(1);
+  if (status === "refundRequested") label = "Refund Requested";
+  if (status === "refunded") label = "Refund Completed";
+  if (status === "paid") label = "Paid";
 
   return (
     <span
-      className={`px-2 py-1 rounded-full text-xs font-semibold ${
+      className={`px-2 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${
         statusClasses[status] || "bg-gray-100 text-gray-800"
       }`}
     >
-      {status.charAt(0).toUpperCase() + status.slice(1)}
+      {label}
     </span>
   );
 };
@@ -43,12 +55,13 @@ const OrdersDashboard = () => {
   });
 
   const queryArray = Object.entries(queryParams)
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     .filter(([_, value]) => value !== "")
     .map(([key, value]) => ({ name: key, value }));
 
   const { data, isLoading, error, refetch } = useGetAllOrdersQuery(queryArray);
   const [issueRefund, { isLoading: isRefunding }] = useIssueRefundMutation();
+  const [changeDeliveryStatus, { isLoading: isUpdatingStatus }] =
+    useChangeDeliveryStatusMutation();
 
   const orders = data?.data || [];
   const totalOrders = data?.meta?.total || 0;
@@ -78,23 +91,34 @@ const OrdersDashboard = () => {
   };
 
   const handleIssueRefund = async (paymentId: string | null | undefined) => {
-    let loadingToast;
-
     if (!paymentId) {
       toast.error("Payment ID is missing!");
       return;
     }
     try {
       toast.loading("Processing refund...");
-      toast.dismiss(loadingToast);
       await issueRefund(paymentId).unwrap();
       toast.success("Refund processed successfully!");
-
       refetch();
-      toast.dismiss(loadingToast);
     } catch {
-      toast.dismiss(loadingToast);
       toast.error("Failed to issue refund. Please try again.");
+    }
+  };
+
+  // Delivery status change
+  const handleStatusChange = async (
+    orderId: string,
+    newStatus: "shipped" | "delivered"
+  ) => {
+    try {
+      await changeDeliveryStatus({
+        orderId,
+        deliveryStatus: newStatus,
+      }).unwrap();
+      toast.success("Delivery status updated successfully!");
+      refetch();
+    } catch {
+      toast.error("Failed to update delivery status.");
     }
   };
 
@@ -114,6 +138,7 @@ const OrdersDashboard = () => {
 
       <h1 className="text-3xl font-bold text-gray-900 mb-6">Orders</h1>
 
+      {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
         <SummaryCard
           icon={<FaShoppingCart />}
@@ -141,6 +166,7 @@ const OrdersDashboard = () => {
         />
       </div>
 
+      {/* Filters */}
       <div className="flex flex-col lg:flex-row justify-between gap-2 items-center mb-4">
         <div className="grid grid-cols-5 gap-2">
           {["All", "PENDING", "DELIVERED", "SHIPPED", "CANCELLED"].map(
@@ -160,6 +186,7 @@ const OrdersDashboard = () => {
           )}
         </div>
 
+        {/* Search */}
         <div className="relative">
           <BsSearch className="absolute left-3 top-2.5 text-gray-500" />
           <input
@@ -178,6 +205,7 @@ const OrdersDashboard = () => {
         </div>
       </div>
 
+      {/* Orders Table */}
       <div className="bg-white p-6 rounded-lg shadow-md text-black">
         <div className="overflow-x-auto">
           <table className="w-full border-collapse rounded-lg overflow-hidden min-w-[800px]">
@@ -205,24 +233,38 @@ const OrdersDashboard = () => {
                       {new Date(order.createdAt).toLocaleDateString()}
                     </td>
                     <td className="px-4 py-3">{order.user.name}</td>
+
+                    {/* Payment Column */}
                     <td className="px-4 py-3">
-                      {order.status === "cancelled" &&
-                        getStatusBadge(
-                          order.refundStatus === "completed"
-                            ? "Refund Issued"
-                            : "Refund Requested"
-                        )}
+                      {order.status === "cancelled"
+                        ? getStatusBadge(
+                            order.refundStatus === "completed"
+                              ? "refunded"
+                              : "refundRequested"
+                          )
+                        : order.refundStatus === "not_requested"
+                        ? getStatusBadge("paid")
+                        : order.refundStatus === "requested"
+                        ? getStatusBadge("refundRequested")
+                        : order.refundStatus === "completed"
+                        ? getStatusBadge("refunded")
+                        : null}
                     </td>
+
                     <td className="px-4 py-3">${order.totalPrice}</td>
-                    <td className="px-4 py-3">{order.quantity} </td>
+                    <td className="px-4 py-3">{order.quantity}</td>
+
                     <td className="px-4 py-3">
                       {getStatusBadge(order.deliveryStatus)}
                     </td>
-                    <td className="px-4 py-3 text-right">
+
+                    <td className="px-4 py-3 text-right space-y-2">
                       {order.status === "cancelled" &&
                         order.refundStatus !== "completed" && (
                           <button
-                            onClick={() => handleIssueRefund(order.payment._id)}
+                            onClick={() =>
+                              handleIssueRefund(order.payment?._id)
+                            }
                             className="px-4 py-2 bg-red-600 text-white text-xs rounded-md hover:bg-red-700 transition"
                             disabled={isRefunding}
                           >
@@ -230,16 +272,39 @@ const OrdersDashboard = () => {
                           </button>
                         )}
 
-                      {order?.refundStatus === "completed" && (
-                        <span className="text-green-600 font-semibold text-xs">
-                          Refund Completed
-                        </span>
+                      {order.deliveryStatus === "delivered" && (
+                        <FaCheckCircle className="inline-block text-green-900 text-xl" />
                       )}
 
-                      {order.status !== "cancelled" && (
-                        <button className="text-gray-600 hover:text-gray-900">
-                          <FaEllipsisH />
-                        </button>
+                      {order.status === "cancelled" && (
+                        <FaTimesCircle className="inline-block text-red-600 text-xl" />
+                      )}
+
+                      {(order.deliveryStatus === "pending" ||
+                        order.deliveryStatus === "shipped") && (
+                        <select
+                          onChange={(e) => {
+                            const selectedStatus = e.target.value as
+                              | "shipped"
+                              | "delivered";
+                            if (selectedStatus) {
+                              handleStatusChange(order._id, selectedStatus);
+                            }
+                          }}
+                          defaultValue=""
+                          disabled={isUpdatingStatus}
+                          className="border border-gray-300 rounded p-1 text-xs"
+                        >
+                          <option value="" disabled>
+                            Change Status
+                          </option>
+                          {order.deliveryStatus === "pending" && (
+                            <option value="shipped">Shipped</option>
+                          )}
+                          {order.deliveryStatus === "shipped" && (
+                            <option value="delivered">Delivered</option>
+                          )}
+                        </select>
                       )}
                     </td>
                   </tr>
@@ -254,6 +319,8 @@ const OrdersDashboard = () => {
             </tbody>
           </table>
         </div>
+
+        {/* Pagination */}
         <div className="flex justify-between items-center mt-4">
           <p className="text-gray-600">
             Showing {(queryParams.page - 1) * queryParams.limit + 1} -{" "}
@@ -285,7 +352,7 @@ const OrdersDashboard = () => {
   );
 };
 
-// TODO: Summary Card  (Static data now)
+// Summary Card (Static data now)
 interface SummaryCardProps {
   icon: JSX.Element;
   title: string;
