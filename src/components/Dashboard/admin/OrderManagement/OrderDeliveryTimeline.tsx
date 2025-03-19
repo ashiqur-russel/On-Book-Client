@@ -11,7 +11,6 @@ const timelineSteps = [
 ];
 
 const OrderDeliveryTimeline: React.FC<OrderTimelineProps> = ({ status }) => {
-  // If the order is cancelled, show a special label:
   if (status === "cancelled") {
     return (
       <div className="flex flex-col items-start space-y-2">
@@ -20,10 +19,8 @@ const OrderDeliveryTimeline: React.FC<OrderTimelineProps> = ({ status }) => {
     );
   }
 
-  // Find the active step index based on current status:
   const activeIndex = timelineSteps.findIndex((step) => step.key === status);
 
-  // If we can't find the status, treat it as unknown (optional):
   if (activeIndex < 0) {
     return <div className="text-gray-500 font-semibold">Unknown Status</div>;
   }
@@ -52,7 +49,6 @@ const OrderDeliveryTimeline: React.FC<OrderTimelineProps> = ({ status }) => {
               {index + 1}
             </div>
             <span className="ml-2">{step.label}</span>
-            {/* Horizontal line except after the last step */}
             {index < timelineSteps.length - 1 && (
               <div className="mx-2 w-10 h-1 bg-gray-300" />
             )}
