@@ -1,6 +1,6 @@
 import { FaBook, FaCog, FaChartLine } from "react-icons/fa";
 import UserDashboard from "../components/Dashboard/user/UserDashboard";
-import MyOrders from "../components/Dashboard/user/Order-Management/MyOrder";
+import MyOrders from "../components/Dashboard/user/OrderManagement/MyOrder";
 import Settings from "@/components/Dashboard/user/Settings";
 
 export const userPaths = [

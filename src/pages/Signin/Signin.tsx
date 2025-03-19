@@ -40,15 +40,17 @@ const SignIn = () => {
       toast.success("Logged in Successfully", { duration: 200 });
       dispatch(setUser({ user, token }));
 
-      await new Promise((resolve) => setTimeout(resolve, 200));
+      // await new Promise((resolve) => setTimeout(resolve, 200));
 
       const redirectPath =
         new URLSearchParams(location.search).get("redirect") || "/";
 
-      if (user.role === "user") {
-        navigate(redirectPath);
-      } else {
-        navigate(`/dashboard/${user.role}`);
+      if (!isLoading) {
+        if (user.role === "user") {
+          navigate(redirectPath);
+        } else {
+          navigate(`/dashboard/${user.role}`);
+        }
       }
     } catch {
       setError("email", {

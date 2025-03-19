@@ -1,7 +1,8 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import io from "socket.io-client";
 import { toast } from "sonner";
 
+//TODO: Replace the URL and Move it to a config file
 const socket = io("http://localhost:5001");
 
 interface NotificationProps {
@@ -15,11 +16,13 @@ const Notification = ({ userId }: NotificationProps) => {
       socket.emit("joinRoom", userId);
     });
 
-    // Listen for refund notifications
+    socket.on("notification", (message: string) => {
+      console.log("Received notification:", message);
+    });
+
     socket.on(
       "refundNotification",
       (data: { message: string; refundAmount: number }) => {
-        console.log("Refund notification received:", data);
         toast.success(`${data.message} Amount: $${data.refundAmount}`, {
           duration: Infinity,
           action: {
@@ -33,6 +36,7 @@ const Notification = ({ userId }: NotificationProps) => {
     return () => {
       socket.off("connect");
       socket.off("refundNotification");
+      socket.off("notification");
     };
   }, [userId]);
 

@@ -63,6 +63,21 @@ const orderApi = baseApi.injectEndpoints({
         return response.data;
       },
     }),
+
+    changeDeliveryStatus: builder.mutation({
+      query: ({
+        orderId,
+        deliveryStatus,
+      }: {
+        orderId: string;
+        deliveryStatus: "shipped" | "delivered";
+      }) => ({
+        url: `/orders/${orderId}/delivery-status`,
+        method: "PATCH",
+        body: { deliveryStatus },
+      }),
+      transformResponse: (response: TResponseRedux<any>) => response.data,
+    }),
   }),
 });
 
@@ -70,4 +85,5 @@ export const {
   useGetAllOrdersQuery,
   useGetMyordersQuery,
   useCancelOrderMutation,
+  useChangeDeliveryStatusMutation,
 } = orderApi;
