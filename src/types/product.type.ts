@@ -25,4 +25,9 @@ export interface IProduct {
   review?: [];
   offerRate?: number;
   rating?: number;
+  offer: {
+    offerRate: number;
+    start: Date;
+    end: Date;
+  };
 }

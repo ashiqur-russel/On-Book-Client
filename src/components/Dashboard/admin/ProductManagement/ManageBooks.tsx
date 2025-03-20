@@ -162,7 +162,7 @@ const ManageBooks = () => {
                     <td className="px-4 py-3">{book.quantity}</td>
                     <td className="px-4 py-3">{book.category}</td>
                     <td className="px-4 py-3">
-                      {book.hasOffer ? `${book.offerRate}%` : "N/A"}
+                      {book.hasOffer ? `${book?.offer?.offerRate}%` : "N/A"}
                     </td>
                     <td className="px-4 py-3">{book.author}</td>
                     <td className="px-4 py-3 text-right space-x-2">

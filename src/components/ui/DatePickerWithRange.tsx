@@ -28,18 +28,20 @@ export function DatePickerWithRange({
 
   return (
     <Popover modal>
-      <PopoverTrigger>
-        <Button variant="outline" className={`${className} text-left`}>
-          <CalendarIcon className="mr-2 h-4 w-4" />
-          {range?.from
-            ? range.to
-              ? `${format(range.from, "LLL dd, yyyy")} – ${format(
-                  range.to,
-                  "LLL dd, yyyy"
-                )}`
-              : format(range.from, "LLL dd, yyyy")
-            : "Pick date range"}
-        </Button>
+      <PopoverTrigger asChild>
+        <div>
+          <Button variant="outline" className={`${className} text-left`}>
+            <CalendarIcon className="mr-2 h-4 w-4" />
+            {range?.from
+              ? range.to
+                ? `${format(range.from, "LLL dd, yyyy")} – ${format(
+                    range.to,
+                    "LLL dd, yyyy"
+                  )}`
+                : format(range.from, "LLL dd, yyyy")
+              : "Pick date range"}
+          </Button>
+        </div>
       </PopoverTrigger>
 
       <PopoverContent
