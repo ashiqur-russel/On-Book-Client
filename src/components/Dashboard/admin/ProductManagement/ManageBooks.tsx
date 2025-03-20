@@ -43,23 +43,25 @@ const ManageBooks = () => {
   };
 
   const handleAddOffer = async (
-    offerPercentage: number,
-    selectedBookIds: string[]
+    offerRate: number,
+    selectedBookIds: string[],
+    start: string,
+    end: string
   ) => {
-    if (selectedBookIds.length === 0) return;
+    if (!selectedBookIds.length) return;
     try {
       await offerBooks({
         productIds: selectedBookIds,
-        discount: offerPercentage,
+        offerRate,
+        start,
+        end,
       }).unwrap();
       toast.success("Offer applied successfully!");
       refetch();
-    } catch (err) {
-      console.error("Offer failed:", err);
-      toast.error("Failed to apply offer. Please try again.");
+    } catch {
+      toast.error("Failed to apply offer.");
     }
   };
-
   const [selectedBookIds, setSelectedBookIds] = useState<string[]>([]);
   const [isOfferModalOpen, setIsOfferModalOpen] = useState<boolean>(false);
 
@@ -197,8 +199,8 @@ const ManageBooks = () => {
         <Suspense fallback={null}>
           <LazyOfferModal
             onClose={() => setIsOfferModalOpen(false)}
-            onSubmit={(discount) => {
-              handleAddOffer(discount, selectedBookIds);
+            onSubmit={(rate, start, end) => {
+              handleAddOffer(rate, selectedBookIds, start, end);
               setIsOfferModalOpen(false);
             }}
           />

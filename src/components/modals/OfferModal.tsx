@@ -1,41 +1,59 @@
-import React, { useState } from "react";
+"use client";
+
+import React from "react";
+import { DateRange } from "react-day-picker";
 import OnModal from "@/components/utils/OnModal";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { DatePickerWithRange } from "@/components/ui/DatePickerWithRange";
 
 interface OfferModalProps {
   onClose: () => void;
-  onSubmit: (discount: number) => void;
+  onSubmit: (offerRate: number, start: string, end: string) => void;
 }
 
-const OfferModal: React.FC<OfferModalProps> = ({ onClose, onSubmit }) => {
-  const [discount, setDiscount] = useState<number>(0);
+export default function OfferModal({ onClose, onSubmit }: OfferModalProps) {
+  const [offerRate, setOfferRate] = React.useState<number>(0);
+  const [dateRange, setDateRange] = React.useState<DateRange | undefined>(
+    undefined
+  );
 
-  const handleSubmit = () => {
-    if (discount > 0) {
-      onSubmit(discount);
+  const handleConfirm = () => {
+    if (dateRange?.from && dateRange.to) {
+      onSubmit(
+        offerRate,
+        dateRange.from.toISOString(),
+        dateRange.to.toISOString()
+      );
     }
   };
 
   return (
     <OnModal
       title="Apply Offer Discount"
-      onClose={onClose}
-      buttonLabel="Submit"
       cancelLabel="Cancel"
-      onConfirm={handleSubmit}
-      onCancel={onClose}
+      buttonLabel="Submit"
+      onClose={onClose}
+      onConfirm={handleConfirm}
     >
-      <div className="flex flex-col items-center">
-        <p className="mb-2">Enter discount percentage:</p>
-        <input
+      <div className="space-y-4">
+        <Label htmlFor="offerRate">Discount (%)</Label>
+        <Input
+          id="offerRate"
           type="number"
-          value={discount}
-          onChange={(e) => setDiscount(Number(e.target.value))}
-          className="border border-gray-300 rounded-lg p-2 w-full"
-          placeholder="e.g. 20"
+          min={0}
+          max={100}
+          value={offerRate}
+          onChange={(e) => setOfferRate(Number(e.target.value))}
+        />
+
+        <Label>Date Range</Label>
+        <DatePickerWithRange
+          className="w-full"
+          value={dateRange}
+          onSelect={setDateRange}
         />
       </div>
     </OnModal>
   );
-};
-
-export default OfferModal;
+}

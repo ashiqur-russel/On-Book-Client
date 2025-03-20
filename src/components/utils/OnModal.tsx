@@ -40,7 +40,7 @@ const OnModal: React.FC<ModalProps> = ({
       }`}
     >
       <div
-        className={`bg-white p-6 shadow-lg w-full max-w-md relative transform transition-transform duration-300 ${
+        className={`bg-white p-6 shadow-lg w-full max-w-md relative transform transition-transform duration-300 overflow-visible ${
           isVisible ? "scale-100" : "scale-95"
         }`}
       >
