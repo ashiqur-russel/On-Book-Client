@@ -20,6 +20,9 @@ export interface IProduct {
   hasOffer?: boolean;
   productImg?: string;
   language?: string;
+  ratings?: number;
   totalPrice?: number;
+  review?: [];
+  offerRate?: number;
   rating?: number;
 }

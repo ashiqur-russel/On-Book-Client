@@ -7,6 +7,7 @@ import { FiTrash2 } from "react-icons/fi";
 import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai";
 import { toggleCart } from "@/redux/features/global/globalSlice";
 import { loadStripe } from "@stripe/stripe-js";
+import { useCreateCheckoutSessionMutation } from "@/redux/features/payment/paymentApi";
 
 import {
   clearCart,
@@ -16,13 +17,11 @@ import {
   resetHighlight,
   selectCurrentStore,
 } from "@/redux/features/product/productSlice";
-import { useCreateCheckoutSessionMutation } from "@/redux/features/payment/paymentApi";
 
 export default function Cart() {
   const dispatch = useAppDispatch();
   const cart = useAppSelector(selectCurrentStore);
-  const [createCheckoutSession] =
-    useCreateCheckoutSessionMutation();
+  const [createCheckoutSession] = useCreateCheckoutSessionMutation();
 
   const [error, setError] = useState<string | null>(null);
 
@@ -64,7 +63,6 @@ export default function Cart() {
     };
   });
 
-
   const handleCheckout = async () => {
     console.log("checkout");
     setError(null);
@@ -89,7 +87,7 @@ export default function Cart() {
         sessionId: response?.data?.sessionId,
       });
 
-      dispatch(clearCart())
+      dispatch(clearCart());
 
       if (redirectResult.error) {
         throw new Error(redirectResult.error.message);

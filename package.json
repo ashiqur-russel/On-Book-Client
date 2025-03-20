@@ -7,6 +7,14 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
+    "format": "prettier . --write",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "serve": "vite preview",
+    "start": "vite",
+    "build:dev": "tsc -b && vite build",
+    "build:prod": "tsc -b && vite build",
+    "lint:fix": "eslint --fix .",
+    "format:fix": "prettier --write .",
     "preview": "vite preview"
   },
   "dependencies": {

@@ -52,6 +52,14 @@ const productApi = baseApi.injectEndpoints({
         body: productData,
       }),
     }),
+
+    offerProduct: builder.mutation({
+      query: (offerData: { productIds: string[]; discount: number }) => ({
+        url: "/products/offer",
+        method: "POST",
+        body: offerData,
+      }),
+    }),
   }),
 });
 
@@ -60,4 +68,5 @@ export const {
   useGetProductByIdQuery,
   useCreateProductMutation,
   useGetBestSellingProductsQuery,
+  useOfferProductMutation,
 } = productApi;
