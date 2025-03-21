@@ -85,7 +85,7 @@ const TopSellingBooks = () => {
   return (
     <div className="container mx-auto px-2 py-10">
       <h2 className="text-3xl text-center mb-6 text-gray-900">
-        Top - 10 Best Selling Books
+        Top Rated Books
       </h2>
 
       {/* Carousel */}

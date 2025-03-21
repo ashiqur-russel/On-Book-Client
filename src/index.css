@@ -1,6 +1,8 @@
 /* Google Font */
+
 @import url("https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600&family=Source+Code+Pro:wght@400;600;700&family=Space+Grotesk:wght@300&family=Poppins:wght@100;200;300;400;500;600;700;800;900&family=Mona+Sans:wght@200..900&display=swap");
 @import "tailwindcss";
+
 
 /* Base Theme Variables */
 @layer base {
@@ -117,3 +119,5 @@
   .fontPoppins { font-family: var(--font-poppins); }
   .fontMona { font-family: var(--font-mona); }
 }
+
+

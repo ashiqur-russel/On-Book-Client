@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { DateRange } from "react-day-picker";
 import OnModal from "@/components/utils/OnModal";

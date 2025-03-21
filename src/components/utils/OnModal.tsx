@@ -3,7 +3,7 @@ import { FaTimes } from "react-icons/fa";
 
 interface ModalProps {
   title: string;
-  content?: React.ReactNode; // Accepts JSX for styling
+  content?: React.ReactNode; 
   buttonLabel?: string;
   cancelLabel?: string;
   onClose: () => void;

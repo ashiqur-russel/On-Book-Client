@@ -1,0 +1,13 @@
+.swiper-pagination {
+    position: static !important;
+    display: flex !important;
+    justify-content: center;
+    margin-top: 1rem;
+  }
+  
+
+  .swiper-slide {
+    display: flex;
+    align-items: stretch; 
+    height: auto !important;
+  }

@@ -1,4 +1,3 @@
-// src/routes/route.tsx
 import { createBrowserRouter } from "react-router-dom";
 import RootLayout from "@/components/Layout/RootLayout";
 import MainLayout from "@/components/Layout/MainLayout";
@@ -17,14 +16,11 @@ import { routeGenerator } from "../utils/routeGenerator";
 
 const router = createBrowserRouter([
   {
-    // 1) The top-level route uses RootLayout
     path: "/",
     element: <RootLayout />,
     errorElement: <ErrorPage />,
 
-    // 2) All child routes go inside children
     children: [
-      // MainLayout path
       {
         path: "/",
         element: <MainLayout />,
@@ -38,7 +34,6 @@ const router = createBrowserRouter([
         ],
       },
 
-      // Dashboard path (admin)
       {
         path: "/dashboard",
         element: <ProtectedRoute role="admin" />,
@@ -52,7 +47,6 @@ const router = createBrowserRouter([
         ],
       },
 
-      // Dashboard path (user)
       {
         path: "/dashboard",
         element: <ProtectedRoute role="user" />,
@@ -66,7 +60,6 @@ const router = createBrowserRouter([
         ],
       },
 
-      // Payment success route
       {
         path: "/payment-success",
         element: <PaymentSuccess />,
@@ -74,7 +67,6 @@ const router = createBrowserRouter([
     ],
   },
 
-  // Fallback for anything not matched
   {
     path: "*",
     element: <ErrorPage />,

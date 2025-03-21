@@ -196,7 +196,7 @@ const ManageBooks = () => {
       </div>
 
       {isOfferModalOpen && (
-        <Suspense fallback={null}>
+        <Suspense fallback={<div>Loading Offer Modal...</div>}>
           <LazyOfferModal
             onClose={() => setIsOfferModalOpen(false)}
             onSubmit={(rate, start, end) => {

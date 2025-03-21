@@ -16,17 +16,37 @@ const App = () => {
   return (
     <div className="min-h-screen flex flex-col h-[100vh]">
       <main className="flex-1">
-        <Suspense
-          fallback={<div className="text-center mt-10">Loading...</div>}
-        >
+        {/* Header */}
+        <Suspense fallback={<div>Loading Header...</div>}>
           <Header />
+        </Suspense>
+
+        {/* Bestsellers */}
+        <Suspense fallback={<div>Loading Bestsellers...</div>}>
           <Bestsellers />
+        </Suspense>
+
+        {/* BookFairSection */}
+        <Suspense fallback={<div>Loading Book Fair...</div>}>
           <BookFairSection />
+        </Suspense>
+
+        {/* BookCarousel */}
+        <Suspense fallback={<div>Loading Carousel...</div>}>
           <BookCarousel />
+        </Suspense>
+
+        {/* Offers */}
+        <Suspense fallback={<div>Loading Offers...</div>}>
           <Offers />
+        </Suspense>
+
+        {/* TopSellingBooks */}
+        <Suspense fallback={<div>Loading Top Selling...</div>}>
           <TopSellingBooks />
         </Suspense>
       </main>
+
       <Footer />
     </div>
   );
