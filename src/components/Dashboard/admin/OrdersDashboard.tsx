@@ -128,6 +128,8 @@ const OrdersDashboard = () => {
     }
   };
 
+  console.log(orders);
+
   return (
     <div className="p-6">
       {error && (
@@ -276,9 +278,10 @@ const OrdersDashboard = () => {
                         <FaCheckCircle className="inline-block text-green-900 text-xl" />
                       )}
 
-                      {order.status === "cancelled" && (
-                        <FaTimesCircle className="inline-block text-red-600 text-xl" />
-                      )}
+                      {order.status === "cancelled" &&
+                        order.refundStatus !== "requested" && (
+                          <FaTimesCircle className="inline-block text-red-600 text-xl" />
+                        )}
 
                       {(order.deliveryStatus === "pending" ||
                         order.deliveryStatus === "shipped") && (
