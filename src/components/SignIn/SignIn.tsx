@@ -10,7 +10,7 @@ import {
 import { FaGoogle } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
 import OnForm from "../utils/OnForm";
-import { LoginForm } from "@/pages/Signin/Signin";
+import { LoginForm } from "@/pages/SignIn/SignIn";
 
 export interface LoginFormProps {
   handleSubmit: UseFormHandleSubmit<LoginForm>;
@@ -31,7 +31,6 @@ const SignIn: React.FC<LoginFormProps> = ({
   isLoading,
   setValue,
 }) => {
-  // Track the currently selected dummy role
   const [selectedRole, setSelectedRole] = useState<"user" | "admin" | "none">(
     "none"
   );
@@ -39,7 +38,6 @@ const SignIn: React.FC<LoginFormProps> = ({
   const handleRoleSelect = (role: "user" | "admin") => {
     setSelectedRole(role);
 
-    // Set preset credentials based on role
     if (role === "user") {
       setValue("email", "guest@gmail.com");
       setValue("password", "123456");
@@ -63,7 +61,6 @@ const SignIn: React.FC<LoginFormProps> = ({
           Sign in with Google
         </button>
 
-        {/* Divider line and text */}
         <div className="relative z-1 my-6 text-center">
           <span className="text-gray-500 text-sm">or sign in with email</span>
           <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-1/3 border-t border-gray-300"></div>

@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { MemoryRouter } from "react-router-dom";
-import SignIn from "../../../pages/Signin/Signin";
+import SignIn from "../../../pages/SignIn/SignIn";
 import store from "../../../redux/store";
 describe("SignIn Page", () => {
   it("renders the Sign in page and main elements", () => {
