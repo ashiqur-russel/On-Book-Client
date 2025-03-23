@@ -9,6 +9,8 @@
     "paths": {
       "@/*": ["./src/*"]
     },
+    "types": ["vitest/globals"],
+
     "typeRoots": ["src/global.d.ts", "node_modules/@types"]
 
   }
