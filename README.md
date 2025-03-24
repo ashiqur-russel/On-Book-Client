@@ -2,8 +2,6 @@
     <img alt="Book Shop" title="#BookShop" src="./src/assets/books/logo.png" />
 </h1>
 
-
-
 <h3 align="center">A modern e-commerce platform for buying and selling books!</h3>
 
 <p align="center">
@@ -16,7 +14,6 @@
     
   <img alt="License" src="https://img.shields.io/badge/license-MIT-brightgreen">
 
-  
 </p>
 
 <h4 align="center"> 
@@ -25,9 +22,9 @@
 
 <p align="center">
     <img alt="Book Shop" title="#BookShop" src="./src/assets/books/login_banner.png" />
-
-
 </p>
+
+---
 
 ## About
 
@@ -37,31 +34,39 @@
 
 ## Features
 
-- [x] **User Authentication:**
+- [x] **User Authentication**:
   - Secure registration and login with JWT token-based authentication.
   - Role-based access control (user and admin roles).
-- [x] **Product Management:**
+
+- [x] **Product Management**:
   - Admins can add, update, and delete books.
   - Users can browse, search, and filter books.
-- [x] **Order Management:**
+
+- [x] **Order Management**:
   - Users can place orders, track order status, and cancel orders.
   - Admins can manage all orders (view, update, and cancel).
-- [x] **Payment Integration:**
+
+- [x] **Payment Integration**:
   - Integrated with **SurjoPay** for secure payments.
-- [x] **Responsive Design:**
+
+- [x] **Responsive Design**:
   - Fully responsive and works seamlessly on all devices.
-- [x] **Product Reviews:**
+
+- [x] **Product Reviews**:
   - Users can add reviews for books with ratings and comments.
 
+- [x] **Real-time Notifications**:
+  - **(New!)** Real-time notifications have been introduced using WebSockets.
+  - Currently, this feature **only works in a local environment** due to the lack of WebSocket support on Vercel.
+  - Consider deploying on a platform or service that supports WebSockets if you need real-time notifications in production. (e.g: AWS EC2)
+
 ---
-	
 
 ## 🔄 Process Flow of Book Purchase
 
 <h1 align="center">
     <img alt="Book Shop" title="#BookShop" src="./src/assets/books/by_process_flow.png" />
 </h1>
-
 
 ### 1️⃣ **User Selects a Product**
 - A logged-in user navigates to the **Product Page**.
@@ -94,20 +99,19 @@
   - **Payment details are recorded**.
 - The user is redirected back to the **Home Page**.
 
-
-
-
+---
 
 ## How to run Locally
 
 The project is divided into two parts:
 
-1. **Backend** (another repo) - Handles API requests, database operations, and authentication.
-2. **Frontend** (this repo) - Provides the user interface and interacts with the backend.
+1. **Backend** (in a separate repository) - Handles API requests, database operations, and authentication.
+2. **Frontend** (this repository) - Provides the user interface and interacts with the backend.
 
 ### Pre-requisites
 
 Before you begin, ensure you have the following tools installed:
+
 - [Git](https://git-scm.com/)
 - [Node.js](https://nodejs.org/en/)
 - A code editor like [VSCode](https://code.visualstudio.com/)
@@ -119,12 +123,13 @@ Before you begin, ensure you have the following tools installed:
 $ git clone https://github.com/ashiqur-russel/On.Book-Client.git
 
 # Access the project folder in your terminal
-$ cd bOn.Book-Client
+$ cd On.Book-Client
 
 # Install the dependencies
 $ npm install
 
 # Run the application in development mode
-$ npm start dev
+$ npm run dev
 
-# The application will open on port 3000 - go to http://localhost:5723
+# Go to http://localhost:5173
+
