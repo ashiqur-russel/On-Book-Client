@@ -19,7 +19,6 @@ const NotificationList = () => {
     refetch,
   } = useGetNotificationsQuery(undefined, {
     refetchOnMountOrArgChange: true,
-    pollingInterval: 10000,
   });
   const [markNotificationRead] = useMarkNotificationReadMutation();
 

@@ -83,8 +83,6 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      console.error("Payment Error:", error);
-
       setError(error.message || "An unknown error occurred.");
     }
   };

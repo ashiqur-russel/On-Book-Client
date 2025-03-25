@@ -10,6 +10,7 @@ import {
 import { logOut, setUser } from "../features/auth/authSlice";
 import { toast } from "sonner";
 import { RootState } from "../store";
+import { redirect } from "react-router";
 
 const baseQuery = fetchBaseQuery({
   baseUrl: import.meta.env.VITE_APP_API_URL_LIVE,
@@ -32,18 +33,15 @@ const baseQueryWithAuthHandling: BaseQueryFn<
   const result = await baseQuery(args, api, extraOptions);
 
   if (result?.error) {
-    const { status, data } = result.error as {
+    const { status } = result.error as {
       status: number;
       data?: { message: string };
     };
 
-    if ([404, 409].includes(status)) {
-      toast.error(data?.message || "An error occurred");
-    }
-
     if (status === 401) {
       api.dispatch(logOut());
       toast.error("Unauthorized. Logging out...");
+      redirect("/login");
     }
 
     return result;

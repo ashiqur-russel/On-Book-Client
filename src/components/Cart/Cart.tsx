@@ -94,9 +94,11 @@ export default function Cart() {
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      console.error("Payment Error:", error);
-
-      setError(error.message || "An unknown error occurred.");
+      if (error.status === 500) {
+        setError("Please Login again !");
+      } else {
+        setError("Something went wrong please log in again");
+      }
     }
   };
 
