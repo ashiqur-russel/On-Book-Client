@@ -17,12 +17,13 @@ import {
   resetHighlight,
   selectCurrentStore,
 } from "@/redux/features/product/productSlice";
+import { selectCurrentToken } from "@/redux/features/auth/authSlice";
 
 export default function Cart() {
   const dispatch = useAppDispatch();
   const cart = useAppSelector(selectCurrentStore);
   const [createCheckoutSession] = useCreateCheckoutSessionMutation();
-
+  const token = useAppSelector(selectCurrentToken);
   const [error, setError] = useState<string | null>(null);
 
   const isCartOpen = useAppSelector(
@@ -49,6 +50,13 @@ export default function Cart() {
     }
   }, [highlightedItemId, isCartOpen]);
 
+  useEffect(() => {
+    if (token) {
+      setError(null);
+    }
+  }, [token]);
+  
+
   const closeCartHandler = () => {
     dispatch(toggleCart());
     dispatch(resetHighlight());
@@ -66,7 +74,14 @@ export default function Cart() {
   const handleCheckout = async () => {
     setError(null);
 
+    if(!token) {
+      setError("Please Login to continue");
+      return;
+    }
+  
+
     try {
+
       const response = await createCheckoutSession({
         items: formattedData,
         successUrl: "http://localhost:5173/dashboard/user/my-orders",
