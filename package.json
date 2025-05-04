@@ -11,7 +11,7 @@
     "test": "vitest",
     "test:ui": "vitest --ui",
     "serve": "vite preview",
-    "start": "vite",
+    "start": "vite --host",
     "build:dev": "tsc -b && vite build",
     "build:prod": "tsc -b && vite build",
     "lint:fix": "eslint --fix .",

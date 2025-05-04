@@ -1,7 +1,7 @@
+import "./index.css";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import "./index.css";
-import { RouterProvider } from "react-router-dom"; // Use "react-router-dom"
+import { RouterProvider } from "react-router-dom";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { Toaster } from "sonner";

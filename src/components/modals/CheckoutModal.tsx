@@ -25,8 +25,6 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
   const [createCheckoutSession, { isLoading }] =
     useCreateCheckoutSessionMutation();
   const [error, setError] = useState<string | null>(null);
-  console.log("Items=>", items);
-  console.log("AMount=>", amount);
 
   useEffect(() => {}, [items]);
 
@@ -46,8 +44,6 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
         productId: item.id,
       }));
 
-      console.log("Sending Checkout Request:", formattedItems);
-
       const product = items[0]?.id;
 
       if (!product) {
@@ -61,8 +57,6 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
         cancelUrl: "https://book-on-client.vercel.app",
       }).unwrap();
 
-      console.log("Received Response from API:", response);
-
       if (!response?.data?.sessionId) {
         throw new Error("No sessionId returned from API.");
       }
@@ -71,8 +65,6 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
       if (!stripe) {
         throw new Error("Stripe failed to initialize.");
       }
-
-      console.log("Stripe Initialized Successfully");
 
       const redirectResult = await stripe.redirectToCheckout({
         sessionId: response?.data?.sessionId,

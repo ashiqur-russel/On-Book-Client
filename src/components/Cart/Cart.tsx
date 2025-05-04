@@ -64,7 +64,6 @@ export default function Cart() {
   });
 
   const handleCheckout = async () => {
-    console.log("checkout");
     setError(null);
 
     try {

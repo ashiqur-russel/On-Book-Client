@@ -95,12 +95,14 @@ const OrdersDashboard = () => {
       toast.error("Payment ID is missing!");
       return;
     }
+    const toastId = toast.loading("Processing refund...");
+
     try {
-      toast.loading("Processing refund...");
       await issueRefund(paymentId).unwrap();
-      toast.success("Refund processed successfully!");
+      toast.success("Refund processed successfully!", { id: toastId });
       refetch();
     } catch {
+      toast.dismiss(toastId);
       toast.error("Failed to issue refund. Please try again.");
     }
   };
@@ -127,8 +129,6 @@ const OrdersDashboard = () => {
       setQueryParams({ ...queryParams, page: newPage });
     }
   };
-
-  console.log(orders);
 
   return (
     <div className="p-6">

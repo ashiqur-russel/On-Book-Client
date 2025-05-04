@@ -13,7 +13,7 @@ import { RootState } from "../store";
 import { redirect } from "react-router";
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: import.meta.env.VITE_APP_API_URL_LIVE,
+  baseUrl: import.meta.env.VITE_APP_API_URL_LOCAL,
 
   credentials: "include",
   prepareHeaders: (headers, { getState }) => {
