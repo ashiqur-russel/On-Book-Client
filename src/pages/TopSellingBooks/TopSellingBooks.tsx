@@ -1,151 +1,165 @@
-import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-import { FaShoppingCart } from "react-icons/fa";
-import { useGetBestSellingProductsQuery } from "@/redux/features/product/productApi";
-import {
-  addToCart,
-  highlightCartItem,
-  incrementQuantity,
-  selectCurrentStore,
-} from "@/redux/features/product/productSlice";
-import { toggleCart } from "@/redux/features/global/globalSlice";
+import BuyProductModal from "@/components/modals/BuyProductModal";
+import { selectCurrentUser } from "@/redux/features/auth/authSlice";
+import { useGetAllProductsQuery } from "@/redux/features/product/productApi";
+import { addToCart } from "@/redux/features/product/productSlice";
+import { useGetMeQuery } from "@/redux/features/user/registerApi";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { IProduct } from "@/types";
+import { useState } from "react";
+import { AiOutlineShoppingCart } from "react-icons/ai";
+import { IoEye } from "react-icons/io5";
+import { RiMoneyEuroCircleFill } from "react-icons/ri";
+import { NavLink, useLocation, useNavigate } from "react-router";
 
-const TopSellingBooks = () => {
-  const settings = {
-    dots: true,
-    infinite: true,
-    speed: 600,
-    autoplay: true,
-    autoplaySpeed: 4000,
-    slidesToShow: 2,
-    slidesToScroll: 2,
-    rows: 2,
-    responsive: [
-      {
-        breakpoint: 1024,
-        settings: {
-          slidesToShow: 2,
-          slidesToScroll: 2,
-          rows: 2,
-          dots: true,
-        },
-      },
-      {
-        breakpoint: 768,
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1,
-          rows: 1,
-          dots: true,
-        },
-      },
-    ],
+const Bestsellers = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<IProduct | null>(null);
+  const user = useAppSelector(selectCurrentUser);
+  const dispatch = useAppDispatch();
+
+  const [queryParams] = useState({
+    deliveryStatus: "",
+    searchTerm: "",
+    page: 1,
+    limit: 10,
+  });
+
+  const queryArray = Object.entries(queryParams)
+    .filter(([, value]) => value !== "")
+    .map(([key, value]) => ({ name: key, value }));
+
+  const { data, isLoading } = useGetAllProductsQuery(queryArray);
+  const { data: myData, refetch } = useGetMeQuery("");
+
+  const userRole = user?.role;
+
+  const handleBuyNow = (product: IProduct) => {
+    if (!user) {
+      navigate(`/signin?redirect=${encodeURIComponent(location.pathname)}`);
+    } else {
+      setSelectedProduct(product);
+      setIsModalOpen(true);
+    }
+    refetch();
   };
 
-  const dispatch = useAppDispatch();
-  const cart = useAppSelector(selectCurrentStore).cart;
-
-  const {
-    data: products,
-    isLoading,
-    error,
-  } = useGetBestSellingProductsQuery("");
-
-  const handleAddToCart = (product: IProduct) => {
-    const isInCart = cart.find((item) => item.id === product.id);
-
-    if (isInCart) {
-      dispatch(incrementQuantity(product.id));
-      dispatch(toggleCart());
-      dispatch(highlightCartItem(product.id));
-    } else {
-      dispatch(addToCart(product));
-    }
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedProduct(null);
   };
 
   if (isLoading) {
     return (
-      <div className="text-center text-lg text-gray-600 py-10">
-        Loading best-selling books...
-      </div>
+      <p className="text-center text-lg text-gray-600">Data is Loading...</p>
     );
   }
 
-  if (error) {
-    return (
-      <div className="text-center text-lg text-red-500 py-10">
-        Failed to load best-selling books.
-      </div>
-    );
-  }
+  const bestSoldProducts =
+    data?.data?.filter((product) => product.isBestSold)?.slice(0, 4) || [];
 
   return (
-    <div className="container mx-auto px-2 py-10">
-      <h2 className="text-3xl text-center mb-6 text-gray-900">
-        Top Rated Books
-      </h2>
+    <div className="fontMona">
+      <div className="container mx-auto px-10">
+        {/* Header Section */}
+        <div className="flex px-1 justify-center items-center">
+          <h2 className="text-4xl text-gray-900 mb-3 text-center">
+            Bestsellers
+          </h2>
+        </div>
 
-      {/* Carousel */}
-      <Slider {...settings}>
-        {products && products.length > 0 ? (
-          products.map((book) => {
-            return (
-              <div key={book._id} className="px-2">
-                <div
-                  className={`flex overflow-hidden shadow-md border hover:shadow-lg transition-all h-36`}
-                >
-                  {/* Left - Book Cover Image */}
-                  <div className="w-1/2">
-                    <img
-                      src={book.productImg}
-                      alt={book.title}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
+        {/* Books Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {bestSoldProducts.length > 0 ? (
+            bestSoldProducts.map((book) => (
+              <div
+                key={book._id}
+                className="border border-gray-200 p-4 hover:shadow-lg transition"
+              >
+                {/* Book Image */}
+                <div className="w-full h-60 overflow-hidden mb-4">
+                  <img
+                    src={book.productImg}
+                    alt={book.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
 
-                  {/* Right - Book Details */}
-                  <div className="w-1/2 p-3 bg-gray-900 text-white flex flex-col justify-between">
-                    <div>
-                      <h3 className="text-sm font-semibold leading-tight">
-                        {book.title}
-                      </h3>
-                      <p className="text-xs text-gray-300">by {book.author}</p>
+                {/* Book Details */}
+                <div className="flex justify-between items-center">
+                  <h3 className="text-lg font-semibold text-gray-900 truncate">
+                    {book.title}
+                  </h3>
+                  <IoEye
+                    className="cursor-pointer hover:text-gray-500"
+                    size={18}
+                  />
+                </div>
+                <p className="text-sm text-gray-600 mb-2">by: {book.author}</p>
+                <p className="text-lg font-bold text-gray-900">${book.price}</p>
 
-                      {/* Star Rating -> Todo: have to make dynamic */}
-                      <div className="flex mt-1 text-yellow-400 text-xs">
-                        {"★★★★★"}
-                      </div>
-
-                      <p className="text-sm font-semibold mt-1">
-                        ${book.price}
-                      </p>
-                    </div>
-
-                    <button
-                      onClick={() => handleAddToCart(book)}
-                      className={`mt-2 cursor-pointer w-20 flex items-center justify-center border px-3 py-1 text-xs transition 
-                          : "border-gray-400 hover:bg-gray-400 hover:text-black"
-                      `}
+                {/* Ratings */}
+                <div className="flex items-center mt-2">
+                  {Array.from({ length: 5 }).map((_, index) => (
+                    <span
+                      key={index}
+                      className={`${
+                        index < 4 ? "text-yellow-400" : "text-gray-300"
+                      }`}
                     >
-                      {"Add"}
-                      <FaShoppingCart className="ml-1 text-sm" />
-                    </button>
-                  </div>
+                      ★
+                    </span>
+                  ))}
+                </div>
+
+                {/* Action Buttons */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-1">
+                  <button
+                    onClick={() => dispatch(addToCart(book))}
+                    className="mt-4 cursor-pointer flex items-center justify-center w-full bg-gray-900 text-white py-2 hover:bg-gray-700 transition"
+                  >
+                    Add
+                    <RiMoneyEuroCircleFill className="ml-2" />
+                  </button>
+                  <button
+                    onClick={() => handleBuyNow(book)}
+                    className="mt-4 cursor-pointer flex items-center justify-center w-full bg-gray-900 text-white py-2 hover:bg-gray-700 transition"
+                  >
+                    Buy
+                    <AiOutlineShoppingCart className="ml-2" />
+                  </button>
                 </div>
               </div>
-            );
-          })
-        ) : (
-          <div className="text-center text-gray-600">
-            No best-selling books found.
-          </div>
-        )}
-      </Slider>
+            ))
+          ) : (
+            <p className="col-span-4 text-center text-gray-600">
+              No best-selling products found.
+            </p>
+          )}
+        </div>
+
+        {/* Centered "See all" Button */}
+        <div className="mt-6 text-center">
+          <NavLink
+            to="/products"
+            className="text-gray-700 hover:underline text-sm"
+          >
+            See all
+          </NavLink>
+        </div>
+      </div>
+
+      {/* Buy Product Modal */}
+      {isModalOpen && selectedProduct && myData && userRole === "user" && (
+        <BuyProductModal
+          product={selectedProduct}
+          onClose={closeModal}
+          user={myData[0]?.name}
+        />
+      )}
     </div>
   );
 };
 
-export default TopSellingBooks;
+export default Bestsellers;

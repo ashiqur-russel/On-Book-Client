@@ -24,21 +24,27 @@ const offers = [
     image:
       "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjEyfHxhdXRob3J8ZW58MHx8MHx8fDA%3D",
   },
+  {
+    id: 4,
+    flipped: false,
+    discount: "20%",
+    image:
+      "https://images.pangobooks.com/images/31987ea3-3b36-4687-8e5a-5185ac54f260?width=800&quality=85&crop=1%3A1",
+  },
 ];
 
 const Offers = () => {
   return (
-    <div className=" py-8 flex flex-col items-center">
-      <div className="container mx-auto px-">
-        <h2 className="text-3xl ml-13 text-gray-900 mb-3 md:text-left">
+      <div className="w-full px-3 md:px-10 lg:px-24 py-10">
+      <h2 className="text-3xl flex justify-center items-center ml-13 text-gray-900 mb-5 md:text-left">
           Offers
         </h2>
 
-        <div className="flex flex-wrap justify-center  gap-10">
+        <div className="flex flex-wrap justify-center gap-4">
           {offers.map((offer) => (
-            <div key={offer.id} className="text-center mx-auto w-72">
+            <div key={offer.id} className="text-center mx-auto w-72 ">
               <div
-                className={`w-full h-80 overflow-hidden bg-gray-300 relative ${
+                className={`w-[100] h-80 overflow-hidden bg-gray-300 relative ${
                   offer.flipped ? "rounded-t-[100px]" : "rounded-b-[100px]"
                 }`}
               >
@@ -62,7 +68,7 @@ const Offers = () => {
           </button>
         </div>
       </div>
-    </div>
+
   );
 };
 

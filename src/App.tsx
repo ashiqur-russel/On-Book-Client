@@ -20,6 +20,10 @@ const App = () => {
         <Suspense fallback={<div>Loading Header...</div>}>
           <Header />
         </Suspense>
+          {/* BookCarousel */}
+          <Suspense fallback={<div>Loading Carousel...</div>}>
+          <BookCarousel />
+        </Suspense>
 
         {/* Bestsellers */}
         <Suspense fallback={<div>Loading Bestsellers...</div>}>
@@ -31,15 +35,12 @@ const App = () => {
           <BookFairSection />
         </Suspense>
 
-        {/* BookCarousel */}
-        <Suspense fallback={<div>Loading Carousel...</div>}>
-          <BookCarousel />
-        </Suspense>
-
         {/* Offers */}
         <Suspense fallback={<div>Loading Offers...</div>}>
           <Offers />
         </Suspense>
+
+       
 
         {/* TopSellingBooks */}
         <Suspense fallback={<div>Loading Top Selling...</div>}>

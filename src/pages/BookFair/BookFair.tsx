@@ -1,3 +1,5 @@
+import { NavLink } from "react-router";
+
 const books = [
   {
     id: 1,
@@ -54,7 +56,7 @@ const books = [
 const BookFairSection = () => {
   return (
     <>
-      <div className="bg-[#0A0E1A]  text-white relative mt-16 container mx-auto px-2 py-10 ">
+      <div className="bg-[#0A0E1A]  text-white relative   container mx-auto px-2 py-10 ">
         <div className="container mx-auto  flex flex-col lg:flex-row justify-between items-center gap-10">
           {/* Left Side - Book Cards */}
           <div className="relative overflow-hidden -z-0 lg:inline hidden w-full lg:w-1/2 h-[400px]">
@@ -80,7 +82,7 @@ const BookFairSection = () => {
           <div className="lg:w-1/2">
             <div className=" border-gray-400 p-8 relative max-w-md mx-auto lg:mx-0">
               <h2 className="text-4xl font-bold mb-4 leading-tight">
-                Online Book Fairs 2022
+                Online Book Fairs 2025
               </h2>
               <p className="text-gray-300 mb-6 leading-relaxed">
                 In a country teetering on the brink of civil war, two young
@@ -89,7 +91,7 @@ const BookFairSection = () => {
               </p>
 
               <button className="mt-4 border border-gray-400 text-white px-6 py-2 rounded-md hover:bg-gray-400 hover:text-black transition">
-                Create Account →
+               <NavLink to={"/signup"}> Create Account →</NavLink>
               </button>
 
               {/* Decorative Border Line */}

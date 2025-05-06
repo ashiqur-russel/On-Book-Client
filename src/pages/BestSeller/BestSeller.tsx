@@ -61,18 +61,13 @@ const Bestsellers = () => {
 
   return (
     <div className="fontMona">
-      <div className="container mx-auto px-10">
+      <div className="w-full px-3 md:px-10 lg:px-24  py-12">
         {/* Header Section */}
-        <div className="flex px-1 justify-between items-center">
+        <div className="flex px-1 justify-center items-center">
           <h2 className="text-4xl text-gray-900 mb-3 text-center">
             Bestsellers
           </h2>
-          <NavLink
-            to={"/products"}
-            className="text-gray-700 hover:underline text-sm hidden md:inline lg:inline"
-          >
-            See all
-          </NavLink>
+        
         </div>
 
         {/* Books Grid */}
@@ -135,7 +130,10 @@ const Bestsellers = () => {
                     <AiOutlineShoppingCart className="ml-2" />
                   </button>
                 </div>
+         
               </div>
+
+              
             ))
           ) : (
             <p className="col-span-4 text-center text-gray-600">
@@ -143,6 +141,15 @@ const Bestsellers = () => {
             </p>
           )}
         </div>
+        <div className="mt-6 text-center">
+  <NavLink
+    to="/products"
+    className="text-gray-700 hover:underline text-sm"
+  >
+    See all
+  </NavLink>
+</div>
+
       </div>
 
       {/* Buy Product Modal */}
