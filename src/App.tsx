@@ -2,6 +2,7 @@ import { Suspense, lazy } from "react";
 import "./App.css";
 import Footer from "./components/shared/Footer";
 import RecentListings from "./components/RecentListings/RecentListings";
+import ContactInformation from "./components/ContactInformation/ContactInformation";
 
 const Header = lazy(() => import("./pages/Header/Header"));
 const Bestsellers = lazy(() => import("./pages/BestSeller/BestSeller"));
@@ -33,10 +34,12 @@ const App = () => {
           <BookFairSection />
         </Suspense>
 
+
         {/* Offers */}
         <Suspense fallback={<div>Loading Offers...</div>}>
           <Offers />
         </Suspense>
+        <ContactInformation />
 
         <RecentListings />
 
