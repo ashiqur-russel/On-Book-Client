@@ -1,6 +1,9 @@
 import { Suspense, lazy } from "react";
 import "./App.css";
 import Footer from "./components/shared/Footer";
+import RecentListings from "./components/RecentListings/RecentListings";
+import ContactInformation from "./components/ContactInformation/ContactInformation";
+import RecentNonfiction from "./components/RecentNonfiction/RecentNonfiction";
 
 const Header = lazy(() => import("./pages/Header/Header"));
 const Bestsellers = lazy(() => import("./pages/BestSeller/BestSeller"));
@@ -8,9 +11,6 @@ const BookFairSection = lazy(() => import("./pages/BookFair/BookFair"));
 const BookCarousel = lazy(() => import("./components/BookCarousel"));
 const Offers = lazy(() => import("./pages/Offers/Offers"));
 
-const TopSellingBooks = lazy(
-  () => import("./pages/TopSellingBooks/TopSellingBooks")
-);
 
 const App = () => {
   return (
@@ -20,8 +20,8 @@ const App = () => {
         <Suspense fallback={<div>Loading Header...</div>}>
           <Header />
         </Suspense>
-          {/* BookCarousel */}
-          <Suspense fallback={<div>Loading Carousel...</div>}>
+        {/* BookCarousel */}
+        <Suspense fallback={<div>Loading Carousel...</div>}>
           <BookCarousel />
         </Suspense>
 
@@ -35,17 +35,16 @@ const App = () => {
           <BookFairSection />
         </Suspense>
 
+
         {/* Offers */}
         <Suspense fallback={<div>Loading Offers...</div>}>
           <Offers />
         </Suspense>
+        <ContactInformation />
 
-       
+        <RecentListings />
+        <RecentNonfiction />
 
-        {/* TopSellingBooks */}
-        <Suspense fallback={<div>Loading Top Selling...</div>}>
-          <TopSellingBooks />
-        </Suspense>
       </main>
 
       <Footer />

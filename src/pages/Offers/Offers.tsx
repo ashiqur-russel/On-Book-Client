@@ -44,7 +44,7 @@ const Offers = () => {
           {offers.map((offer) => (
             <div key={offer.id} className="text-center mx-auto w-72 ">
               <div
-                className={`w-[100] h-80 overflow-hidden bg-gray-300 relative ${
+                className={`w-full h-80 overflow-hidden bg-gray-300 relative ${
                   offer.flipped ? "rounded-t-[100px]" : "rounded-b-[100px]"
                 }`}
               >
