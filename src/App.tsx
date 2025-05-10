@@ -1,4 +1,4 @@
-import React, { Suspense, lazy, useState, useEffect } from "react";
+import { Suspense, lazy, useState, useEffect } from "react";
 import "./App.css";
 import Footer from "./components/shared/Footer";
 import RecentListings from "./components/RecentListings/RecentListings";
@@ -16,7 +16,6 @@ const App = () => {
   const [isLoadingInitial, setIsLoadingInitial] = useState(true);
 
   useEffect(() => {
-    console.log("useEffect: Setting isLoadingInitial to false after 500ms");
     const timer = setTimeout(() => {
       setIsLoadingInitial(false);
     }, 500);
@@ -30,7 +29,6 @@ const App = () => {
     return <CustomStyledSpinner />;
   }
 
-  console.log("App: Showing main content");
   return (
     <div className="min-h-screen flex flex-col h-[100vh]">
       <main className="flex-1">
