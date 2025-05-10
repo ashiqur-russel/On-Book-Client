@@ -7,6 +7,7 @@ import BuyProductModal from "@/components/modals/BuyProductModal";
 import { IProduct } from "@/types";
 import { useAppSelector } from "@/redux/hooks";
 import { selectCurrentUser } from "@/redux/features/auth/authSlice";
+import CustomStyledSpinner from "@/components/shared/LoaderSpinner";
 
 interface ProductProps {
   product: IProduct;
@@ -36,7 +37,7 @@ const ProductCard: React.FC<ProductProps> = ({ product }) => {
   };
 
   if (isLoading) {
-    <p> Loading...</p>;
+    <> <CustomStyledSpinner /></>;
   }
   return (
     <div className="relative bg-white border-gray-200 flex flex-col w-full">
@@ -64,11 +65,10 @@ const ProductCard: React.FC<ProductProps> = ({ product }) => {
             {[...Array(5)].map((_, index) => (
               <span
                 key={index}
-                className={`text-lg ${
-                  index < (product.rating || 0)
+                className={`text-lg ${index < (product.rating || 0)
                     ? "text-yellow-500"
                     : "text-gray-300"
-                }`}
+                  }`}
               >
                 ★
               </span>
@@ -94,11 +94,10 @@ const ProductCard: React.FC<ProductProps> = ({ product }) => {
         </button>
 
         <button
-          className={`flex items-center justify-center gap-2 px-4 py-2 text-sm transition w-full ${
-            userRole === "admin"
+          className={`flex items-center justify-center gap-2 px-4 py-2 text-sm transition w-full ${userRole === "admin"
               ? "bg-gray-400 text-gray-700 cursor-not-allowed"
               : "bg-red-600 text-white hover:bg-red-500"
-          }`}
+            }`}
           disabled={userRole === "admin"}
           onClick={handleBuyNow}
         >

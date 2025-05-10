@@ -2,6 +2,7 @@ import { lazy, Suspense } from "react";
 import { FaChartLine, FaUsers, FaCog, FaJediOrder } from "react-icons/fa";
 import { GiBookshelf } from "react-icons/gi";
 import { BiBookAdd } from "react-icons/bi";
+import CustomStyledSpinner from "@/components/shared/LoaderSpinner";
 
 const LazyDashboard = lazy(() => import("../components/Dashboard/Dashboard"));
 const LazyCreateProduct = lazy(
@@ -26,7 +27,7 @@ export const adminPaths = [
     path: "",
     icon: <FaChartLine />,
     element: (
-      <Suspense fallback={<div>Loading Dashboard...</div>}>
+      <Suspense fallback={<div><CustomStyledSpinner /> </div>}>
         <LazyDashboard />
       </Suspense>
     ),
@@ -36,7 +37,7 @@ export const adminPaths = [
     path: "add-book",
     icon: <BiBookAdd />,
     element: (
-      <Suspense fallback={<div>Loading Add Book...</div>}>
+      <Suspense fallback={<div><CustomStyledSpinner /> </div>}>
         <LazyCreateProduct />
       </Suspense>
     ),
@@ -46,7 +47,7 @@ export const adminPaths = [
     path: "manage-books",
     icon: <GiBookshelf />,
     element: (
-      <Suspense fallback={<div>Loading Manage Books...</div>}>
+      <Suspense fallback={<div><CustomStyledSpinner /> </div>}>
         <LazyManageBooks />
       </Suspense>
     ),
@@ -56,7 +57,7 @@ export const adminPaths = [
     path: "manage-users",
     icon: <FaUsers />,
     element: (
-      <Suspense fallback={<div>Loading Users...</div>}>
+      <Suspense fallback={<div><CustomStyledSpinner /> </div>}>
         <LazyUsers />
       </Suspense>
     ),
@@ -66,7 +67,7 @@ export const adminPaths = [
     path: "manage-orders",
     icon: <FaJediOrder />,
     element: (
-      <Suspense fallback={<div>Loading Orders...</div>}>
+      <Suspense fallback={<div><CustomStyledSpinner /> </div>}>
         <LazyOrdersDashboard />
       </Suspense>
     ),
@@ -76,7 +77,7 @@ export const adminPaths = [
     path: "settings",
     icon: <FaCog />,
     element: (
-      <Suspense fallback={<div>Loading Settings...</div>}>
+      <Suspense fallback={<div><CustomStyledSpinner /> </div>}>
         <LazyUserSettings />
       </Suspense>
     ),

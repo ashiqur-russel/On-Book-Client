@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Slider from "react-slick";
+import CustomStyledSpinner from "./shared/LoaderSpinner";
 
 // Dynamically import slick-carousel styles only when component is mounted
 const loadSlickCarouselCSS = async () => {
@@ -62,7 +63,7 @@ const BookCarousel = () => {
   };
 
   if (!isLoaded) {
-    return <div className="text-center py-10">Loading Carousel...</div>;
+    return <div className="text-center py-10"><CustomStyledSpinner /></div>;
   }
 
   return (

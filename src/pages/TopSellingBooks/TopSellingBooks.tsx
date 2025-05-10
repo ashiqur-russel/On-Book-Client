@@ -1,4 +1,5 @@
 import BuyProductModal from "@/components/modals/BuyProductModal";
+import CustomStyledSpinner from "@/components/shared/LoaderSpinner";
 import { selectCurrentUser } from "@/redux/features/auth/authSlice";
 import { useGetAllProductsQuery } from "@/redux/features/product/productApi";
 import { addToCart } from "@/redux/features/product/productSlice";
@@ -52,7 +53,7 @@ const Bestsellers = () => {
 
   if (isLoading) {
     return (
-      <p className="text-center text-lg text-gray-600">Data is Loading...</p>
+      <p className="text-center text-lg text-gray-600">{<CustomStyledSpinner />}</p>
     );
   }
 
@@ -104,9 +105,8 @@ const Bestsellers = () => {
                   {Array.from({ length: 5 }).map((_, index) => (
                     <span
                       key={index}
-                      className={`${
-                        index < 4 ? "text-yellow-400" : "text-gray-300"
-                      }`}
+                      className={`${index < 4 ? "text-yellow-400" : "text-gray-300"
+                        }`}
                     >
                       ★
                     </span>

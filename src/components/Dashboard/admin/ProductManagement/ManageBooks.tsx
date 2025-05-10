@@ -8,6 +8,7 @@ import {
 } from "@/redux/features/product/productApi";
 import { IProduct } from "@/types";
 import Pagination from "@/components/shared/Pagination";
+import CustomStyledSpinner from "@/components/shared/LoaderSpinner";
 
 const LazyOfferModal = lazy(() => import("@/components/modals/OfferModal"));
 
@@ -196,7 +197,7 @@ const ManageBooks = () => {
       </div>
 
       {isOfferModalOpen && (
-        <Suspense fallback={<div>Loading Offer Modal...</div>}>
+        <Suspense fallback={<><CustomStyledSpinner /></>}>
           <LazyOfferModal
             onClose={() => setIsOfferModalOpen(false)}
             onSubmit={(rate, start, end) => {

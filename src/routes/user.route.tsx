@@ -1,3 +1,4 @@
+import CustomStyledSpinner from "@/components/shared/LoaderSpinner";
 import { lazy, Suspense } from "react";
 import { FaBook, FaCog, FaChartLine } from "react-icons/fa";
 
@@ -15,7 +16,7 @@ export const userPaths = [
     path: "",
     icon: <FaChartLine />,
     element: (
-      <Suspense fallback={<div>Loading Dashboard...</div>}>
+      <Suspense fallback={<div><CustomStyledSpinner /> </div>}>
         <LazyUserDashboard />
       </Suspense>
     ),
@@ -25,7 +26,7 @@ export const userPaths = [
     path: "my-orders",
     icon: <FaBook />,
     element: (
-      <Suspense fallback={<div>Loading My Orders...</div>}>
+      <Suspense fallback={<div><CustomStyledSpinner /> </div>}>
         <LazyMyOrders />
       </Suspense>
     ),
@@ -35,7 +36,7 @@ export const userPaths = [
     path: "settings",
     icon: <FaCog />,
     element: (
-      <Suspense fallback={<div>Loading Settings...</div>}>
+      <Suspense fallback={<div><CustomStyledSpinner /> </div>}>
         <LazySettings />
       </Suspense>
     ),

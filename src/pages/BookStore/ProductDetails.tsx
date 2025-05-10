@@ -7,6 +7,7 @@ import { useGetProductByIdQuery } from "../../redux/features/product/productApi"
 import { useGetMeQuery } from "@/redux/features/user/registerApi";
 import { cn } from "@/lib/utils";
 import { toast } from 'sonner';
+import CustomStyledSpinner from '@/components/shared/LoaderSpinner';
 
 
 const ProductDetails = () => {
@@ -56,7 +57,7 @@ const ProductDetails = () => {
 
 
   if (isLoading) {
-    return <div className="text-center text-lg font-semibold">Loading...</div>;
+    return <div className="text-center text-lg font-semibold">{<CustomStyledSpinner />}</div>;
   }
 
 
