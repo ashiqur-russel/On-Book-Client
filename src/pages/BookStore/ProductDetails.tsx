@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Star, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -6,6 +6,7 @@ import BuyProductModal from '@/components/modals/BuyProductModal';
 import { useGetProductByIdQuery } from "../../redux/features/product/productApi";
 import { useGetMeQuery } from "@/redux/features/user/registerApi";
 import { cn } from "@/lib/utils";
+import { toast } from 'sonner';
 
 
 const ProductDetails = () => {
@@ -20,26 +21,44 @@ const ProductDetails = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [userRating, setUserRating] = useState<number | null>(null);
   const [hoverRating, setHoverRating] = useState<number | null>(null);
+  const isLoggedIn = myData && myData.length > 0;
 
-
-  const handleBuyNow = () => {
-    if (!myData || myData.length === 0) {
+  const handleAuthRequiredAction = (callback: () => void) => {
+    if (!isLoggedIn) {
       navigate(`/signin?redirect=${encodeURIComponent(location.pathname)}`);
     } else {
-      setIsModalOpen(true);
+      callback();
     }
-    refetchUser();
   };
 
-  const handleRateBook = (rating: number) => {
+  const handleBuyNow = () => {
+    handleAuthRequiredAction(() => {
+      setIsModalOpen(true);
+      refetchUser();
+    });
+  };
+
+  // const [addRating] = useAddRatingMutation();
+
+  const handleRateBook = async (rating: number) => {
     setUserRating(rating);
     setHoverRating(null);
     console.log(`Rated book with ${rating} stars`);
+
+    try {
+      //await addRating({ productId: id!, rating }).unwrap();
+      toast.success("Thanks for your rating!");
+    } catch (err) {
+      console.error("Rating failed:", err);
+      toast.error("Failed to submit rating.");
+    }
   };
+
 
   if (isLoading) {
     return <div className="text-center text-lg font-semibold">Loading...</div>;
   }
+
 
   if (isError || !product) {
     return (
@@ -168,70 +187,61 @@ const ProductDetails = () => {
               <div className="p-4 md:p-6 border-t border-gray-200">
                 <h2 className="text-xl font-semibold text-gray-800 mb-3">Be the first one to review</h2>
                 <p className="text-gray-600 mb-4">Review the book today!</p>
-                {userRole === "user" ? (
-                  <div
-                    className="flex items-center gap-1 mt-4"
-                    onMouseLeave={() => setHoverRating(null)}
+                <div
+                  className="flex items-center gap-1 mt-4"
+                  onMouseLeave={() => setHoverRating(null)}
+                >
+                  {[1, 2, 3, 4, 5].map((starIndex) => {
+                    const starValue = starIndex;
+                    const currentRating = hoverRating ?? userRating ?? product.rating;
+                    const isFull = currentRating >= starValue;
+                    const isHalf = currentRating >= starValue - 0.5 && currentRating < starValue;
+
+                    return (
+                      <div
+                        key={starIndex}
+                        className="relative w-6 h-6 cursor-pointer"
+                        onMouseMove={(e) => {
+                          const { left, width } = e.currentTarget.getBoundingClientRect();
+                          const x = e.clientX - left;
+                          const percent = x / width;
+                          setHoverRating(percent > 0.5 ? starValue : starValue - 0.5);
+                        }}
+                        onClick={() => {
+                          handleAuthRequiredAction(() => {
+                            if (hoverRating) handleRateBook(hoverRating);
+                          });
+                        }}
+                      >
+                        {/* Gray base star */}
+                        <Star className="text-gray-300 w-full h-full" />
+
+                        {/* Gold overlay star */}
+                        {(isFull || isHalf) && (
+                          <Star
+                            className="text-yellow-400 w-full h-full absolute top-0 left-0"
+                            style={{
+                              clipPath: isFull ? 'none' : 'inset(0 50% 0 0)',
+                            }}
+                          />
+                        )}
+                      </div>
+                    );
+                  })}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="ml-2"
+                    onClick={() =>
+                      handleAuthRequiredAction(() => {
+                        if (hoverRating) handleRateBook(hoverRating);
+                      })
+                    }
                   >
-                    {[1, 2, 3, 4, 5].map((starIndex) => {
-                      const starValue = starIndex;
+                    Rate the book
+                  </Button>
+                </div>
 
-                      const currentRating = hoverRating ?? userRating ?? product.rating;
-
-                      const isFull = currentRating >= starValue;
-                      const isHalf = currentRating >= starValue - 0.5 && currentRating < starValue;
-
-                      return (
-                        <div
-                          key={starIndex}
-                          className="relative w-6 h-6 cursor-pointer"
-                          onMouseMove={(e) => {
-                            const { left, width } = e.currentTarget.getBoundingClientRect();
-                            const x = e.clientX - left;
-                            const percent = x / width;
-                            setHoverRating(percent > 0.5 ? starValue : starValue - 0.5);
-                          }}
-                          onClick={() => {
-                            setUserRating(hoverRating);
-                            console.log(`Rated: ${hoverRating}`);
-                          }}
-                        >
-                          {/* Gray base star */}
-                          <Star className="text-gray-300 w-full h-full" />
-
-                          {/* Gold overlay star */}
-                          {(isFull || isHalf) && (
-                            <Star
-                              className="text-yellow-400 w-full h-full absolute top-0 left-0"
-                              style={{
-                                clipPath: isFull
-                                  ? 'none'
-                                  : 'inset(0 50% 0 0)',
-                              }}
-                            />
-                          )}
-                        </div>
-                      );
-                    })}
-                    <Button variant="outline" size="sm" className="ml-2">
-                      Rate the book
-                    </Button>
-                  </div>
-
-
-                ) : (
-                  <div className="flex items-center gap-2 mt-4">
-                    {[1, 2, 3, 4, 5].map((index) => (
-                      <Star
-                        key={index}
-                        className="w-6 h-6 text-gray-300"
-                      />
-                    ))}
-                    <Button variant="outline" size="sm" className="ml-2" disabled>
-                      Rate the book
-                    </Button>
-                  </div>
-                )}
               </div>
               {/* Tags Section */}
               <div className="p-4 md:p-6">
